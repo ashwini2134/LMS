@@ -1,619 +1,274 @@
-# Lecture 0
+## [**Artificial Intelligence**](https://cs50.harvard.edu/ai/notes/0/#artificial-intelligence)
 
-Humans reason based on existing knowledge and draw conclusions. The concept of representing knowledge and drawing conclusions from it is also used in AI, and in this lecture we will explore how we can achieve this behavior.
+Artificial Intelligence (AI) covers a range of techniques that appear as sentient behavior by the computer. For example, AI is used to recognize faces in photographs on your social media, beat the World’s Champion in chess, and process your speech when you speak to Siri or Alexa on your phone.
 
----
+In this course, we will explore some of the ideas that make AI possible:
 
-# Knowledge-Based Agents
+1. **Search**
 
-These are agents that reason by operating on internal representations of knowledge.
+Finding a solution to a problem, like a navigator app that finds the best route from your origin to the destination, or like playing a game and figuring out the next move.
 
-## What does "reasoning based on knowledge to draw a conclusion" mean?
+1. **Knowledge**
 
-Let's start answering this with a Harry Potter example. Consider the following sentences:
+Representing information and drawing inferences from it.
 
-1. If it didn't rain, Harry visited Hagrid today.
-2. Harry visited Hagrid or Dumbledore today, but not both.
-3. Harry visited Dumbledore today.
+1. **Uncertainty**
 
-Based on these three sentences, we can answer the question:
+Dealing with uncertain events using probability.
 
-> Did it rain today?
+1. **Optimization**
 
-Even though none of the individual sentences tells us directly whether it rained today.
+Finding not only a correct way to solve a problem, but a better—or the best—way to solve it.
 
-### Reasoning
+1. **Learning**
 
-From sentence 3, we know that Harry visited Dumbledore.  
-From sentence 2, we know Harry visited either Dumbledore or Hagrid, but not both.
+Improving performance based on access to data and experience. For example, your email is able to distinguish spam from non-spam mail based on past experience.
 
-So we conclude:
+1. **Neural Networks**
 
-4. Harry did not visit Hagrid.
+A program structure inspired by the human brain that is able to perform tasks effectively.
 
-Now, from sentence 1:
+1. **Language**
 
-- If it didn't rain, Harry would have visited Hagrid.
+Processing natural language, which is produced and understood by humans.
 
-But we know he did **not** visit Hagrid. Therefore:
+## [**Search**](https://cs50.harvard.edu/ai/notes/0/#search)
 
-5. It rained today.
+Search problems involve an agent that is given an initial state and a goal state, and it returns a solution of how to get from the former to the latter. A navigator app uses a typical search process, where the agent (the thinking part of the program) receives as input your current location and your desired destination, and, based on a search algorithm, returns a suggested path. However, there are many other forms of search problems, like puzzles or mazes.
 
-To come to this conclusion, we used logic, and today's lecture explores how AI can use logic to reach new conclusions based on existing information.
+![15 puzzle](https://cs50.harvard.edu/ai/notes/0/15puzzle.png)
 
----
+Finding a solution to a 15 puzzle would require the use of a search algorithm.
 
-# Sentence
-
-A sentence is an assertion about the world in a knowledge representation language.  
-A sentence is how AI stores knowledge and uses it to infer new information.
-
----
-
-# Propositional Logic
-
-Propositional logic is based on propositions: statements about the world that can be either **true** or **false**, as in sentences above.
-
----
-
-## Propositional Symbols
-
-Propositional symbols are most often letters (`P`, `Q`, `R`) used to represent propositions.
-
----
-
-## Logical Connectives
-
-Logical connectives are logical symbols that connect propositional symbols to reason in a more complex way about the world.
-
----
-
-### NOT (¬)
-
-**Not (¬)** inverses the truth value of the proposition.
-
-Example:
-
-- `P`: It is raining
-- `¬P`: It is not raining
-
-Truth table:
-
-| P     | ¬P    |
-|-------|-------|
-| false | true  |
-| true  | false |
-
-![NOT Operation](/static/images/image_122856940665.png)
-
----
-
-### AND (∧)
-
-**And (∧)** connects two propositions.  
-`P ∧ Q` is true only if both `P` and `Q` are true.
-
-Truth table:
-
-| P     | Q     | P ∧ Q |
-|-------|-------|-------|
-| false | false | false |
-| false | true  | false |
-| true  | false | false |
-| true  | true  | true  |
-
-![AND Operation](/static/images/image_122856940758.png)
-
----
-
-### OR (∨)
-
-**Or (∨)** is true as long as at least one argument is true.
-
-Truth table:
-
-| P     | Q     | P ∨ Q |
-|-------|-------|-------|
-| false | false | false |
-| false | true  | true  |
-| true  | false | true  |
-| true  | true  | true  |
-
-![OR Operation](/static/images/image_122856940803.png)
-
-#### Inclusive OR vs Exclusive OR
-
-There are two types of OR:
-
-- **Inclusive OR**: `P ∨ Q` is true if either is true OR both are true.
-- **Exclusive OR (XOR)**: `P ⊕ Q` is false if both are true.
-
-Examples:
-
-- Inclusive OR: "To eat dessert, you must clean your room OR mow the lawn."  
-  (If you do both, you still get dessert.)
-
-- Exclusive OR: "For dessert, you can have either cookies OR ice cream."  
-  (You cannot have both.)
-
----
-
-### Implication (→)
-
-**Implication (→)** represents:  
-"If P then Q"
-
-Example:
-
-- `P`: It is raining
-- `Q`: I'm indoors
-- `P → Q`: If it is raining, then I'm indoors.
-
-Here:
-
-- `P` is the **antecedent**
-- `Q` is the **consequent**
-
-Truth table:
-
-| P     | Q     | P → Q |
-|-------|-------|-------|
-| false | false | true  |
-| false | true  | true  |
-| true  | false | false |
-| true  | true  | true  |
-
-If the antecedent is false, the implication is always true (trivially true).
-
-![Implication Operation](/static/images/image_122856941538.png)
-
----
-
-### Biconditional (↔)
-
-**Biconditional (↔)** means:  
-"If and only if"
-
-`P ↔ Q` is equivalent to:
-
-- `(P → Q) ∧ (Q → P)`
-
-Example:
-
-- `P`: It is raining
-- `Q`: I'm indoors
-
-Then `P ↔ Q` means:
-
-- If it is raining, I'm indoors.
-- If I'm indoors, it is raining.
-
-Truth table:
-
-| P     | Q     | P ↔ Q |
-|-------|-------|-------|
-| false | false | true  |
-| false | true  | false |
-| true  | false | false |
-| true  | true  | true  |
-
-![Biconditional Operation](/static/images/image_122856941571.png)
-
----
-
-# Model
-
-A **model** is an assignment of truth values to every proposition.
-
-Example:
-
-- `P`: It is raining
-- `Q`: It is Tuesday
-
-Model:
-
-| P     | Q     |
-|-------|-------|
-| true  | false |
-
-In this model, `P` is true and `Q` is false. A model represents one possible state of the world.
-
-![Model Example](/static/images/image_122856941572.png)
-
----
-
-# Knowledge Representation
-
-Knowledge representation is the field of AI dedicated to representing information about the world in a form that a computer system can utilize to solve complex tasks. 
-
-## Types of Knowledge
-
-1. **Declarative Knowledge**: Facts about the world
-2. **Procedural Knowledge**: How to do things
-3. **Meta-knowledge**: Knowledge about knowledge
-
-## Knowledge Representation Schemes
-
-- **Logic**: Propositional logic, first-order logic
-- **Rules**: Production rules, if-then statements
-- **Frames**: Data structures for representing stereotypical situations
-- **Semantic Networks**: Graph-based representations
-- **Ontologies**: Formal specifications of conceptualizations
-
-![Knowledge Representation](/static/images/image_122857395167.png)
-
----
-
-# Inference
-
-Inference is the process of deriving logical conclusions from premises known or assumed to be true.
-
-## Types of Inference
-
-1. **Deduction**: Deriving specific conclusions from general principles
-2. **Induction**: Deriving general principles from specific examples  
-3. **Abduction**: Finding the best explanation for observed facts
-
-## Inference Rules
-
-- **Modus Ponens**: If P → Q and P, then Q
-- **Modus Tollens**: If P → Q and ¬Q, then ¬P
-- **Chain Rule**: If P → Q and Q → R, then P → R
-
----
-
-# Summary
-
-In this lecture, we explored:
-- Knowledge-based agents and how they reason
-- Propositional logic and logical connectives
-- Truth tables and logical reasoning
-- Models and knowledge representation
-- Inference mechanisms
-
-These concepts form the foundation for building AI systems that can reason about the world and make intelligent decisions based on available information.
-
----
-
-## Navigation
-
-<div class="navigation-buttons my-4">
-  <button data-section="quiz" class="nav-button bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded mr-2">
-    📝 Quiz
-  </button>
-  <button data-section="project" class="nav-button bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">
-    🚀 Project
-  </button>
-</div>
-
-<div id="quiz-section" class="section-content" style="display: none;">
-## [__Quiz 0__](https://cs50.harvard.edu/ai/quizzes/0/#quiz-0)
-
-Quizzes are *optional, but encouraged*. They are a good way to test your conceptual understanding, before diving into the programming projects. Consider each question below, then reveal the answer. If you didn't get it right, consider why you may have had that misunderstanding!
-
-### [__Question 1__](https://cs50.harvard.edu/ai/quizzes/0/#question-1)
-
-__Between depth first search (DFS) and breadth first search (BFS), which will find a shorter path through a maze?__
-
-- DFS will always find a shorter path than BFS
-- BFS will always find a shorter path than DFS
-- DFS will sometimes, but not always, find a shorter path than BFS
-- BFS will sometimes, but not always, find a shorter path than DFS
-- Both algorithms will always find paths of the same length
-
-<details class="cursor-pointer my-4 p-4 rounded bg-slate-800 border border-slate-700">
-  <summary class="font-bold text-blue-400">Click here for the answer to Question 1</summary>
-  <div class="mt-2 text-slate-300">BFS will sometimes, but not always, find a shorter path than DFS</div>
-</details>
-
-### [__Question 2__](https://cs50.harvard.edu/ai/quizzes/0/#question-2)
-
-__Consider the below maze. Grey cells indicate walls. A search algorithm was run on this maze, and found the yellow highlighted path from point A to B. In doing so, the red highlighted cells were the states explored but that did not lead to the goal.__
-
-__Of the four search algorithms discussed in lecture — depth-first search, breadth-first search, greedy best-first search with Manhattan distance heuristic, and A* search with Manhattan distance heuristic — which one (or multiple, if multiple are possible) could be the algorithm used?__
-
-- Could only be A*
-- Could only be greedy best-first search
-- Could only be DFS
-- Could only be BFS
-- Could be either A* or greedy best-first search
-- Could be either DFS or BFS
-- Could be any of the four algorithms
-- Could not be any of the four algorithms
-
-![Quiz 0, Question 2](https://cs50.harvard.edu/ai/quizzes/images/q0q2.png)
-
-<details class="cursor-pointer my-4 p-4 rounded bg-slate-800 border border-slate-700">
-  <summary class="font-bold text-blue-400">Click here for the answer to Question 2</summary>
-  <div class="mt-2 text-slate-300">Could only be DFS</div>
-</details>
-
-### [__Question 3__](https://cs50.harvard.edu/ai/quizzes/0/#question-3)
-
-__Why is depth-limited minimax sometimes preferable to minimax without a depth limit?__
-
-- Depth-limited minimax can arrive at a decision more quickly because it explores fewer states
-- Depth-limited minimax will achieve the same output as minimax without a depth limit, but can sometimes use less memory
-- Depth-limited minimax can make a more optimal decision by not exploring states known to be suboptimal
-- Depth-limited minimax is never preferable to minimax without a depth limit
-
-<details class="cursor-pointer my-4 p-4 rounded bg-slate-800 border border-slate-700">
-  <summary class="font-bold text-blue-400">Click here for the answer to Question 3</summary>
-  <div class="mt-2 text-slate-300">Depth-limited minimax can arrive at a decision more quickly because it explores fewer states</div>
-</details>
-
-### [__Question 4__](https://cs50.harvard.edu/ai/quizzes/0/#question-4)
-
-__Consider the Minimax tree below, where the green up arrows indicate the MAX player and red down arrows indicate the MIN player. The leaf nodes are each labelled with their value.__
-
-__What is the value of the root node?__
-
-![Quiz 0, Question 4](https://cs50.harvard.edu/ai/quizzes/images/q0q4.png)
-
-<details class="cursor-pointer my-4 p-4 rounded bg-slate-800 border border-slate-700">
-  <summary class="font-bold text-blue-400">Click here for the answer to Question 4</summary>
-  <div class="mt-2 text-slate-300">5</div>
-</details>
-</div>
-
-<div id="project-section" class="section-content" style="display: none;">
-## [__Project 0__](https://cs50.harvard.edu/ai/projects/0/#project-0)
-
-Projects are *optional, but encouraged*. They are a good way to apply the concepts learned in lecture to practical problems. Consider the following project to deepen your understanding of search algorithms and graph traversal.
-
-### [__Degrees__](https://cs50.harvard.edu/ai/projects/0/degrees/#degrees)
-
-## 📋 [__Solution & Code__](https://www.notion.so/Solution-2eff244881af80d191e7e3615c2bb375?pvs=21)
-
-**Click here to view the complete solution and implementation code on Notion**
-
----
-
-The latest version of Python you should use in this course is Python 3.12.
-
-Write a program that determines how many "degrees of separation" apart two actors are.
-
-```
-$ python degrees.py large
-Loading data...
-Data loaded.
-Name: Emma Watson
-Name: Jennifer Lawrence
-3 degrees of separation.
-1: Emma Watson and Brendan Gleeson starred in Harry Potter and the Order of the Phoenix
-2: Brendan Gleeson and Michael Fassbender starred in Trespass Against Us
-3: Michael Fassbender and Jennifer Lawrence starred in X-Men: First Class
-```
-
-## [__When to Do It__](https://cs50.harvard.edu/ai/projects/0/degrees/#when-to-do-it)
-
-By [Wednesday, July 1, 2026 at 5:29 AM GMT+5:30](https://time.cs50.io/20260630T235900Z)
-
-## [__How to Get Help__](https://cs50.harvard.edu/ai/projects/0/degrees/#how-to-get-help)
-
-1. Ask questions via [Ed](https://cs50.edx.org/ed)!
-2. Ask questions via any of CS50's [communities](https://cs50.harvard.edu/ai/communities/)!
-
-## [__Background__](https://cs50.harvard.edu/ai/projects/0/degrees/#background)
-
-According to the [Six Degrees of Kevin Bacon](https://en.wikipedia.org/wiki/Six_Degrees_of_Kevin_Bacon) game, anyone in the Hollywood film industry can be connected to Kevin Bacon within six steps, where each step consists of finding a film that two actors both starred in.
-
-In this problem, we're interested in finding the shortest path between any two actors by choosing a sequence of movies that connects them. For example, the shortest path between Jennifer Lawrence and Tom Hanks is 2: Jennifer Lawrence is connected to Kevin Bacon by both starring in "X-Men: First Class," and Kevin Bacon is connected to Tom Hanks by both starring in "Apollo 13."
-
-We can frame this as a search problem: our states are people. Our actions are movies, which take us from one actor to another (it's true that a movie could take us to multiple different actors, but that's okay for this problem). Our initial state and goal state are defined by the two people we're trying to connect. By using breadth-first search, we can find the shortest path from one actor to another.
-
-## [__Getting Started__](https://cs50.harvard.edu/ai/projects/0/degrees/#getting-started)
-
-- Download the distribution code from https://cdn.cs50.net/ai/2023/x/projects/0/degrees.zip and unzip it.
-
-## [__Understanding__](https://cs50.harvard.edu/ai/projects/0/degrees/#understanding)
-
-The distribution code contains two sets of CSV data files: one set in the `large` directory and one set in the `small` directory. Each contains files with the same names, and the same structure, but `small` is a much smaller dataset for ease of testing and experimentation.
-
-Each dataset consists of three CSV files. A CSV file, if unfamiliar, is just a way of organizing data in a text-based format: each row corresponds to one data entry, with commas in the row separating the values for that entry.
-
-Open up `small/people.csv`. You'll see that each person has a unique `id`, corresponding with their `id` in [IMDb](https://www.imdb.com/)'s database. They also have a `name`, and a `birth` year.
-
-Next, open up `small/movies.csv`. You'll see here that each movie also has a unique `id`, in addition to a `title` and the `year` in which the movie was released.
-
-Now, open up `small/stars.csv`. This file establishes a relationship between the people in `people.csv` and the movies in `movies.csv`. Each row is a pair of a `person_id` value and a `movie_id` value. The first row (ignoring the header), for example, states that the person with id 102 starred in the movie with id 104257. Checking that against `people.csv` and `movies.csv`, you'll find that this line is saying that Kevin Bacon starred in the movie "A Few Good Men."
-
-Next, take a look at `degrees.py`. At the top, several data structures are defined to store information from the CSV files. The `names` dictionary is a way to look up a person by their name: it maps names to a set of corresponding ids (because it's possible that multiple actors have the same name). The `people` dictionary maps each person's id to another dictionary with values for the person's `name`, `birth` year, and the set of all the `movies` they have starred in. And the `movies` dictionary maps each movie's id to another dictionary with values for that movie's `title`, release `year`, and the set of all the movie's `stars`. The `load_data` function loads data from the CSV files into these data structures.
-
-The `main` function in this program first loads data into memory (the directory from which the data is loaded can be specified by a command-line argument). Then, the function prompts the user to type in two names. The `person_id_for_name` function retrieves the id for any person (and handles prompting the user to clarify, in the event that multiple people have the same name). The function then calls the `shortest_path` function to compute the shortest path between the two people, and prints out the path.
-
-The `shortest_path` function, however, is left unimplemented. That's where you come in!
-
-## [__Specification__](https://cs50.harvard.edu/ai/projects/0/degrees/#specification)
-
-Complete the implementation of the `shortest_path` function such that it returns the shortest path from the person with id `source` to the person with id `target`.
-
-- Assuming there is a path from the `source` to the `target`, your function should return a list, where each list item is the next `(movie_id, person_id)` pair in the path from the source to the target. Each pair should be a tuple of two strings.
-    - For example, if the return value of `shortest_path` were `[(1, 2), (3, 4)]`, that would mean that the source starred in movie 1 with person 2, person 2 starred in movie 3 with person 4, and person 4 is the target.
-- If there are multiple paths of minimum length from the source to the target, your function can return any of them.
-- If there is no possible path between two actors, your function should return `None`.
-- You may call the `neighbors_for_person` function, which accepts a person's id as input, and returns a set of `(movie_id, person_id)` pairs for all people who starred in a movie with a given person.
-
-You should not modify anything else in the file other than the `shortest_path` function, though you may write additional functions and/or import other Python standard library modules.
-
-## [__Hints__](https://cs50.harvard.edu/ai/projects/0/degrees/#hints)
-
-- While the implementation of search in lecture checks for a goal when a node is popped off the frontier, you can improve the efficiency of your search by checking for a goal as nodes are added to the frontier: if you detect a goal node, no need to add it to the frontier, you can simply return the solution immediately.
-- You're welcome to borrow and adapt any code from the lecture examples. We've already provided you with a file `util.py` that contains the lecture implementations for `Node`, `StackFrontier`, and `QueueFrontier`, which you're welcome to use (and modify if you'd like).
-
-## [__Testing__](https://cs50.harvard.edu/ai/projects/0/degrees/#testing)
-
-If you'd like, you can execute the below (after [setting up `check50`](https://cs50.readthedocs.io/projects/check50/en/latest/index.html) on your system) to evaluate the correctness of your code. This isn't obligatory; you can simply submit following the steps at the end of this specification, and these same tests will run on our server. Either way, be sure to compile and test it yourself as well!
-
-```
-check50 ai50/projects/2024/x/degrees
-```
-
-Execute the below to evaluate the style of your code using `style50`.
-
-```
-style50 degrees.py
-```
-
-Remember that **you may not import any modules** (other than those in the Python standard library) **other than those explicitly authorized herein**. Doing so will not only prevent `check50` from running, but will also prevent `submit50` from scoring your assignment, since it uses `check50`. If that happens, you've likely imported something disallowed or otherwise modified the distribution code in an unauthorized manner, per the specification. There are certainly tools out there that trivialize some of these projects, but that's not the goal here; you're learning things at a lower level. If we don't say here that you can use them, you can't use them.
-
-## [__How to Submit__](https://cs50.harvard.edu/ai/projects/0/degrees/#how-to-submit)
-
-1. Visit [this link](https://submit.cs50.io/invites/d03c31aef1984c29b5e7b268c3a87b7b), log in with your GitHub account, and click **Authorize cs50**. Then, check the box indicating that you'd like to grant course staff access to your submissions, and click **Join course**.
-2. [Install Git](https://git-scm.com/downloads) and, optionally, [install `submit50`](https://cs50.readthedocs.io/submit50/).
-3. If you've installed `submit50`, execute
+- **Agent**
     
-    ```
-    submit50 ai50/projects/2024/x/degrees
+    An entity that perceives its environment and acts upon that environment. In a navigator app, for example, the agent would be a representation of a car that needs to decide on which actions to take to arrive at the destination.
+    
+- **State**
+    
+    A configuration of an agent in its environment. For example, in a [15 puzzle](https://en.wikipedia.org/wiki/15_puzzle), a state is any one way that all the numbers are arranged on the board.
+    
+    - **Initial State**
+        
+        The state from which the search algorithm starts. In a navigator app, that would be the current location.
+        
+- **Actions**
+    
+    Choices that can be made in a state. More precisely, actions can be defined as a function. Upon receiving state `s` as input, `Actions(s)` returns as output the set of actions that can be executed in state `s`. For example, in a *15 puzzle*, the actions of a given state are the ways you can slide squares in the current configuration (4 if the empty square is in the middle, 3 if next to a side, 2 if in the corner).
+    
+- **Transition Model**
+    
+    A description of what state results from performing any applicable action in any state. More precisely, the transition model can be defined as a function. Upon receiving state `s` and action `a` as input, `Results(s, a)` returns the state resulting from performing action `a` in state `s`. For example, given a certain configuration of a *15 puzzle* (state `s`), moving a square in any direction (action `a`) will bring to a new configuration of the puzzle (the new state).
+    
+- **State Space**
+    
+    The set of all states reachable from the initial state by any sequence of actions. For example, in a 15 puzzle, the state space consists of all the 16!/2 configurations on the board that can be reached from any initial state. The state space can be visualized as a directed graph with states, represented as nodes, and actions, represented as arrows between nodes.
+    
+
+![State Space](https://cs50.harvard.edu/ai/notes/0/statespace.png)
+
+- **Goal Test**
+    
+    The condition that determines whether a given state is a goal state. For example, in a navigator app, the goal test would be whether the current location of the agent (the representation of the car) is at the destination. If it is — problem solved. If it’s not — we continue searching.
+    
+- **Path Cost**
+    
+    A numerical cost associated with a given path. For example, a navigator app does not simply bring you to your goal; it does so while minimizing the path cost, finding the fastest way possible for you to get to your goal state.
+    
+
+## [**Solving Search Problems**](https://cs50.harvard.edu/ai/notes/0/#solving-search-problems)
+
+- **Solution**
+    
+    A sequence of actions that leads from the initial state to the goal state.
+    
+    - Its *parent node*, through which the current node was generated
+    - **Optimal Solution**
+        
+        A solution that has the lowest path cost among all solutions.
+        
+
+In a search process, data is often stored in a ***node***, a data structure that contains the following data:
+
+- A *state*
+- The *action* that was applied to the state of the parent to get to the current node
+    
+    *Nodes* contain information that makes them very useful for the purposes of search algorithms. They contain a *state*, which can be checked using the *goal test* to see if it is the final state. If it is, the node’s *path cost* can be compared to other nodes’ *path costs*, which allows choosing the *optimal solution*. Once the node is chosen, by virtue of storing the *parent node* and the *action* that led from the *parent* to the current node, it is possible to trace back every step of the way from the *initial state* to this node, and this sequence of actions is the *solution*.
+    
+- The *path cost* from the initial state to this node
+
+However, *nodes* are simply a data structure — they don’t search, they hold information. To actually search, we use the **frontier**, the mechanism that “manages” the *nodes*. The *frontier* starts by containing an initial state and an empty set of explored items, and then repeats the following actions until a solution is reached:
+
+Repeat:
+
+1. If the frontier is empty,
+    - *Stop.* There is no solution to the problem.
+2. Remove a node from the frontier. This is the node that will be considered.
+3. If the node contains the goal state,
+    - Return the solution. *Stop*.
+    
+    Else,
+    
+    ```python
+    * Expand the node (find all the new nodes that could be reached from this node), and add resulting nodes to the frontier.
+    * Add the current node to the explored set.
     ```
     
-    Otherwise, using Git, push your work to `https://github.com/me50/USERNAME.git`, where `USERNAME` is your GitHub username, on a branch called `ai50/projects/2024/x/degrees`.
 
-If you submit your code directly using Git, rather than `submit50`, **do not** include either the `large` or `small` directories as part of your submission. `submit50` will automatically exclude these for you. You should only include files you are actually instructed to modify per the specification above.
+### [**Depth-First Search**](https://cs50.harvard.edu/ai/notes/0/#depth-first-search)
 
-Work should be graded within five minutes. You can then go to https://cs50.me/cs50ai to view your current progress!
+In the previous description of the *frontier*, one thing went unmentioned. At stage 2 in the pseudocode above, which node should be removed? This choice has implications on the quality of the solution and how fast it is achieved. There are multiple ways to go about the question of which nodes should be considered first, two of which can be represented by the data structures of **stack** (in *depth-first* search) and **queue** (in *breadth-first search*; and [here is a cute cartoon demonstration](https://www.youtube.com/watch?v=2wM6_PuBIxY) of the difference between the two).
 
-## [__Acknowledgements__](https://cs50.harvard.edu/ai/projects/0/degrees/#acknowledgements)
+We start with the *depth-first* search (*DFS*) approach.
 
-Information courtesy of [IMDb](https://www.imdb.com/). Used with permission.
+A *depth-first* search algorithm exhausts each one direction before trying another direction. In these cases, the frontier is managed as a *stack* data structure. The catchphrase you need to remember here is “*last-in first-out*.” After nodes are being added to the frontier, the first node to remove and consider is the last one to be added. This results in a search algorithm that goes as deep as possible in the first direction that gets in its way while leaving all other directions for later.
 
-[Tic-Tac-Toe](https://www.notion.so/Tic-Tac-Toe-2dcf244881af80f1a8d9dcba60df8943?pvs=21)
+(An example from outside lecture: Take a situation where you are looking for your keys. In a *depth-first* search approach, if you choose to start with searching in your pants, you’d first go through every single pocket, emptying each pocket and going through the contents carefully. You will stop searching in your pants and start searching elsewhere only once you will have completely exhausted the search in every single pocket of your pants.)
 
----
+- Pros:
+    - At best, this algorithm is the fastest. If it “lucks out” and always chooses the right path to the solution (by chance), then *depth-first* search takes the least possible time to get to a solution.
+- Cons:
+    - It is possible that the found solution is not optimal.
+    - At worst, this algorithm will explore every possible path before finding the solution, thus taking the longest possible time before reaching the solution.
 
-## 🔗 [__Complete Solution & Code Implementation__](https://www.notion.so/Solution-2eff244881af80d191e7e3615c2bb375?pvs=21)
+Code example:
 
-**📁 View the full solution, code examples, and implementation details on Notion**
+```python
+    # Define the function that removes a node from the frontier and returns it.
+    def remove(self):
+    	  # Terminate the search if the frontier is empty, because this means that there is no solution.
+        if self.empty():
+            raise Exception("empty frontier")
+        else:
+        	  # Save the last item in the list (which is the newest node added)
+            node = self.frontier[-1]
+            # Save all the items on the list besides the last node (i.e. removing the last node)
+            self.frontier = self.frontier[:-1]
+            return node
+```
 
-This link contains:
-- Complete working solution for the Degrees project
-- Step-by-step code implementation
-- Explanation of the BFS algorithm approach
-- Sample input/output examples
-- Debugging tips and common issues
+### [**Breadth-First Search**](https://cs50.harvard.edu/ai/notes/0/#breadth-first-search)
 
-<details class="cursor-pointer my-4 p-4 rounded bg-slate-800 border border-slate-700">
-  <summary class="font-bold text-blue-400">Click here for implementation hints</summary>
-  <div class="mt-2 text-slate-300">
-    <p><strong>Implementation Tips:</strong></p>
-    <ul>
-      <li>Use breadth-first search (BFS) to find the shortest path between actors</li>
-      <li>Represent the actor-movie relationships as a graph data structure</li>
-      <li>Use a queue frontier for BFS implementation</li>
-      <li>Keep track of visited nodes to avoid cycles</li>
-      <li>Store the path information to reconstruct the solution once found</li>
-      <li>Test with the small dataset first before using the large dataset</li>
-    </ul>
-  </div>
-</details>
-</div>
+The opposite of *depth-first* search would be *breadth-first* search (*BFS*).
 
----
+A *breadth-first* search algorithm will follow multiple directions at the same time, taking one step in each possible direction before taking the second step in each direction. In this case, the frontier is managed as a *queue* data structure. The catchphrase you need to remember here is “*first-in first-out*.” In this case, all the new nodes add up in line, and nodes are being considered based on which one was added first (first come first served!). This results in a search algorithm that takes one step in each possible direction before taking a second step in any one direction.
 
-<script>
-// Enhanced navigation function with better error handling
-function toggleSection(section) {
-  try {
-    const quizSection = document.getElementById('quiz-section');
-    const projectSection = document.getElementById('project-section');
-    
-    // Debug: Check if elements exist
-    if (!quizSection || !projectSection) {
-      console.error('Sections not found');
-      return;
-    }
-    
-    // Hide all sections first
-    quizSection.style.display = 'none';
-    projectSection.style.display = 'none';
-    
-    // Show the selected section
-    if (section === 'quiz') {
-      quizSection.style.display = 'block';
-      console.log('Showing quiz section');
-    } else if (section === 'project') {
-      projectSection.style.display = 'block';
-      console.log('Showing project section');
-    }
-  } catch (error) {
-    console.error('Error in toggleSection:', error);
-  }
-}
+(An example from outside lecture: suppose you are in a situation where you are looking for your keys. In this case, if you start with your pants, you will look in your right pocket. After this, instead of looking at your left pocket, you will take a look in one drawer. Then on the table. And so on, in every location you can think of. Only after you will have exhausted all the locations will you go back to your pants and search in the next pocket.)
 
-// Enhanced initialization with multiple approaches
-function initializeNavigation() {
-  try {
-    console.log('Initializing navigation...');
-    
-    // Method 1: Use data attributes
-    const navButtons = document.querySelectorAll('[data-section]');
-    console.log('Found navigation buttons:', navButtons.length);
-    
-    navButtons.forEach(button => {
-      const section = button.getAttribute('data-section');
-      console.log('Setting up button for section:', section);
-      
-      button.addEventListener('click', function(e) {
-        e.preventDefault();
-        console.log('Button clicked for section:', section);
-        toggleSection(section);
-      });
-    });
-    
-    // Method 2: Fallback to onclick if needed
-    const quizButton = document.querySelector('button[data-section="quiz"]');
-    const projectButton = document.querySelector('button[data-section="project"]');
-    
-    if (quizButton) {
-      quizButton.onclick = function(e) {
-        e.preventDefault();
-        toggleSection('quiz');
-      };
-    }
-    
-    if (projectButton) {
-      projectButton.onclick = function(e) {
-        e.preventDefault();
-        toggleSection('project');
-      };
-    }
-    
-    // Show quiz section by default
-    setTimeout(() => {
-      toggleSection('quiz');
-      console.log('Default quiz section shown');
-    }, 100);
-    
-  } catch (error) {
-    console.error('Error initializing navigation:', error);
-  }
-}
+- Pros:
+    - This algorithm is guaranteed to find the optimal solution.
+- Cons:
+    - This algorithm is almost guaranteed to take longer than the minimal time to run.
+    - At worst, this algorithm takes the longest possible time to run.
 
-// Multiple initialization attempts to ensure it works in different environments
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initializeNavigation);
-} else {
-  initializeNavigation();
-}
+Code example:
 
-// Backup initialization
-window.addEventListener('load', function() {
-  setTimeout(initializeNavigation, 200);
-});
+```python
+    # Define the function that removes a node from the frontier and returns it.
+    def remove(self):
+    	  # Terminate the search if the frontier is empty, because this means that there is no solution.
+        if self.empty():
+            raise Exception("empty frontier")
+        else:
+            # Save the oldest item on the list (which was the first one to be added)
+            node = self.frontier[0]
+            # Save all the items on the list besides the first one (i.e. removing the first node)
+            self.frontier = self.frontier[1:]
+            return node
+```
 
-// Additional backup - try initialization every second for first 5 seconds
-let initAttempts = 0;
-const initInterval = setInterval(() => {
-  initAttempts++;
-  if (initAttempts > 5) {
-    clearInterval(initInterval);
-    return;
-  }
-  
-  const buttons = document.querySelectorAll('[data-section]');
-  if (buttons.length > 0) {
-    initializeNavigation();
-    clearInterval(initInterval);
-  }
-}, 1000);
-</script>
+### [**Greedy Best-First Search**](https://cs50.harvard.edu/ai/notes/0/#greedy-best-first-search)
+
+Breadth-first and depth-first are both **uninformed** search algorithms. That is, these algorithms do not utilize any knowledge about the problem that they did not acquire through their own exploration. However, most often is the case that some knowledge about the problem is, in fact, available. For example, when a human maze-solver enters a junction, the human can see which way goes in the general direction of the solution and which way does not. AI can do the same. A type of algorithm that considers additional knowledge to try to improve its performance is called an **informed** search algorithm.
+
+**Greedy best-first** search expands the node that is the closest to the goal, as determined by a **heuristic function** *h(n)*. As its name suggests, the function estimates how close to the goal the next node is, but it can be mistaken. The efficiency of the *greedy best-first* algorithm depends on how good the heuristic function is. For example, in a maze, an algorithm can use a heuristic function that relies on the **Manhattan distance** between the possible nodes and the end of the maze. The *Manhattan distance* ignores walls and counts how many steps up, down, or to the sides it would take to get from one location to the goal location. This is an easy estimation that can be derived based on the (x, y) coordinates of the current location and the goal location.
+
+![Manhattan Distance](https://cs50.harvard.edu/ai/notes/0/manhattandistance.png)
+
+Manhattan Distance
+
+However, it is important to emphasize that, as with any heuristic, it can go wrong and lead the algorithm down a slower path than it would have gone otherwise. It is possible that an *uninformed* search algorithm will provide a better solution faster, but it is less likely to do so than an *informed* algorithm.
+
+### [**A* Search**](https://cs50.harvard.edu/ai/notes/0/#a-search)
+
+A development of the *greedy best-first* algorithm, *A* search* considers not only *h(n)*, the estimated cost from the current location to the goal, but also *g(n)*, the cost that was accrued until the current location. By combining both these values, the algorithm has a more accurate way of determining the cost of the solution and optimizing its choices on the go. The algorithm keeps track of (*cost of path until now* + *estimated cost to the goal*), and once it exceeds the estimated cost of some previous option, the algorithm will ditch the current path and go back to the previous option, thus preventing itself from going down a long, inefficient path that *h(n)* erroneously marked as best.
+
+Yet again, since this algorithm, too, relies on a heuristic, it is as good as the heuristic that it employs. It is possible that in some situations it will be less efficient than *greedy best-first* search or even the *uninformed* algorithms. For *A* search* to be optimal, the heuristic function, *h(n)*, should be:
+
+1. *Admissible*, or never *overestimating* the true cost, and
+2. *Consistent*, which means that the estimated path cost to the goal of a new node in addition to the cost of transitioning to it from the previous node is greater or equal to the estimated path cost to the goal of the previous node. To put it in an equation form, *h(n)* is consistent if for every node *n* and successor node *n’* with step cost *c*, *h(n) ≤ h(n’) + c*.
+
+### [**Adversarial Search**](https://cs50.harvard.edu/ai/notes/0/#adversarial-search)
+
+Whereas, previously, we have discussed algorithms that need to find an answer to a question, in **adversarial search** the algorithm faces an opponent that tries to achieve the opposite goal. Often, AI that uses adversarial search is encountered in games, such as tic tac toe.
+
+### [**Minimax**](https://cs50.harvard.edu/ai/notes/0/#minimax)
+
+A type of algorithm in adversarial search, **Minimax** represents winning conditions as (-1) for one side and (+1) for the other side. Further actions will be driven by these conditions, with the minimizing side trying to get the lowest score, and the maximizer trying to get the highest score.
+
+**Representing a Tic-Tac-Toe AI**:
+
+- *S₀*: Initial state (in our case, an empty 3X3 board)
+- *Players(s)*: a function that, given a state *s*, returns which player’s turn it is (X or O).
+- *Actions(s)*: a function that, given a state *s*, return all the legal moves in this state (what spots are free on the board).
+- *Result(s, a)*: a function that, given a state *s* and action *a*, returns a new state. This is the board that resulted from performing the action *a* on state *s* (making a move in the game).
+- *Terminal(s)*: a function that, given a state *s*, checks whether this is the last step in the game, i.e. if someone won or there is a tie. Returns *True* if the game has ended, *False* otherwise.
+- *Utility(s)*: a function that, given a terminal state *s*, returns the utility value of the state: -1, 0, or 1.
+
+**How the algorithm works**:
+
+Recursively, the algorithm simulates all possible games that can take place beginning at the current state and until a terminal state is reached. Each terminal state is valued as either (-1), 0, or (+1).
+
+![Minimax in Tic Tac Toe](https://cs50.harvard.edu/ai/notes/0/minimax_tictactoe.png)
+
+Minimax Algorithm in Tic Tac Toe
+
+Knowing based on the state whose turn it is, the algorithm can know whether the current player, when playing optimally, will pick the action that leads to a state with a lower or a higher value. This way, alternating between minimizing and maximizing, the algorithm creates values for the state that would result from each possible action. To give a more concrete example, we can imagine that the maximizing player asks at every turn: “if I take this action, a new state will result. If the minimizing player plays optimally, what action can that player take to bring to the lowest value?” However, to answer this question, the maximizing player has to ask: “To know what the minimizing player will do, I need to simulate the same process in the minimizer’s mind: the minimizing player will try to ask: ‘if I take this action, what action can the maximizing player take to bring to the highest value?’” This is a recursive process, and it could be hard to wrap your head around it; looking at the pseudo code below can help. Eventually, through this recursive reasoning process, the maximizing player generates values for each state that could result from all the possible actions at the current state. After having these values, the maximizing player chooses the highest one.
+
+![Minimax Algorithm](https://cs50.harvard.edu/ai/notes/0/minimax_theoretical.png)
+
+The Maximizer Considers the Possible Values of Future States.
+
+To put it in pseudocode, the Minimax algorithm works the following way:
+
+- Given a state *s*
+    - The maximizing player picks action *a* in *Actions(s)* that produces the highest value of *Min-Value(Result(s, a))*.
+    - The minimizing player picks action *a* in *Actions(s)* that produces the lowest value of *Max-Value(Result(s, a))*.
+- Function *Max-Value(state)*
+    - *v = -∞*
+    - if *Terminal(state)*:
+        
+         return *Utility(state)*
+        
+    - for *action* in *Actions(state)*:
+        
+         *v = Max(v, Min-Value(Result(state, action)))*
+        
+        return *v*
+        
+- Function *Min-Value(state)*:
+    - *v = ∞*
+    - if *Terminal(state)*:
+        
+         return *Utility(state)*
+        
+    - for *action* in *Actions(state)*:
+        
+         *v = Min(v, Max-Value(Result(state, action)))*
+        
+        return *v*
+        
+
+### [**Alpha-Beta Pruning**](https://cs50.harvard.edu/ai/notes/0/#alpha-beta-pruning)
+
+A way to optimize *Minimax*, **Alpha-Beta Pruning** skips some of the recursive computations that are decidedly unfavorable. After establishing the value of one action, if there is initial evidence that the following action can bring the opponent to get to a better score than the already established action, there is no need to further investigate this action because it will decidedly be less favorable than the previously established one.
+
+This is most easily shown with an example: a maximizing player knows that, at the next step, the minimizing player will try to achieve the lowest score. Suppose the maximizing player has three possible actions, and the first one is valued at 4. Then the player starts generating the value for the next action. To do this, the player generates the values of the minimizer’s actions if the current player makes this action, knowing that the minimizer will choose the lowest one. However, before finishing the computation for all the possible actions of the minimizer, the player sees that one of the options has a value of three. This means that there is no reason to keep on exploring the other possible actions for the minimizing player. The value of the not-yet-valued action doesn’t matter, be it 10 or (-10). If the value is 10, the minimizer will choose the lowest option, 3, which is already worse than the preestablished 4. If the not-yet-valued action would turn out to be (-10), the minimizer will this option, (-10), which is even more unfavorable to the maximizer. Therefore, computing additional possible actions for the minimizer at this point is irrelevant to the maximizer, because the maximizing player already has an unequivocally better choice whose value is 4.
+
+![Alpha Beta Pruning](https://cs50.harvard.edu/ai/notes/0/alphabeta.png)
+
+### [**Depth-Limited Minimax**](https://cs50.harvard.edu/ai/notes/0/#depth-limited-minimax)
+
+There is a total of 255,168 possible Tic Tac Toe games, and 10²⁹⁰⁰⁰ possible games in Chess. The minimax algorithm, as presented so far, requires generating all hypothetical games from a certain point to the terminal condition. While computing all the Tic-Tac-Toe games doesn’t pose a challenge for a modern computer, doing so with chess is currently impossible.
+
+**Depth-limited Minimax** considers only a pre-defined number of moves before it stops, without ever getting to a terminal state. However, this doesn’t allow for getting a precise value for each action, since the end of the hypothetical games has not been reached. To deal with this problem, *Depth-limited Minimax* relies on an **evaluation function** that estimates the expected utility of the game from a given state, or, in other words, assigns values to states. For example, in a chess game, a utility function would take as input a current configuration of the board, try to assess its expected utility (based on what pieces each player has and their locations on the board), and then return a positive or a negative value that represents how favorable the board is for one player versus the other. These values can be used to decide on the right action, and the better the evaluation function, the better the Minimax algorithm that relies on it.
