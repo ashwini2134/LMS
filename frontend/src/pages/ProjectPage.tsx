@@ -4,148 +4,65 @@ export default function ProjectPage() {
 
   const { slug, number } = useParams();
 
-  const projectMap: any = {
+  const projects: Record<string, string[]> = {
 
-    0: [
-      {
-        title: "Degrees",
-        id: "degrees",
-      },
+    "0": ["degrees", "tictactoe"],
 
-      {
-        title: "Tic-Tac-Toe",
-        id: "tictactoe",
-      },
-    ],
+    "1": ["knights", "minesweeper"],
 
-    1: [
-      {
-        title: "Knights",
-        id: "knights",
-      },
+    "2": ["pagerank", "heredity"],
 
-      {
-        title: "Minesweeper",
-        id: "minesweeper",
-      },
-    ],
+    "3": ["crossword"],
 
-    2: [
-      {
-        title: "PageRank",
-        id: "pagerank",
-      },
+    "4": ["shopping", "nim"],
 
-      {
-        title: "Heredity",
-        id: "heredity",
-      },
-    ],
+    "5": ["traffic"],
 
-    3: [
-      {
-        title: "Crossword",
-        id: "crossword",
-      },
-    ],
-
-    4: [
-      {
-        title: "Shopping",
-        id: "shopping",
-      },
-
-      {
-        title: "Nim",
-        id: "nim",
-      },
-    ],
-
-    5: [
-      {
-        title: "Traffic",
-        id: "traffic",
-      },
-    ],
-
-    6: [
-      {
-        title: "Parser",
-        id: "parser",
-      },
-
-      {
-        title: "Attention",
-        id: "attention",
-      },
-    ],
+    "6": ["parser", "questions"],
   };
 
-  const projects = projectMap[number || 0] || [];
+  const lectureProjects =
+    projects[number || "0"] || [];
 
   return (
 
-    <div className="min-h-screen bg-slate-950 text-white p-8">
+    <div className="min-h-screen bg-slate-950 text-white p-10">
 
-      <div className="max-w-5xl mx-auto">
+      <h1 className="text-4xl font-bold mb-10">
+        Lecture {number} Projects
+      </h1>
 
-        <h1 className="text-5xl font-bold mb-3">
-          Project {number}
-        </h1>
+      <div className="grid gap-6 md:grid-cols-2">
 
-        <p className="text-slate-400 mb-12 text-lg">
-          Lecture {number} Project
-        </p>
+        {lectureProjects.map((project) => (
 
-        <div className="grid gap-6">
+          <Link
+            key={project}
 
-          {projects.map((project: any) => (
+            // IMPORTANT
+            to={`/course/${slug}/lecture/${number}/project/${project}`}
 
-            <Link
-              key={project.id}
-              to={`/course/${slug}/lecture/${number}/project/${project.id}`}
-              className="
-                flex items-center justify-between
-                rounded-2xl
-                border border-slate-700
-                bg-slate-900
-                hover:bg-slate-800
-                transition-all
-                p-6
-              "
-            >
+            className="
+              rounded-2xl
+              border border-slate-800
+              bg-slate-900
+              p-8
+              hover:bg-slate-800
+              transition
+            "
+          >
 
-              <div className="flex items-center gap-4">
+            <h2 className="text-2xl font-semibold capitalize">
+              {project}
+            </h2>
 
-                <div className="
-                  w-12 h-12
-                  rounded-xl
-                  bg-blue-500/20
-                  flex items-center justify-center
-                  text-2xl
-                ">
-                  📄
-                </div>
+            <p className="mt-2 text-slate-400">
+              Open coding workspace
+            </p>
 
-                <div>
+          </Link>
 
-                  <h2 className="text-2xl font-semibold">
-                    {project.title}
-                  </h2>
-
-                </div>
-
-              </div>
-
-              <div className="text-slate-400 text-2xl">
-                →
-              </div>
-
-            </Link>
-
-          ))}
-
-        </div>
+        ))}
 
       </div>
 
