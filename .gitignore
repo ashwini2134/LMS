@@ -2,11 +2,15 @@
 node_modules/
 frontend/node_modules/
 
-# Build output (committed for GitHub Pages)
-# docs/ is intentionally committed — it's the gh-pages build artifact
+# Build output — never commit. CI builds and pushes to the gh-pages branch.
+docs/
+frontend/docs/
+frontend/dist/
+dist/
 
 # Vite / TypeScript
-frontend/dist/
+.vite/
+frontend/.vite/
 *.tsbuildinfo
 
 # Environment variables

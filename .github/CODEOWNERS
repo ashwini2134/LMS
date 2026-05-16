@@ -1,0 +1,24 @@
+# CODEOWNERS for Fraylon Academy LMS
+# Everyone listed here is auto-requested as a reviewer when matching paths change.
+# Order matters — the LAST matching rule wins.
+
+# Default: Yuvaraj owns everything not matched by a more specific rule
+*                                       @7227Yuvaraj
+
+# CI, deploy, and workspace config — Yuvaraj only
+/.github/                               @7227Yuvaraj
+/.gitignore                             @7227Yuvaraj
+/README.md                              @7227Yuvaraj
+/CONTRIBUTING.md                        @7227Yuvaraj
+
+# Frontend app code — Yuvaraj reviews; interns can co-own as they grow into it
+/frontend/src/                          @7227Yuvaraj
+/frontend/vite.config.ts                @7227Yuvaraj
+/frontend/package.json                  @7227Yuvaraj
+/frontend/tsconfig*.json                @7227Yuvaraj
+
+# Course content — interns own their tracks
+/frontend/public/data/cs50p/            @7227Yuvaraj @macpriya05
+/frontend/public/data/cs50ai/           @7227Yuvaraj @ashwini2134
+/content/cs50p/                         @7227Yuvaraj @macpriya05
+/content/cs50ai/                        @7227Yuvaraj @ashwini2134
