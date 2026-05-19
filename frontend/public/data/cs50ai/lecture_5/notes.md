@@ -6,7 +6,7 @@ An **Artificial Neural Network** is a mathematical model for learning inspired
 
 When implemented in AI, the parallel of each neuron is a **unit** that’s connected to other units. For example, like in the last lecture, the AI might map two inputs, x₁ and x₂, to whether it is going to rain today or not. Last lecture, we suggested the following form for this hypothesis function: *h(x₁, x₂)* = *w₀ + w₁x₁ + w₂x₂*, where *w₁* and *w₂* are weights that modify the inputs, and *w₀* is a constant, also called **bias**, modifying the value of the whole expression.
 
-## [**Activation Functions**](https://cs50.harvard.edu/ai/notes/5/#activation-functions)
+## [**Activation Functions**]
 
 To use the hypothesis function to decide whether it rains or not, we need to create some sort of threshold based on the value it produces.
 
@@ -24,7 +24,7 @@ Another possible function is Rectified Linear Unit (ReLU), which allows the outp
 
 Whichever function we choose to use, we learned last lecture that the inputs are modified by weights in addition to the bias, and the sum of those is passed to an activation function. This stays true for simple neural networks.
 
-## [**Neural Network Structure**](https://cs50.harvard.edu/ai/notes/5/#neural-network-structure)
+## [**Neural Network Structure**]
 
 A neural network can be thought of as a representation of the idea above, where a function sums up inputs to produce an output.
 
@@ -74,7 +74,7 @@ For example, in the case where *x₁* = *x₂* = 0, the sum is (-1). This is
 
 A similar process can be repeated with the And function (where the bias will be (-2)). Moreover, inputs and outputs don’t have to be distinct. A similar process can be used to take humidity and air pressure as input, and produce the probability of rain as output. Or, in a different example, inputs can be money spent on advertising and the month when it was spent to get the output of expected revenue from sales. This can be extended to any number of inputs by multiplying each input *x₁ … xₙ* by weight *w₁ … wₙ*, summing up the resulting values and adding a bias *w₀*.
 
-## [**Gradient Descent**](https://cs50.harvard.edu/ai/notes/5/#gradient-descent)
+## [**Gradient Descent**]
 
 Gradient descent is an algorithm for minimizing loss when training neural networks. As was mentioned earlier, a neural network is capable of inferring knowledge about the structure of the network itself from the data. Whereas, so far, we defined the different weights, neural networks allow us to compute these weights based on the training data. To do this, we use the gradient descent algorithm, which works the following way:
 
@@ -95,14 +95,13 @@ So far, our neural networks relied on **perceptron** output units. These are u
 
 ![Linear and Non-Linear Models](https://cs50.harvard.edu/ai/notes/5/linearnonlinear.png)
 
-## [**Multilayer Neural Networks**](https://cs50.harvard.edu/ai/notes/5/#multilayer-neural-networks)
+## [**Multilayer Neural Networks**]
 
 A multilayer neural network is an artificial neural network with an input layer, an output layer, and at least one **hidden** layer. While we provide inputs and outputs to train the model, we, the humans, don’t provide any values to the units inside the hidden layers. Each unit in the first hidden layer receives a weighted value from each of the units in the input layer, performs some action on it and outputs a value. Each of these values is weighted and further propagated to the next layer, repeating the process until the output layer is reached. Through hidden layers, it is possible to model non-linear data.
 
 ![Multilayer Neural Network](https://cs50.harvard.edu/ai/notes/5/multilayer.png)
 
-## [**Backpropagation**](https://cs50.harvard.edu/ai/notes/5/#backpropagation)
-
+## [**Backpropagation**]
 Backpropagation is the main algorithm used for training neural networks with hidden layers. It does so by starting with the errors in the output units, calculating the gradient descent for the weights of the previous layer, and repeating the process until the input layer is reached. In pseudocode, we can describe the algorithm as follows:
 
 - Calculate error for output layer
@@ -114,16 +113,14 @@ This can be extended to any number of hidden layers, creating **deep neural net
 
 ![Deep Neural Network](https://cs50.harvard.edu/ai/notes/5/deepnn.png)
 
-## [**Overfitting**](https://cs50.harvard.edu/ai/notes/5/#overfitting)
-
+## [**Overfitting**]
 Overfitting is the danger of modeling the training data too closely, thus failing to generalize to new data. One way to combat overfitting is by **dropout**. In this technique, we temporarily remove units that we select at random during the learning phase. This way, we try to prevent over-reliance on any one unit in the network. Throughout training, the neural network will assume different forms, each time dropping some other units and then using them again:
 
 ![Dropout](https://cs50.harvard.edu/ai/notes/5/dropout.png)
 
 Note that after the training is finished, the whole neural network will be used again.
 
-## [**TensorFlow**](https://cs50.harvard.edu/ai/notes/5/#tensorflow)
-
+## [**TensorFlow**]
 Like often is the case in python, multiple libraries already have an implementation for neural networks using the backpropagation algorithm, and TensorFlow is one such library. You are welcome to experiment with TensorFlow neural networks in this [web application](https://playground.tensorflow.org/), which lets you define different properties of the network and run it, visualizing the output. We will now turn to an example of how we can use TensorFlow to perform the task we discussed last lecture: distinguishing counterfeit notes from genuine notes.
 
 `import csv
@@ -181,13 +178,13 @@ model.evaluate(X_testing, y_testing, verbose=2)`
 
 Finally, we compile the model, specifying which algorithm should optimize it, what type of loss function we use, and how we want to measure its success (in our case, we are interested in the accuracy of the output). Finally, we fit the model on the training data with 20 repetitions (epochs), and then evaluate it on the testing data.
 
-## [**Computer Vision**](https://cs50.harvard.edu/ai/notes/5/#computer-vision)
+## [**Computer Vision**]
 
 Computer vision encompasses the different computational methods for analyzing and understanding digital images, and it is often achieved using neural networks. For example, computer vision is used when social media employs face recognition to automatically tag people in pictures. Other examples are handwriting recognition and self-driving cars.
 
 Images consist of pixels, and pixels are represented by three values that range from 0 to 255, one for red, one for green and one for blue. These values are often referred to with the acronym RGB. We can use this to create a neural network where each color value in each pixel is an input, where we have some hidden layers, and the output is some number of units that tell us what it is that was shown in the image. However, there are a few drawbacks to this approach. First, by breaking down the image into pixels and the values of their colors, we can’t use the structure of the image as an aid. That is, as humans, if we see a part of a face we know to expect to see the rest of the face, and this quickens computation. We want to be able to use a similar advantage in our neural networks. Second, the sheer number of inputs is very big, which means that we will have to calculate a lot of weights.
 
-## [**Image Convolution**](https://cs50.harvard.edu/ai/notes/5/#image-convolution)
+## [**Image Convolution**]
 
 Image convolution is applying a filter that adds each pixel value of an image to its neighbors, weighted according to a kernel matrix. Doing so alters the image and can help the neural network process it.
 
@@ -233,7 +230,7 @@ Still, processing the image in a neural network is computationally expensive due
 
 ![Max-Pooling](https://cs50.harvard.edu/ai/notes/5/maxpooling.png)
 
-## [**Convolutional Neural Networks**](https://cs50.harvard.edu/ai/notes/5/#convolutional-neural-networks)
+## [**Convolutional Neural Networks**]
 
 A convolutional neural network is a neural network that uses convolution, usually for analyzing images. It starts by applying filters that can help distill some features of the image using different kernels. These filters can be improved in the same way as other weights in the neural network, by adjusting their kernels based on the error of the output. Then, the resulting images are pooled, after which the pixels are fed to a traditional neural network as inputs (a process called **flattening**).
 
@@ -304,7 +301,7 @@ if len(sys.argv) == 2:
 
 Now, if we run a program that receives hand-drawn digits as input, it will be able to classify and output the digit using the model. For an implementation of such a program, refer to recognition.py in the source code for this lecture.
 
-## [**Recurrent Neural Networks**](https://cs50.harvard.edu/ai/notes/5/#recurrent-neural-networks)
+## [**Recurrent Neural Networks**]
 
 **Feed-Forward Neural Networks** are the type of neural networks that we have discussed so far, where input data is provided to the network, which eventually produces some output. A diagram of how feed-forward neural networks work can be seen below.
 

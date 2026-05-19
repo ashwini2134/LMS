@@ -1,177 +1,155 @@
 import { useEffect, useState } from "react";
+
 import { useParams } from "react-router-dom";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-import rehypeRaw from "rehype-raw";
 
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
-
-import { Spinner, PageHeader } from "../components";
+interface QuizQuestion {
+  question: string;
+  options: string[];
+  answer: string;
+}
 
 export default function QuizPage() {
-  const { slug, number } = useParams<{
-    slug: string;
-    number: string;
-  }>();
 
-  const [content, setContent] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [err, setErr] = useState("");
+  const { slug, number } = useParams();
+
+  const [questions, setQuestions] =
+    useState<QuizQuestion[]>([]);
+
+  const [selected, setSelected] =
+    useState<{ [key: number]: string }>({});
 
   useEffect(() => {
-    const fetchQuiz = async () => {
-      try {
-        setLoading(true);
 
-        const baseUrl =
-          import.meta.env.BASE_URL?.replace(/\/$/, "") || "";
+    async function loadQuiz() {
 
-        const response = await fetch(
-          `${baseUrl}/data/${slug}/lecture_${number}/quiz.md`
+      const base =
+        import.meta.env.BASE_URL;
+
+      const response =
+        await fetch(
+          `${base}data/${slug}/lecture_${number}/quiz.json`
         );
 
-        if (!response.ok) {
-          throw new Error("Quiz not found");
-        }
+      const data =
+        await response.json();
 
-        const text = await response.text();
+      setQuestions(data);
+    }
 
-        setContent(text);
-        setErr("");
-      } catch (e: any) {
-        setErr(e.message || "Failed to load quiz");
-      } finally {
-        setLoading(false);
-      }
-    };
+    loadQuiz();
 
-    fetchQuiz();
   }, [slug, number]);
 
-  // Loading
-  if (loading) {
-    return (
-      <div className="w-full h-full flex items-center justify-center bg-slate-900">
-        <div className="flex flex-col items-center gap-3">
-          <Spinner size="lg" className="text-blue-500" />
-          <p className="text-slate-400">Loading quiz...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Error
-  if (err) {
-    return (
-      <div className="w-full h-full flex flex-col bg-slate-900">
-        <div className="px-4 md:px-8 py-8">
-          <div className="bg-red-900/20 border border-red-700/50 rounded-lg text-red-300 p-4">
-            {err}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="w-full h-full flex flex-col bg-slate-900">
 
-      {/* Header */}
-      <div className="border-b border-slate-700/50 bg-gradient-to-r from-slate-900 to-slate-800/50 px-4 md:px-8 py-8">
-        <PageHeader
-          title={`Quiz ${number}`}
-          subtitle={`Lecture ${number} Quiz`}
-          breadcrumbs={[
-            { label: "Dashboard", href: "/" },
-            { label: slug?.toUpperCase() || "Course" },
-            { label: `Quiz ${number}` },
-          ]}
-        />
-      </div>
+    <div className="min-h-screen bg-[#020817] p-10 text-white">
 
-      {/* Content */}
-      <div className="flex-1 overflow-auto px-4 md:px-8 py-8">
-        <div className="mx-auto w-full max-w-4xl">
+      <h1 className="mb-10 text-5xl font-bold">
+        Quiz {number}
+      </h1>
 
-          <div className="markdown-content prose prose-invert prose-blue max-w-none overflow-hidden">
+      <div className="space-y-10">
 
-            <ReactMarkdown
-              remarkPlugins={[remarkGfm]}
-              rehypePlugins={[rehypeRaw]}
-              components={{
+        {questions.map((q, index) => {
 
-                h1: ({ node, ...props }) => (
-                  <h1
-                    className="text-3xl font-bold text-slate-100 mt-8 mb-4"
-                    {...props}
-                  />
-                ),
+          const selectedAnswer =
+            selected[index];
 
-                h2: ({ node, ...props }) => (
-                  <h2
-                    className="text-2xl font-bold text-slate-200 mt-8 mb-4"
-                    {...props}
-                  />
-                ),
+          const isCorrect =
+            selectedAnswer === q.answer;
 
-                h3: ({ node, ...props }) => (
-                  <h3
-                    className="text-xl font-bold text-slate-300 mt-6 mb-3"
-                    {...props}
-                  />
-                ),
+          return (
 
-                img: ({ src, ...props }) => {
-                  const baseUrl =
-                    import.meta.env.BASE_URL?.replace(/\/$/, "") || "";
-
-                  const resolvedSrc =
-                    src &&
-                    src.startsWith("/") &&
-                    !/^https?:\/\//.test(src)
-                      ? `${baseUrl}${src}`
-                      : src;
-
-                  return (
-                    <img
-                      src={resolvedSrc}
-                      {...props}
-                      className="my-6 rounded-lg w-full max-w-full mx-auto border border-slate-700"
-                    />
-                  );
-                },
-
-                code({ inline, className, children, ...props }) {
-                  const match = /language-(\w+)/.exec(className || "");
-
-                  return !inline ? (
-                    <SyntaxHighlighter
-                      style={oneDark}
-                      language={match?.[1] || "python"}
-                      PreTag="div"
-                      className="rounded-lg my-6 border border-slate-700"
-                      {...props}
-                    >
-                      {String(children).replace(/\n$/, "")}
-                    </SyntaxHighlighter>
-                  ) : (
-                    <code
-                      className="bg-slate-800 px-2 py-1 rounded text-green-400 border border-slate-700 text-sm"
-                      {...props}
-                    >
-                      {children}
-                    </code>
-                  );
-                },
-              }}
+            <div
+              key={index}
+              className="
+                rounded-3xl
+                border
+                border-slate-700
+                bg-[#08112b]
+                p-8
+              "
             >
-              {content}
-            </ReactMarkdown>
 
-          </div>
-        </div>
+              <h2 className="mb-6 text-2xl font-bold">
+                {q.question}
+              </h2>
+
+              <div className="space-y-4">
+
+                {q.options.map((option) => (
+
+                  <button
+                    key={option}
+                    onClick={() =>
+                      setSelected({
+                        ...selected,
+                        [index]: option
+                      })
+                    }
+                    className={`
+                      w-full
+                      rounded-xl
+                      border
+                      p-4
+                      text-left
+                      transition
+
+                      ${
+                        selectedAnswer === option
+                          ? isCorrect
+                            ? "border-green-500 bg-green-500/20"
+                            : "border-red-500 bg-red-500/20"
+                          : "border-slate-700 bg-slate-900"
+                      }
+                    `}
+                  >
+
+                    {option}
+
+                  </button>
+                ))}
+
+              </div>
+
+              {selectedAnswer && (
+
+                <div className="mt-6">
+
+                  {isCorrect ? (
+
+                    <p className="text-green-400">
+                      ✅ Correct Answer
+                    </p>
+
+                  ) : (
+
+                    <div>
+
+                      <p className="text-red-400">
+                        ❌ Wrong Answer
+                      </p>
+
+                      <p className="mt-2 text-slate-300">
+                        Correct Answer:
+                        {" "}
+                        <span className="font-bold text-green-400">
+                          {q.answer}
+                        </span>
+                      </p>
+
+                    </div>
+                  )}
+
+                </div>
+              )}
+
+            </div>
+          );
+        })}
+
       </div>
+
     </div>
   );
 }

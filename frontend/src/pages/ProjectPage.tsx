@@ -1,68 +1,101 @@
+import { useEffect, useState } from "react";
+
 import { Link, useParams } from "react-router-dom";
+
+interface Project {
+  id: string;
+  title: string;
+  description: string;
+}
 
 export default function ProjectPage() {
 
   const { slug, number } = useParams();
 
-  const projects: Record<string, string[]> = {
+  const [projects, setProjects] =
+    useState<Project[]>([]);
 
-    "0": ["degrees", "tictactoe"],
+  useEffect(() => {
 
-    "1": ["knights", "minesweeper"],
+    async function loadProjects() {
 
-    "2": ["pagerank", "heredity"],
+      try {
 
-    "3": ["crossword"],
+        const base =
+          import.meta.env.BASE_URL;
 
-    "4": ["shopping", "nim"],
+        const response =
+          await fetch(
+            `${base}data/${slug}/lecture_${number}/problems.json`
+          );
 
-    "5": ["traffic"],
+        const data =
+          await response.json();
 
-    "6": ["parser", "questions"],
-  };
+        const filtered =
+          data.filter(
+            (item: any) =>
+              item.id !== "quiz"
+          );
 
-  const lectureProjects =
-    projects[number || "0"] || [];
+        setProjects(filtered);
+
+      } catch (error) {
+
+        console.error(error);
+      }
+    }
+
+    loadProjects();
+
+  }, [slug, number]);
 
   return (
 
-    <div className="min-h-screen bg-slate-950 text-white p-10">
+    <div className="min-h-screen bg-[#020817] p-16 text-white">
 
-      <h1 className="text-4xl font-bold mb-10">
+      <h1 className="mb-10 text-5xl font-bold">
         Lecture {number} Projects
       </h1>
 
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
 
-        {lectureProjects.map((project) => (
+        {
+          projects.map((project) => (
 
-          <Link
-            key={project}
+            <div
+              key={project.id}
+              className="
+                rounded-3xl
+                border
+                border-slate-800
+                bg-[#08112b]
+                p-10
+              "
+            >
 
-            // IMPORTANT
-            to={`/course/${slug}/lecture/${number}/project/${project}`}
+              <h2 className="mb-4 text-4xl font-bold">
+                {project.title}
+              </h2>
 
-            className="
-              rounded-2xl
-              border border-slate-800
-              bg-slate-900
-              p-8
-              hover:bg-slate-800
-              transition
-            "
-          >
+              <p className="mb-8 text-slate-300">
+                {project.description}
+              </p>
 
-            <h2 className="text-2xl font-semibold capitalize">
-              {project}
-            </h2>
+              <Link
+                to={`/course/${slug}/lecture/${number}/project/${project.id}`}
+                className="
+                  text-lg
+                  text-blue-400
+                  hover:text-blue-300
+                "
+              >
+                Open coding workspace
+              </Link>
 
-            <p className="mt-2 text-slate-400">
-              Open coding workspace
-            </p>
-
-          </Link>
-
-        ))}
+            </div>
+          ))
+        }
 
       </div>
 

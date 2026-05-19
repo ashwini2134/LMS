@@ -28,7 +28,7 @@ To come to this conclusion, we used logic, and today’s lecture explores how AI
 
 A sentence is an assertion about the world in a knowledge representation language. A sentence is how AI stores knowledge and uses it to infer new information.
 
-## [**Propositional Logic**](https://cs50.harvard.edu/ai/notes/1/#propositional-logic)
+## [**Propositional Logic**]
 
 Propositional logic is based on propositions, statements about the world that can be either true or false, as in sentences 1-5 above.
 
@@ -92,13 +92,30 @@ Logical connectives are logical symbols that connect propositional symbols in or
     | true | true | true |
 - **Biconditional ()** is an implication that goes both directions. You can read it as “if and only if.” P  Q is the same as P → Q and Q → P taken together. For example, if P: “It is raining.” and Q: “I’m indoors,” then P  Q means that “If it is raining, then I’m indoors,” and “if I’m indoors, then it is raining.” This means that we can infer more than we could with a simple implication. If P is false, then Q is also false; if it is not raining, we know that I’m also not indoors.
     
-    ![↔](https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/2194.png)
-    
-    ![↔](https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/2194.png)
-    
-    ![↔](https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/2194.png)
-    
-    [Untitled](https://www.notion.so/353f244881af80468572f4eb063542b8?pvs=21)
+<div align="left">
+
+<img
+  src="/static/images/image (1).png"
+  style="width:70px; height:auto;"
+/>
+
+</div>
+<div align="left">
+
+<img
+  src="/static/images/image (1).png"
+  style="width:70px; height:auto;"
+/>
+
+</div>
+<div align="left">
+
+<img
+  src="/static/images/image (1).png"
+  style="width:70px; height:auto;"
+/>
+
+</div>
     
 
 **Model**
@@ -117,7 +134,7 @@ If α ⊨ β (α entails β), then in any world where α is true, β is true, to
 
 For example, if α: “It is a Tuesday in January” and β: “It is January,” then we know that α ⊨ β. If it is true that it is a Tuesday in January, we also know that it is January. Entailment is different from implication. Implication is a logical connective between two propositions. Entailment, on the other hand, is a relation that means that if all the information in α is true, then all the information in β is true.
 
-## [**Inference**](https://cs50.harvard.edu/ai/notes/1/#inference)
+## [**Inference**]
 
 Inference is the process of deriving new sentences from old ones.
 
@@ -134,7 +151,6 @@ Consider the following example:
 P: It is a Tuesday. Q: It is raining. R: Harry will go for a run. KB: (P ∧ ¬Q) → R (in words, P and not Q imply R) P (P is true) ¬Q (Q is false) Query: R (We want to know whether R is true or false; Does KB ⊨ R?)
 
 To answer the query using the Model Checking algorithm, we enumerate all possible models.
-
 | P | Q | R | KB |
 | --- | --- | --- | --- |
 | false | false | false |  |
@@ -145,7 +161,6 @@ To answer the query using the Model Checking algorithm, we enumerate all possibl
 | true | false | true |  |
 | true | true | false |  |
 | true | true | true |  |
-
 Then, we go through every model and check whether it is true given our Knowledge Base.
 
 First, in our KB, we know that P is true. Thus, we can say that the KB is false in all models where P is not true.
@@ -163,16 +178,17 @@ First, in our KB, we know that P is true. Thus, we can say that the KB is false 
 
 Next, similarly, in our KB, we know that Q is false. Thus, we can say that the KB is false in all models where Q is true.
 
-| P | Q | R | KB |
-| --- | --- | --- | --- |
+
+| P     | Q     | R     | KB    |
+|-------|-------|-------|-------|
 | false | false | false | false |
-| false | false | true | false |
-| false | true | false | false |
-| false | true | true | false |
-| true | false | false |  |
-| true | false | true |  |
-| true | true | false | false |
-| true | true | true | false |
+| false | false | true  | false |
+| false | true  | false | false |
+| false | true  | true  | false |
+| true  | false | false | false |
+| true  | false | true  | true  |
+| true  | true  | false | false |
+| true  | true  | true  | false |
 
 Finally, we are left with two models. In both, P is true and Q is false. In one model R is true and in the other R is false. Due to (P ∧ ¬Q) → R being in our KB, we know that in the case where P is true and Q is false, R must be true. Thus, we say that our KB is false for the model where R is false, and true for the model where R is true.
 
@@ -194,9 +210,12 @@ Next, let’s look at how knowledge and logic can be represented as code.
 `from logic import *
 
 # Create new classes, each having a name, or a symbol, representing each proposition.
-rain = Symbol("rain")  # It is raining.
-hagrid = Symbol("hagrid")  # Harry visited Hagrid
-dumbledore = Symbol("dumbledore")  # Harry visited Dumbledore
+rain = Symbol("rain")  
+# It is raining.
+hagrid = Symbol("hagrid") 
+ # Harry visited Hagrid
+dumbledore = Symbol("dumbledore")  
+# Harry visited Dumbledore
 
 # Save sentences into the KB
 knowledge = And(  # Starting from the "And" logical connective, becasue each proposition represents knowledge that we know to be true.
@@ -253,7 +272,7 @@ Note that we are interested only in the models where the KB is true. If the KB i
 
 Further, the way the `check_all` function works is recursive. That is, it picks one symbol, creates two models, in one of which the symbol is true and in the other the symbol is false, and then calls itself again, now with two models that differ by the truth assignment of this symbol. The function will keep doing so until all symbols will have been assigned truth-values in the models, leaving the list `symbols` empty. Once it is empty (as identified by the line `if not symbols`), in each instance of the function (wherein each instance holds a different model), the function checks whether the KB is true given the model. If the KB is true in this model, the function checks whether the query is true, as described earlier.
 
-## [**Knowledge Engineering**](https://cs50.harvard.edu/ai/notes/1/#knowledge-engineering)
+## [**Knowledge Engineering**]
 
 Knowledge engineering is the process of figuring out how to represent propositions and logic in AI.
 
@@ -332,27 +351,52 @@ and so on for all houses and all people. A solution to this inefficiency is offe
 
 Another type of puzzle that can be solved using propositional logic is a Mastermind game. In this game, player one arranges colors in a certain order, and then player two has to guess this order. Each turn, player two makes a guess, and player one gives back a number, indicating how many colors player two got right. Let’s simulate a game with four colors. Suppose player two suggests the following ordering:
 
-![Mastermind1](https://cs50.harvard.edu/ai/notes/1/mastermind1.png)
+<div align="center">
 
+<img
+  src="/static/images/image_122856941570.png"
+  style="width:300px; height:auto;"
+/>
+
+</div>
 Player one answers “two.” Thus we know that some two of the colors are in the correct position, and the other two are in the wrong place. Based on this information, player two tries to switch the locations of two colors.
 
-![Mastermind2](https://cs50.harvard.edu/ai/notes/1/mastermind2.png)
+<div align="center">
 
+<img
+  src="/static/images/image_122856941571.png"
+  style="width:300px; height:auto;"
+/>
+
+</div>
 Now player one answers “zero.” Thus, player two knows that the switched colors were in the right location initially, which means the untouched two colors were in the wrong location. Player two switches them.
 
-![Mastermind3](https://cs50.harvard.edu/ai/notes/1/mastermind3.png)
+<div align="center">
+
+<img
+  src="/static/images/image_122856941572.png"
+  style="width:300px; height:auto;"
+/>
+
+</div>
 
 Player one says “four” and the game is over.
 
 Representing this in propositional logic would require us to have (number of colors)² atomic propositions. So, in the case of four colors, we would have the propositions red0, red1, red2, red3, blue0… standing for color and position. The next step would be representing the rules of the game in propositional logic (that there is only one color in each position and no colors repeat) and adding them to the KB. The final step would be adding all the cues that we have to the KB. In our case, we would add that, in the first guess, two positions were wrong and two were right, and in the second guess, none was right. Using this knowledge, a Model Checking algorithm can give us the solution to the puzzle.
 
-## [**Inference Rules**](https://cs50.harvard.edu/ai/notes/1/#inference-rules)
-
+## [**Inference Rules**]
 Model Checking is not an efficient algorithm because it has to consider every possible model before giving the answer (a reminder: a query R is true if under all the models (truth assignments) where the KB is true, R is true as well). Inference rules allow us to generate new information based on existing knowledge without considering every possible model.
 
 Inference rules are usually represented using a horizontal bar that separates the top part, the premise, from the bottom part, the conclusion. The premise is whatever knowledge we have, and the conclusion is what knowledge can be generated based on the premise.
 
-![Modus Ponens Example](https://cs50.harvard.edu/ai/notes/1/modusponensexample.png)
+<div align="center">
+
+<img
+  src="/static/images/image_122856941573.png"
+  style="width:300px; height:auto;"
+/>
+
+</div>
 
 In this example, our premise consists of the following propositions:
 
@@ -367,25 +411,51 @@ Based on this, most reasonable humans can conclude that
 
 The type of inference rule we use in this example is Modus Ponens, which is a fancy way of saying that if we know an implication and its antecedent to be true, then the consequent is true as well.
 
-![Modus Ponens](https://cs50.harvard.edu/ai/notes/1/modusponens.png)
+<div align="center">
 
+<img
+  src="/static/images/image_122856941574.png"
+  style="width:300px; height:auto;"
+/>
+
+</div>
 **And Elimination**
 
 If an And proposition is true, then any one atomic proposition within it is true as well. For example, if we know that Harry is friends with Ron and Hermione, we can conclude that Harry is friends with Hermione.
 
-![And Elimination](https://cs50.harvard.edu/ai/notes/1/andelimination.png)
+<div align="center">
 
+<img
+  src="/static/images/image_122856941575.png"
+  style="width:300px; height:auto;"
+/>
+
+</div>
 **Double Negation Elimination**
 
 A proposition that is negated twice is true. For example, consider the proposition “It is not true that Harry did not pass the test”. We can parse it the following way: “It is not true that (Harry did not pass the test)”, or “¬(Harry did not pass the test)”, and, finally “¬(¬(Harry passed the test)).” The two negations cancel each other, marking the proposition “Harry passed the test” as true.
 
-![Double Negation Elimination](https://cs50.harvard.edu/ai/notes/1/doublenegationelimination.png)
+<div align="center">
+
+<img
+  src="/static/images/image_122856941576.png"
+  style="width:300px; height:auto;"
+/>
+
+</div>
 
 **Implication Elimination**
 
 An implication is equivalent to an Or relation between the negated antecedent and the consequent. As an example, the proposition “If it is raining, Harry is inside” is equivalent to the proposition “(it is not raining) or (Harry is inside).”
 
-![Implication Elimination](https://cs50.harvard.edu/ai/notes/1/implicationelimination.png)
+<div align="center">
+
+<img
+  src="/static/images/image_122856941577.png"
+  style="width:300px; height:auto;"
+/>
+
+</div>
 
 This one can be a little confusing. However, consider the following truth table:
 
@@ -402,26 +472,59 @@ Since P → Q and ¬P ∨ Q have the same truth-value assignment, we know them t
 
 A biconditional proposition is equivalent to an implication and its inverse with an And connective. For example, “It is raining if and only if Harry is inside” is equivalent to (“If it is raining, Harry is inside” And “If Harry is inside, it is raining”).
 
-![Biconditional Elimination](https://cs50.harvard.edu/ai/notes/1/biconditionalelimination.png)
+<div align="center">
+
+<img
+  src="/static/images/image_122856941578.png"
+  style="width:300px; height:auto;"
+/>
+
+</div>
 
 **De Morgan’s Law**
 
 It is possible to turn an And connective into an Or connective. Consider the following proposition: “It is not true that both Harry and Ron passed the test.” From this, it is possible to conclude that “It is not true that Harry passed the test” Or “It is not true that Ron passed the test.” That is, for the And proposition earlier to be true, at least one of the propositions in the Or propositions must be true.
 
-![De Morgan's 1](https://cs50.harvard.edu/ai/notes/1/demorgans1.png)
+<div align="center">
+
+<img
+  src="/static/images/image_122856941579.png"
+  style="width:300px; height:auto;"
+/>
+
+</div>
 
 Similarly, it is possible to conclude the reverse. Consider the proposition “It is not true that Harry or Ron passed the test.” This can be rephrased as “Harry did not pass the test” And “Ron did not pass the test.”
 
-![De Morgan's 2](https://cs50.harvard.edu/ai/notes/1/demorgans2.png)
+<div align="center">
 
+<img
+  src="/static/images/image_122856941580.png"
+  style="width:300px; height:auto;"
+/>
+
+</div>
 **Distributive Property**
 
 A proposition with two elements that are grouped with And or Or connectives can be distributed, or broken down into, smaller units consisting of And and Or.
 
-![Distributive 1](https://cs50.harvard.edu/ai/notes/1/distributive1.png)
+<div align="center">
 
-![Distributive 2](https://cs50.harvard.edu/ai/notes/1/distributive2.png)
+<img
+  src="/static/images/image_122856941581.png"
+  style="width:300px; height:auto;"
+/>
 
+</div>
+
+<div align="center">
+
+<img
+  src="/static/images/image_122856941582.png"
+  style="width:300px; height:auto;"
+/>
+
+</div>
 **Knowledge and Search Problems**
 
 Inference can be viewed as a search problem with the following properties:
@@ -434,17 +537,31 @@ Inference can be viewed as a search problem with the following properties:
 
 This shows just how versatile search algorithms are, allowing us to derive new information based on existing knowledge using inference rules.
 
-## [**Resolution**](https://cs50.harvard.edu/ai/notes/1/#resolution)
+
 
 Resolution is a powerful inference rule that states that if one of two atomic propositions in an Or proposition is false, the other has to be true. For example, given the proposition “Ron is in the Great Hall” Or “Hermione is in the library”, in addition to the proposition “Ron is not in the Great Hall,” we can conclude that “Hermione is in the library.” More formally, we can define resolution the following way:
 
-![Resolution](https://cs50.harvard.edu/ai/notes/1/resolution1.png)
+<div align="center">
+
+<img
+  src="/static/images/image_122856941583.png"
+  style="width:300px; height:auto;"
+/>
+
+</div>
 
 Resolution relies on **Complementary Literals**, two of the same atomic propositions where one is negated and the other is not, such as P and ¬P.
 
 Resolution can be further generalized. Suppose that in addition to the proposition “Ron is in the Great Hall” Or “Hermione is in the library”, we also know that “Ron is not in the Great Hall” Or “Harry is sleeping.” We can infer from this, using resolution, that “Hermione is in the library” Or “Harry is sleeping.” To put it in formal terms:
 
-![Resolution](https://cs50.harvard.edu/ai/notes/1/resolution2.png)
+<div align="center">
+
+<img
+  src="/static/images/image (3).png"
+  style="width:300px; height:auto;"
+/>
+
+</div>
 
 Complementary literals allow us to generate new sentences through inferences by resolution. Thus, inference algorithms locate complementary literals to generate new knowledge.
 
@@ -455,7 +572,14 @@ A **Clause** is a disjunction of literals (a propositional symbol or a negatio
 - Eliminate biconditionals
     - Turn (α       β) into (α → β) ∧ (β → α).
         
-        ![↔](https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/2194.png)
+        <div align="center">
+
+<img
+  src="/static/images/image (1).png"
+  style="width:70px; height:auto;"
+/>
+
+</div>
         
 - Eliminate implications
     - Turn (α → β) into ¬α ∨ β.
@@ -494,7 +618,7 @@ Here is an example that illustrates how this algorithm might work:
 - Next, since we know (¬B), the only way (A ∨ B) can be true is if A is true. Thus, we can add (A) to our KB.
 - Now our KB has two complementary literals, (A) and (¬A). We resolve them, arriving at the empty set, (). The empty set is false by definition, so we have arrived at a contradiction.
 
-## [**First Order Logic**](https://cs50.harvard.edu/ai/notes/1/#first-order-logic)
+## [**First Order Logic**]
 
 First order logic is another type of logic that allows us to express more complex ideas more succinctly than propositional logic. First order logic uses two types of symbols: *Constant Symbols* and *Predicate Symbols*. Constant symbols represent objects, while predicate symbols are like relations or functions that take an argument and return a true or false value.
 

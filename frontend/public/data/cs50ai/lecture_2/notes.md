@@ -1,4 +1,4 @@
-## [**Probability**](https://cs50.harvard.edu/ai/notes/2/#probability)
+## [**Probability**]
 
 Uncertainty can be represented as a number of events and the likelihood, or probability, of each of them happening.
 
@@ -30,7 +30,7 @@ To get the probability of an event, we divide the number of worlds in which it o
 
 Unconditional probability is the degree of belief in a proposition in the absence of any other evidence. All the questions that we have asked so far were questions of unconditional probability, because the result of rolling a die is not dependent on previous events.
 
-## [**Conditional Probability**](https://cs50.harvard.edu/ai/notes/2/#conditional-probability)
+## [**Conditional Probability**]
 
 Conditional probability is the degree of belief in a proposition given some evidence that has already been revealed. As discussed in the introduction, AI can use partial information to make educated guesses about the future. To use this information, which affects the probability that the event occurs in the future, we rely on conditional probability.
 
@@ -52,7 +52,7 @@ Now we ask how many times does the event *a* (the sum being 12) occur in the w
 
 ![Conditioned Probability](https://cs50.harvard.edu/ai/notes/2/sumconditional2.png)
 
-## [**Random Variables**](https://cs50.harvard.edu/ai/notes/2/#random-variables)
+## [**Random Variables**]
 
 A random variable is a variable in probability theory with a domain of possible values that it can take on. For example, to represent possible outcomes when rolling a die, we can define a random variable *Roll*, that can take on the values {*1, 2, 3, 4, 5, 6*}. To represent the status of a flight, we can define a variable *Flight* that takes on the values {*on time, delayed, canceled*}.
 
@@ -72,7 +72,7 @@ Independence is the knowledge that the occurrence of one event does not affect t
 
 Independence can be defined mathematically: events *a* and *b* are independent if and only if the probability of *a* and *b* is equal to the probability of *a* times the probability of *b*: P(*a ∧ b*) = P(*a*)P(*b*).
 
-## [**Bayes’ Rule**](https://cs50.harvard.edu/ai/notes/2/#bayes-rule)
+## [**Bayes’ Rule**]
 
 Bayes’ rule is commonly used in probability theory to compute conditional probability. In words, Bayes’ rule says that the probability of *b* given *a* is equal to the probability of *a* given *b*, times the probability of *b*, divided by the probability of *a*.
 
@@ -88,7 +88,7 @@ Applying Bayes’ rule, we compute (0.1)(0.8)/(0.4) = 0.2. That is, the probabil
 
 Knowing P(*a | b*), in addition to P(*a*) and P(*b*), allows us to calculate P(*b | a*). This is helpful, because knowing the conditional probability of a visible effect given an unknown cause, P(*visible effect | unknown cause*), allows us to calculate the probability of the unknown cause given the visible effect, P(*unknown cause | visible effect*). For example, we can learn P(*medical test results | disease*) through medical trials, where we test people with the disease and see how often the test picks up on that. Knowing this, we can calculate P(*disease | medical test results*), which is valuable diagnostic information.
 
-## [**Joint Probability**](https://cs50.harvard.edu/ai/notes/2/#joint-probability)
+## [**Joint Probability**]
 
 Joint probability is the likelihood of multiple events all occurring.
 
@@ -115,7 +115,7 @@ Using joint probabilities, we can deduce conditional probability. For example, i
 
 In the last equation, it is possible to view P(*rain*) as some constant by which P(*C, rain*) is multiplied. Thus, we can rewrite P(*C, rain*)/P(*rain*) = αP(*C, rain*), or α<0.08, 0.02>. Factoring out α leaves us with the proportions of the probabilities of the possible values of C given that there is rain in the afternoon. Namely, if there is rain in the afternoon, the proportion of the probabilities of clouds in the morning and no clouds in the morning is 0.08:0.02. Note that 0.08 and 0.02 don’t sum up to 1; however, since this is the probability distribution for the random variable C, we know that they should sum up to 1. Therefore, we need to normalize the values by computing α such that α0.08 + α0.02 = 1. Finally, we can say that P(*C | rain*) = <0.8, 0.2>.
 
-## [**Probability Rules**](https://cs50.harvard.edu/ai/notes/2/#probability-rules)
+## [**Probability Rules**]
 
 - **Negation**: P(*¬a*) = 1 - P(*a*). This stems from the fact that the sum of the probabilities of all the possible worlds is 1, and the complementary literals *a* and *¬a* include all the possible worlds.
 - **Inclusion-Exclusion**: P(*a ∨ b*) = P(*a*) + P(*b*) - P(*a ∧ b*). This can interpreted in the following way: the worlds in which *a* or *b* are true are equal to all the worlds where *a* is true, plus the worlds where *b* is true. However, in this case, some worlds are counted twice (the worlds where both *a* and *b* are true)). To get rid of this overlap, we subtract once the worlds where both *a* and *b* are true (since they were counted twice).
@@ -136,7 +136,7 @@ The left side of the equation means “The probability of random variable X havi
 
 In this formula, the random variable X takes the value xᵢ with probability that is equal to the sum of the probabilities of xᵢ given each value of the random variable Y multiplied by the probability of variable Y taking that value. This makes sense if we remember that P(*a | b*) = P(*a, b*)/P(*b*). If we multiply this expression by P(*b*), we end up with P(*a, b*), and from here we do the same as we did with marginalization.
 
-## [**Bayesian Networks**](https://cs50.harvard.edu/ai/notes/2/#bayesian-networks)
+## [**Bayesian Networks**]
 
 A Bayesian network is a data structure that represents the dependencies among random variables. Bayesian networks have the following properties:
 
@@ -296,7 +296,7 @@ for node, prediction in zip(model.states, predictions):
 
 The code above used inference by enumeration. However, this way of computing probability is inefficient, especially when there are many variables in the model. A different way to go about this would be abandoning **exact inference** in favor of **approximate inference**. Doing this, we lose some precision in the generated probabilities, but often this imprecision is negligible. Instead, we gain a scalable method of calculating probabilities.
 
-## [**Sampling**](https://cs50.harvard.edu/ai/notes/2/#sampling)
+## [**Sampling**]
 
 Sampling is one technique of approximate inference. In sampling, each variable is sampled for a value according to its probability distribution. We will start with an example from outside lecture, and then cover the example from lecture.
 
@@ -370,7 +370,7 @@ In the sampling example above, we discarded the samples that did not match the e
 
 For example, if we have the observation that the train was on time, we will start sampling as before. We sample a value of Rain given its probability distribution, then Maintenance, but when we get to Train - we always give it the observed value, in our case, *on time*. Then we proceed and sample Appointment based on its probability distribution given Train = *on time*. Now that this sample exists, we weight it by the conditional probability of the observed variable given its sampled parents. That is, if we sampled Rain and got *light*, and then we sampled Maintenance and got *yes*, then we will weight this sample by P(*Train = on time | light, yes*).
 
-## [**Markov Models**](https://cs50.harvard.edu/ai/notes/2/#markov-models)
+## [**Markov Models**]
 
 So far, we have looked at questions of probability given some information that we observed. In this kind of paradigm, the dimension of time is not represented in any way. However, many tasks do rely on the dimension of time, such as prediction. To represent the variable of time we will create a new variable, X, and change it based on the event of interest, such that Xₜ is the current event, Xₜ₊₁ is the next event, and so on. To be able to predict events in the future, we will use Markov Models.
 
@@ -414,7 +414,7 @@ model = MarkovChain([start, transitions])
 # Sample 50 states from chain
 print(model.sample(50))`
 
-## [**Hidden Markov Models**](https://cs50.harvard.edu/ai/notes/2/#hidden-markov-models)
+## [**Hidden Markov Models**]
 
 A hidden Markov model is a type of a Markov model for a system with hidden states that generate some observed event. This means that sometimes, the AI has some measurement of the world but no access to the precise state of the world. In these cases, the state of the world is called the **hidden state** and whatever data the AI has access to are the **observations**. Here are a few examples for this:
 

@@ -14,13 +14,25 @@
   {
     "id": "parser",
     "title": "Parser",
-    "description": "Write an AI to parse English sentences into noun phrases and verb phrases. Your parser should build a tree structure representing the syntactic structure of sentences.",
+    "description": "Write an AI to parse English sentences into noun phrases and verb phrases.",
     "check50_slug": "cs50/problems/2024/ai/parser",
     "difficulty": "Hard",
     "common_mistakes": [
       "Not handling ambiguous sentences correctly",
       "Incorrect preposition attachment",
       "Missing terminal symbols in grammar rules"
+    ]
+  },
+  {
+    "id": "attention",
+    "title": "Attention",
+    "description": "Implement attention mechanisms for natural language processing tasks.",
+    "check50_slug": "cs50/problems/2024/ai/attention",
+    "difficulty": "Hard",
+    "common_mistakes": [
+      "Incorrect attention weight calculations",
+      "Shape mismatch in tensors",
+      "Improper masking in attention layers"
     ]
   }
 ]
