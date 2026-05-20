@@ -1,9 +1,9 @@
 
-## [**Machine Learning**](https://cs50.harvard.edu/ai/notes/4/#machine-learning)
+## [**Machine Learning**]
 
 Machine learning provides a computer with data, rather than explicit instructions. Using these data, the computer learns to recognize patterns and becomes able to execute tasks on its own.
 
-## [**Supervised Learning**](https://cs50.harvard.edu/ai/notes/4/#supervised-learning)
+## [**Supervised Learning**]
 
 Supervised learning is a task where a computer learns a function that maps inputs to outputs based on a dataset of input-output pairs.
 
@@ -13,7 +13,7 @@ This task can be formalized as follows. We observe nature, where a function *f(
 
 ![Classification](https://cs50.harvard.edu/ai/notes/4/classification.png)
 
-## [**Nearest-Neighbor Classification**](https://cs50.harvard.edu/ai/notes/4/#nearest-neighbor-classification)
+## [**Nearest-Neighbor Classification**]
 
 One way of solving a task like the one described above is by assigning the variable in question the value of the closest observation. So, for example, the white dot on the graph above would be colored blue, because the nearest observed dot is blue as well. This might work well some times, but consider the graph below.
 
@@ -25,7 +25,7 @@ One way to get around the limitations of nearest-neighbor classification is by u
 
 A drawback of the k-nearest-neighbors classification is that, using a naive approach, the algorithm will have to measure the distance of every single point to the point in question, which is computationally expensive. This can be sped up by using data structures that enable finding neighbors more quickly or by pruning irrelevant observations.
 
-## [**Perceptron Learning**](https://cs50.harvard.edu/ai/notes/4/#perceptron-learning)
+## [**Perceptron Learning**]
 
 Another way of going about a classification problem, as opposed to the nearest-neighbor strategy, is looking at the data as a whole and trying to create a decision boundary. In two-dimensional data, we can draw a line between the two types of observations. Every additional data point will be classified based on the side of the line on which it is plotted.
 
@@ -67,7 +67,7 @@ The problem with this type of function is that it is unable to express uncertain
 
 ![Soft Threshold](https://cs50.harvard.edu/ai/notes/4/softthreshold.png)
 
-## [**Support Vector Machines**](https://cs50.harvard.edu/ai/notes/4/#support-vector-machines)
+## [**Support Vector Machines**]
 
 In addition to nearest-neighbor and linear regression, another approach to classification is the Support Vector Machine. This approach uses an additional vector (support vector) near the decision boundary to make the best decision when separating the data. Consider the example below.
 
@@ -81,7 +81,7 @@ Another benefit of support vector machines is that they can represent decision b
 
 To summarize, there are multiple ways to go about classification problems, with no one being always better than the other. Each has their drawbacks and might prove more useful than others in specific situations.
 
-## [**Regression**](https://cs50.harvard.edu/ai/notes/4/#regression)
+## [**Regression**]
 
 Regression is a supervised learning task of a function that maps an input point to a continuous value, some real number. This differs from classification in that classification problems map an input to discrete values (Rain or No Rain).
 
@@ -89,8 +89,7 @@ For example, a company might use regression to answer the question of how money 
 
 ![Regression](https://cs50.harvard.edu/ai/notes/4/regression.png)
 
-## [**Loss Functions**](https://cs50.harvard.edu/ai/notes/4/#loss-functions)
-
+## [**Loss Functions**]
 Loss functions are a way to quantify the utility lost by any of the decision rules above. The less accurate the prediction, the larger the loss.
 
 For classification problems, we can use a **0-1 Loss Function**.
@@ -114,15 +113,14 @@ One can choose the loss function that serves their goals best. L₂ penalizes ou
 
 ![L₁](https://cs50.harvard.edu/ai/notes/4/l1.png)
 
-## [**Overfitting**](https://cs50.harvard.edu/ai/notes/4/#overfitting)
-
+## [**Overfitting**]
 Overfitting is when a model fits the training data so well that it fails to generalize to other data sets. In this sense, loss functions are a double edged sword. In the two examples below, the loss function is minimized such that the loss is equal to 0. However, it is unlikely that it will fit new data well.
 
 ![Overfitting](https://cs50.harvard.edu/ai/notes/4/overfitting.png)
 
 For example, in the left graph, a dot next to the red one at the bottom of the screen is likely to be Rain (blue). However, with the overfitted model, it will be classified as No Rain (red).
 
-## [**Regularization**](https://cs50.harvard.edu/ai/notes/4/#regularization)
+## [**Regularization**]
 
 Regularization is the process of penalizing hypotheses that are more complex to favor simpler, more general hypotheses. We use regularization to avoid overfitting.
 
@@ -136,7 +134,7 @@ One way to test whether we overfitted the model is with **Holdout Cross Validat
 
 The downside of holdout cross validation is that we don’t get to train the model on half the data, since it is used for evaluation purposes. A way to deal with this is using ***k*-Fold Cross-Validation**. In this process, we divide the data into k sets. We run the training k times, each time leaving out one dataset and using it as a test set. We end up with k different evaluations of our model, which we can average and get an estimate of how our model generalizes without losing any data.
 
-## [**scikit-learn**](https://cs50.harvard.edu/ai/notes/4/#scikit-learn)
+## [**scikit-learn**]
 
 As often is the case with Python, there are multiple libraries that allow us to conveniently use machine learning algorithms. One of such libraries is scikit-learn.
 
@@ -207,7 +205,7 @@ print(f"Accuracy: {100 * correct / total:.2f}%")`
 
 This manual version of running the algorithm can be found in the source code for this lecture under banknotes0.py. Since the algorithm is used often in a similar way, scikit-learn contains additional functions that make the code even more succinct and easy to use, and this version can be found under banknotes1.py.
 
-## [**Reinforcement Learning**](https://cs50.harvard.edu/ai/notes/4/#reinforcement-learning)
+## [**Reinforcement Learning**]
 
 Reinforcement learning is another approach to machine learning, where after each action, the agent gets feedback in the form of reward or punishment (a positive or a negative numerical value).
 
@@ -217,7 +215,7 @@ The learning process starts by the environment providing a state to the agent. T
 
 This type of algorithm can be used to train walking robots, for example, where each step returns a positive number (reward) and each fall a negative number (punishment).
 
-## [**Markov Decision Processes**](https://cs50.harvard.edu/ai/notes/4/#markov-decision-processes)
+## [**Markov Decision Processes**]
 
 Reinforcement learning can be viewed as a Markov decision process, having the following properties:
 
@@ -232,7 +230,7 @@ For example, consider the following task:
 
 The agent is the yellow circle, and it needs to get to the green square while avoiding the red squares. Every single square in the task is a state. Moving up, down, or to the sides is an action. The transition model gives us the new state after performing an action, and the reward function is what kind of feedback the agent gets. For example, if the agent chooses to go right, it will step on a red square and get negative feedback. This means that the agent will learn that, when in the state of being in the bottom-left square, it should avoid going right. This way, the agent will start exploring the space, learning which state-action pairs it should avoid. The algorithm can be probabilistic, choosing to take different actions in different states based on some probability that’s being increased or decreased based on reward. When the agent reaches the green square, it will get a positive reward, learning that it is favorable to take the action it took in the previous state.
 
-## [**Q-Learning**](https://cs50.harvard.edu/ai/notes/4/#q-learning)
+## [**Q-Learning**]
 
 Q-Learning is one model of reinforcement learning, where a function ***Q(s, a)*** outputs an estimate of the value of taking action *a* in state *s*.
 
@@ -256,16 +254,14 @@ Another way to train a reinforcement learning model is to give feedback not upon
 
 This approach becomes more computationally demanding when a game has multiple states and possible actions, such as chess. It is infeasible to generate an estimated value for every possible move in every possible state. In this case, we can use a **function approximation**, which allows us to approximate ***Q(s, a)*** using various other features, rather than storing one value for each state-action pair. Thus, the algorithm becomes able to recognize which moves are similar enough so that their estimated value should be similar as well, and use this heuristic in its decision making.
 
-## [**Unsupervised Learning**](https://cs50.harvard.edu/ai/notes/4/#unsupervised-learning)
-
+## [**Unsupervised Learning**]
 In all the cases we saw before, as in supervised learning, we had data with labels that the algorithm could learn from. For example, when we trained an algorithm to recognize counterfeit notes, each banknote had four variables with different values (the input data) and whether it is counterfeit or not (the label). In unsupervised learning, only the input data is present and the AI learns patterns in these data.
 
 **Clustering**
 
 Clustering is an unsupervised learning task that takes the input data and organizes it into groups such that similar objects end up in the same group. This can be used, for example, in genetics research, when trying to find similar genes, or in image segmentation, when defining different parts of the image based on similarity between pixels.
 
-## [**k-means Clustering**](https://cs50.harvard.edu/ai/notes/4/#k-means-clustering)
-
+## [**k-means Clustering**]
 k-means Clustering is an algorithm to perform a clustering task. It maps all data points in a space, and then randomly places k cluster centers in the space (it is up to the programmer to decide how many; this is the starting state we see on the left). Each cluster center is simply a point in the space. Then, each cluster gets assigned all the points that are closest to its center than to any other center (this is the middle picture). Then, in an iterative process, the cluster center moves to the middle of all these points (the state on the right), and then points are reassigned again to the clusters whose centers are now closest to them. When, after repeating the process, each point remains in the same cluster it was before, we have reached an equilibrium and the algorithm is over, leaving us with points divided between clusters.
 
 ![k-means Clustering](https://cs50.harvard.edu/ai/notes/4/kclustering.png)

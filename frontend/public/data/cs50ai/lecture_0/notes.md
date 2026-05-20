@@ -1,5 +1,4 @@
-## [**Artificial Intelligence**](https://cs50.harvard.edu/ai/notes/0/#artificial-intelligence)
-
+## [**Artificial Intelligence**]
 Artificial Intelligence (AI) covers a range of techniques that appear as sentient behavior by the computer. For example, AI is used to recognize faces in photographs on your social media, beat the World’s Champion in chess, and process your speech when you speak to Siri or Alexa on your phone.
 
 In this course, we will explore some of the ideas that make AI possible:
@@ -32,11 +31,17 @@ A program structure inspired by the human brain that is able to perform tasks ef
 
 Processing natural language, which is produced and understood by humans.
 
-## [**Search**](https://cs50.harvard.edu/ai/notes/0/#search)
-
+## [**Search**]
 Search problems involve an agent that is given an initial state and a goal state, and it returns a solution of how to get from the former to the latter. A navigator app uses a typical search process, where the agent (the thinking part of the program) receives as input your current location and your desired destination, and, based on a search algorithm, returns a suggested path. However, there are many other forms of search problems, like puzzles or mazes.
 
-![15 puzzle](https://cs50.harvard.edu/ai/notes/0/15puzzle.png)
+<div align="center">
+
+<img
+  src="/static/images/image_12285739511.png"
+  style="width:300px; height:auto;"
+/>
+
+</div>
 
 Finding a solution to a 15 puzzle would require the use of a search algorithm.
 
@@ -54,18 +59,25 @@ Finding a solution to a 15 puzzle would require the use of a search algorithm.
         
 - **Actions**
     
-    Choices that can be made in a state. More precisely, actions can be defined as a function. Upon receiving state `s` as input, `Actions(s)` returns as output the set of actions that can be executed in state `s`. For example, in a *15 puzzle*, the actions of a given state are the ways you can slide squares in the current configuration (4 if the empty square is in the middle, 3 if next to a side, 2 if in the corner).
+    Choices that can be made in a state. More precisely, actions can be defined as a function. Upon receiving state `s` as input, `Actions(s)` returns as output the set of actions that can be executed in state `s`.For example, in a *15 puzzle*, the actions of a given state are the ways you can slide squares in the current configuration (4 if the empty square is in the middle, 3 if next to a side, 2 if in the corner).
     
 - **Transition Model**
     
-    A description of what state results from performing any applicable action in any state. More precisely, the transition model can be defined as a function. Upon receiving state `s` and action `a` as input, `Results(s, a)` returns the state resulting from performing action `a` in state `s`. For example, given a certain configuration of a *15 puzzle* (state `s`), moving a square in any direction (action `a`) will bring to a new configuration of the puzzle (the new state).
+    A description of what state results from performing any applicable action in any state. More precisely, the transition model can be defined as a function. Upon receiving state `s` and action `a` as input, `Results(s, a)` returns the state resulting from performing action `a` in state `s` For example, given a certain configuration of a *15 puzzle* (state `s`), moving a square in any direction (action `a`) will bring to a new configuration of the puzzle (the new state).
     
 - **State Space**
     
     The set of all states reachable from the initial state by any sequence of actions. For example, in a 15 puzzle, the state space consists of all the 16!/2 configurations on the board that can be reached from any initial state. The state space can be visualized as a directed graph with states, represented as nodes, and actions, represented as arrows between nodes.
     
 
-![State Space](https://cs50.harvard.edu/ai/notes/0/statespace.png)
+<div align="center">
+
+<img
+  src="/static/images/image_122857256064.png"
+  style="width:300px; height:auto;"
+/>
+
+</div>
 
 - **Goal Test**
     
@@ -76,7 +88,7 @@ Finding a solution to a 15 puzzle would require the use of a search algorithm.
     A numerical cost associated with a given path. For example, a navigator app does not simply bring you to your goal; it does so while minimizing the path cost, finding the fastest way possible for you to get to your goal state.
     
 
-## [**Solving Search Problems**](https://cs50.harvard.edu/ai/notes/0/#solving-search-problems)
+## [**Solving Search Problems**]
 
 - **Solution**
     
@@ -115,7 +127,7 @@ Repeat:
     ```
     
 
-### [**Depth-First Search**](https://cs50.harvard.edu/ai/notes/0/#depth-first-search)
+### [**Depth-First Search**]
 
 In the previous description of the *frontier*, one thing went unmentioned. At stage 2 in the pseudocode above, which node should be removed? This choice has implications on the quality of the solution and how fast it is achieved. There are multiple ways to go about the question of which nodes should be considered first, two of which can be represented by the data structures of **stack** (in *depth-first* search) and **queue** (in *breadth-first search*; and [here is a cute cartoon demonstration](https://www.youtube.com/watch?v=2wM6_PuBIxY) of the difference between the two).
 
@@ -147,7 +159,7 @@ Code example:
             return node
 ```
 
-### [**Breadth-First Search**](https://cs50.harvard.edu/ai/notes/0/#breadth-first-search)
+### [**Breadth-First Search**]
 
 The opposite of *depth-first* search would be *breadth-first* search (*BFS*).
 
@@ -177,20 +189,26 @@ Code example:
             return node
 ```
 
-### [**Greedy Best-First Search**](https://cs50.harvard.edu/ai/notes/0/#greedy-best-first-search)
+### [**Greedy Best-First Search**]
 
 Breadth-first and depth-first are both **uninformed** search algorithms. That is, these algorithms do not utilize any knowledge about the problem that they did not acquire through their own exploration. However, most often is the case that some knowledge about the problem is, in fact, available. For example, when a human maze-solver enters a junction, the human can see which way goes in the general direction of the solution and which way does not. AI can do the same. A type of algorithm that considers additional knowledge to try to improve its performance is called an **informed** search algorithm.
 
 **Greedy best-first** search expands the node that is the closest to the goal, as determined by a **heuristic function** *h(n)*. As its name suggests, the function estimates how close to the goal the next node is, but it can be mistaken. The efficiency of the *greedy best-first* algorithm depends on how good the heuristic function is. For example, in a maze, an algorithm can use a heuristic function that relies on the **Manhattan distance** between the possible nodes and the end of the maze. The *Manhattan distance* ignores walls and counts how many steps up, down, or to the sides it would take to get from one location to the goal location. This is an easy estimation that can be derived based on the (x, y) coordinates of the current location and the goal location.
 
-![Manhattan Distance](https://cs50.harvard.edu/ai/notes/0/manhattandistance.png)
+<div align="center">
+
+<img
+  src="/static/images/image_122857256065.png"
+  style="width:300px; height:auto;"
+/>
+
+</div>
 
 Manhattan Distance
 
 However, it is important to emphasize that, as with any heuristic, it can go wrong and lead the algorithm down a slower path than it would have gone otherwise. It is possible that an *uninformed* search algorithm will provide a better solution faster, but it is less likely to do so than an *informed* algorithm.
 
-### [**A* Search**](https://cs50.harvard.edu/ai/notes/0/#a-search)
-
+### [**A* Search**]
 A development of the *greedy best-first* algorithm, *A* search* considers not only *h(n)*, the estimated cost from the current location to the goal, but also *g(n)*, the cost that was accrued until the current location. By combining both these values, the algorithm has a more accurate way of determining the cost of the solution and optimizing its choices on the go. The algorithm keeps track of (*cost of path until now* + *estimated cost to the goal*), and once it exceeds the estimated cost of some previous option, the algorithm will ditch the current path and go back to the previous option, thus preventing itself from going down a long, inefficient path that *h(n)* erroneously marked as best.
 
 Yet again, since this algorithm, too, relies on a heuristic, it is as good as the heuristic that it employs. It is possible that in some situations it will be less efficient than *greedy best-first* search or even the *uninformed* algorithms. For *A* search* to be optimal, the heuristic function, *h(n)*, should be:
@@ -198,12 +216,11 @@ Yet again, since this algorithm, too, relies on a heuristic, it is as good as th
 1. *Admissible*, or never *overestimating* the true cost, and
 2. *Consistent*, which means that the estimated path cost to the goal of a new node in addition to the cost of transitioning to it from the previous node is greater or equal to the estimated path cost to the goal of the previous node. To put it in an equation form, *h(n)* is consistent if for every node *n* and successor node *n’* with step cost *c*, *h(n) ≤ h(n’) + c*.
 
-### [**Adversarial Search**](https://cs50.harvard.edu/ai/notes/0/#adversarial-search)
+### [**Adversarial Search**]
 
 Whereas, previously, we have discussed algorithms that need to find an answer to a question, in **adversarial search** the algorithm faces an opponent that tries to achieve the opposite goal. Often, AI that uses adversarial search is encountered in games, such as tic tac toe.
 
-### [**Minimax**](https://cs50.harvard.edu/ai/notes/0/#minimax)
-
+### [**Minimax**]
 A type of algorithm in adversarial search, **Minimax** represents winning conditions as (-1) for one side and (+1) for the other side. Further actions will be driven by these conditions, with the minimizing side trying to get the lowest score, and the maximizer trying to get the highest score.
 
 **Representing a Tic-Tac-Toe AI**:
@@ -219,14 +236,26 @@ A type of algorithm in adversarial search, **Minimax** represents winning cond
 
 Recursively, the algorithm simulates all possible games that can take place beginning at the current state and until a terminal state is reached. Each terminal state is valued as either (-1), 0, or (+1).
 
-![Minimax in Tic Tac Toe](https://cs50.harvard.edu/ai/notes/0/minimax_tictactoe.png)
+<div align="center">
 
+<img
+  src="/static/images/image_122857256066.png"
+  style="width:300px; height:auto;"
+/>
+
+</div>
 Minimax Algorithm in Tic Tac Toe
 
 Knowing based on the state whose turn it is, the algorithm can know whether the current player, when playing optimally, will pick the action that leads to a state with a lower or a higher value. This way, alternating between minimizing and maximizing, the algorithm creates values for the state that would result from each possible action. To give a more concrete example, we can imagine that the maximizing player asks at every turn: “if I take this action, a new state will result. If the minimizing player plays optimally, what action can that player take to bring to the lowest value?” However, to answer this question, the maximizing player has to ask: “To know what the minimizing player will do, I need to simulate the same process in the minimizer’s mind: the minimizing player will try to ask: ‘if I take this action, what action can the maximizing player take to bring to the highest value?’” This is a recursive process, and it could be hard to wrap your head around it; looking at the pseudo code below can help. Eventually, through this recursive reasoning process, the maximizing player generates values for each state that could result from all the possible actions at the current state. After having these values, the maximizing player chooses the highest one.
 
-![Minimax Algorithm](https://cs50.harvard.edu/ai/notes/0/minimax_theoretical.png)
+<div align="center">
 
+<img
+  src="/static/images/image_122857256067.png"
+  style="width:300px; height:auto;"
+/>
+
+</div>
 The Maximizer Considers the Possible Values of Future States.
 
 To put it in pseudocode, the Minimax algorithm works the following way:
@@ -259,15 +288,20 @@ To put it in pseudocode, the Minimax algorithm works the following way:
         return *v*
         
 
-### [**Alpha-Beta Pruning**](https://cs50.harvard.edu/ai/notes/0/#alpha-beta-pruning)
-
+### [**Alpha-Beta Pruning**]
 A way to optimize *Minimax*, **Alpha-Beta Pruning** skips some of the recursive computations that are decidedly unfavorable. After establishing the value of one action, if there is initial evidence that the following action can bring the opponent to get to a better score than the already established action, there is no need to further investigate this action because it will decidedly be less favorable than the previously established one.
 
 This is most easily shown with an example: a maximizing player knows that, at the next step, the minimizing player will try to achieve the lowest score. Suppose the maximizing player has three possible actions, and the first one is valued at 4. Then the player starts generating the value for the next action. To do this, the player generates the values of the minimizer’s actions if the current player makes this action, knowing that the minimizer will choose the lowest one. However, before finishing the computation for all the possible actions of the minimizer, the player sees that one of the options has a value of three. This means that there is no reason to keep on exploring the other possible actions for the minimizing player. The value of the not-yet-valued action doesn’t matter, be it 10 or (-10). If the value is 10, the minimizer will choose the lowest option, 3, which is already worse than the preestablished 4. If the not-yet-valued action would turn out to be (-10), the minimizer will this option, (-10), which is even more unfavorable to the maximizer. Therefore, computing additional possible actions for the minimizer at this point is irrelevant to the maximizer, because the maximizing player already has an unequivocally better choice whose value is 4.
 
-![Alpha Beta Pruning](https://cs50.harvard.edu/ai/notes/0/alphabeta.png)
+<div align="center">
 
-### [**Depth-Limited Minimax**](https://cs50.harvard.edu/ai/notes/0/#depth-limited-minimax)
+<img
+  src="/static/images/image_122857256068.png"
+  style="width:300px; height:auto;"
+/>
+
+</div>
+
 
 There is a total of 255,168 possible Tic Tac Toe games, and 10²⁹⁰⁰⁰ possible games in Chess. The minimax algorithm, as presented so far, requires generating all hypothetical games from a certain point to the terminal condition. While computing all the Tic-Tac-Toe games doesn’t pose a challenge for a modern computer, doing so with chess is currently impossible.
 
