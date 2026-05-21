@@ -26,13 +26,15 @@ jobs:
         working-directory: frontend
 
       - name: Build frontend (static, no backend)
-        env:
-          VITE_BASE_PATH: /LMS/
         run: npm run build
         working-directory: frontend
+
+      - name: SPA 404 fallback (copy built index.html to 404.html)
+        run: cp frontend/dist/index.html frontend/dist/404.html
 
       - name: Deploy to gh-pages branch
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./frontend/dist
+          cname: academy.fraylontech.com
