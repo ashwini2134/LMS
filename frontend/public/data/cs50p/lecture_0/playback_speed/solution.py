@@ -1,6 +1,6 @@
-﻿def main():
+def main():
     text = input()
-    print(text.lower())
+    print(text.replace("...", " "))
 
 if __name__ == "__main__":
     main()

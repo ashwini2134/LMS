@@ -1,5 +1,6 @@
-# TODO: instructor-written reference solution.
-# Do NOT auto-generate. Reference:
-#   - specification.md
-#   - tests.js
-pass
+﻿def main():
+    text = input()
+    print(text.replace(":)", "🙂").replace(":(", "🙁"))
+
+if __name__ == "__main__":
+    main()

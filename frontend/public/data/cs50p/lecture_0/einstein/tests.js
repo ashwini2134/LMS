@@ -1,27 +1,7 @@
-// TODO: replace placeholder tests with real cases.
-// Pattern reference: frontend/public/data/cs50ai/lecture_0/degrees/tests.js
-// Original pytest cases to port: (none — author from scratch)
-
-export function runTests(code) {
-
-  // TODO: real validation goes here.
-
-  if (code && code.trim().length > 0) {
-
-    return {
-
-      success: true,
-
-      message: "✅ Placeholder check passed — TODO replace with real tests.",
-
-    };
+﻿export function runTests(code) {
+  const normalized = code.replace(/\s/g, "");
+  if (!normalized.includes("300000000**2") && !normalized.includes("90000000000000000") && !normalized.includes("300000000*300000000")) {
+    return { passed: false, message: "❌ Expected Einstein formula E = m * c^2 (using 300000000 for c)." };
   }
-
-  return {
-
-    success: false,
-
-    message: "❌ TODO: real tests not yet implemented.",
-
-  };
+  return { passed: true, message: "✅ All test cases passed!" };
 }

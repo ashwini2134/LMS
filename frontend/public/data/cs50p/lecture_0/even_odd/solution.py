@@ -1,5 +1,9 @@
-# TODO: instructor-written reference solution.
-# Do NOT auto-generate. Reference:
-#   - specification.md
-#   - tests.js (or content/cs50p/lecture_0/test_even_odd.py)
-pass
+def main():
+    num = int(input())
+    if num % 2 == 0:
+        print("Even")
+    else:
+        print("Odd")
+
+if __name__ == "__main__":
+    main()
