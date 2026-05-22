@@ -1,3 +1,1 @@
-# Background — Hello World
-
-> TODO: Replace with a short paragraph (2-4 sentences) explaining the concept students are learning by solving this problem.
+When learning programming, one of the first things students usually do is print text to the screen. This problem helps students understand how output works in Python using the print() function.

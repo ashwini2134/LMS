@@ -1,5 +1,3 @@
 # Testing
 
-> TODO: Describe how to run tests locally.
-
-- TODO
+The program will be tested to ensure it prints the correct output exactly as expected.
