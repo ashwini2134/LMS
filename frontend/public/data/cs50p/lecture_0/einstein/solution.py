@@ -1,5 +1,7 @@
-# TODO: instructor-written reference solution.
-# Do NOT auto-generate. Reference:
-#   - specification.md
-#   - tests.js
-pass
+def einstein():
+    c = 300000000
+    M = int(input())
+    E = M * c*c
+    print(E)
+  
+einstein()    

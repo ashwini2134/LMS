@@ -1,5 +1,7 @@
-# TODO: instructor-written reference solution.
-# Do NOT auto-generate. Reference:
-#   - specification.md
-#   - tests.js (or content/cs50p/lecture_0/test_sum.py)
-pass
+def main():
+    num1 = int(input())
+    num2 = int(input())
+    print(num1 + num2)
+
+if __name__ == "__main__":
+    main()
