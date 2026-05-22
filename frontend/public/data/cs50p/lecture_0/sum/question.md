@@ -14,4 +14,6 @@ Use the `input()` function and `int()` to convert.
 
 ## Task
 
-> TODO: Restate the task clearly for the student.
+
+
+Write a Python program that takes two numbers as input and prints their sum.
