@@ -1,5 +1,3 @@
 # Testing
 
-> TODO: Describe how to run tests locally.
-
-- TODO
+The program will be tested with different number inputs to ensure the correct even or odd result is displayed.
