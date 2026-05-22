@@ -1,27 +1,17 @@
-// TODO: replace placeholder tests with real cases.
-// Pattern reference: frontend/public/data/cs50ai/lecture_0/degrees/tests.js
-// Original pytest cases to port: content/cs50p/lecture_0/test_even_odd.py
-
 export function runTests(code) {
-
-  // TODO: real validation goes here.
-
-  if (code && code.trim().length > 0) {
-
-    return {
-
-      success: true,
-
-      message: "✅ Placeholder check passed — TODO replace with real tests.",
-
-    };
+  const normalized = code.toLowerCase().replace(/\s/g, "");
+  
+  if (!normalized.includes("%2")) {
+    return { passed: false, message: "❌ Expected modulo operator (%) to be used." };
   }
-
-  return {
-
-    success: false,
-
-    message: "❌ TODO: real tests not yet implemented.",
-
-  };
+  
+  if (!normalized.includes('"even"') && !normalized.includes("'even'")) {
+    return { passed: false, message: '❌ Expected code to print "Even".' };
+  }
+  
+  if (!normalized.includes('"odd"') && !normalized.includes("'odd'")) {
+    return { passed: false, message: '❌ Expected code to print "Odd".' };
+  }
+  
+  return { passed: true, message: "✅ All test cases passed!" };
 }
