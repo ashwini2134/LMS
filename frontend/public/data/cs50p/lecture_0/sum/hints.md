@@ -1,5 +1,9 @@
 # Hints
 
-> TODO: Add 3-5 progressive hints.
+- Use the `input()` function to get numbers from the user.
 
-- TODO
+- Convert the input values using `int()`.
+
+- Use the `+` operator to add the numbers.
+
+- Print the final result using `print()`.

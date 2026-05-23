@@ -13,4 +13,4 @@ Use the modulo operator `%`.
 
 ## Task
 
-> TODO: Restate the task clearly for the student.
+>Write a Python program that checks whether a number is even or odd.

@@ -2,12 +2,21 @@
 
 ## Requirements
 
-> TODO: List the explicit requirements the student's program must satisfy.
+- Use Python
+- Accept one number as input
+- Print whether the number is Even or Odd
 
 ## Constraints
 
-> TODO: List language/library/runtime constraints.
+- Use the `input()` function
+- Convert values using `int()`
 
 ## Examples
 
-> TODO: Provide input/output examples.
+```text
+Input:
+4
+
+Output:
+Even
+```

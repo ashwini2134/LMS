@@ -2,12 +2,22 @@
 
 ## Requirements
 
-> TODO: List the explicit requirements the student's program must satisfy.
+- Use Python
+- Accept two numbers as input
+- Print the sum of the numbers
 
 ## Constraints
 
-> TODO: List language/library/runtime constraints.
+- Use the `input()` function
+- Convert values using `int()`
 
 ## Examples
 
-> TODO: Provide input/output examples.
+```text
+Input:
+3
+5
+
+Output:
+8
+```
