@@ -1,27 +1,19 @@
-// TODO: replace placeholder tests with real cases.
-// Pattern reference: frontend/public/data/cs50ai/lecture_0/degrees/tests.js
-// Original pytest cases to port: content/cs50p/lecture_0/test_hello_world.py
-
 export function runTests(code) {
+  const normalized = code.replace(/\s/g, "");
 
-  // TODO: real validation goes here.
+  const passed =
+    normalized.includes('print("Hello,World!")') ||
+    normalized.includes("print('Hello,World!')");
 
-  if (code && code.trim().length > 0) {
-
+  if (passed) {
     return {
-
-      success: true,
-
-      message: "✅ Placeholder check passed — TODO replace with real tests.",
-
+      passed: true,
+      message: "✅ All test cases passed.",
     };
   }
 
   return {
-
-    success: false,
-
-    message: "❌ TODO: real tests not yet implemented.",
-
+    passed: false,
+    message: "❌ Expected print('Hello, World!')",
   };
 }

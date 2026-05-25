@@ -150,63 +150,75 @@ export default function CodingProjectPage() {
 
     setStatus("");
 
-    if (
-      code.includes("minimax")
-      ||
-      code.includes("shortest_path")
-      ||
-      code.includes("player")
-    ) {
-
-      setStatus("success");
-
-      setOutput(
-`✅ All test cases passed!
-
-Great job!`
-      );
-
-    } else {
-
+    try {
+      const base = import.meta.env.BASE_URL;
+      const testModuleUrl = `${base}data/${slug}/lecture_${number}/${projectId}/tests.js`;
+      
+      const response = await fetch(testModuleUrl);
+      if (!response.ok) throw new Error("Tests file not found");
+      
+      const testText = await response.text();
+      const blob = new Blob([testText], { type: 'application/javascript' });
+      const blobUrl = URL.createObjectURL(blob);
+      
+      const module = await import(/* @vite-ignore */ blobUrl);
+      URL.revokeObjectURL(blobUrl);
+      
+      if (module && module.runTests) {
+        const result = module.runTests(code);
+        if (result.passed || result.success) {
+          setStatus("success");
+          setOutput(result.message || "✅ All test cases passed!");
+        } else {
+          setStatus("error");
+          setOutput(result.message || "❌ Test cases failed.\n\nImplementation incomplete.");
+        }
+      } else {
+        throw new Error("No runTests function found");
+      }
+    } catch (e) {
+      console.error(e);
       setStatus("error");
-
-      setOutput(
-`❌ Test cases failed.
-
-Implementation incomplete.`
-      );
+      setOutput(`❌ Test execution failed.\n\nCould not load tests for this project.`);
     }
   }
 
   // SUBMIT BUTTON
 
   async function handleSubmit() {
+    setOutput("Submitting code...");
+    setStatus("");
 
-    if (
-      code.includes("minimax")
-      ||
-      code.includes("shortest_path")
-      ||
-      code.includes("player")
-    ) {
-
-      setStatus("success");
-
-      setOutput(
-`✅ Submission Successful!
-
-All hidden test cases passed.`
-      );
-
-    } else {
-
+    try {
+      const base = import.meta.env.BASE_URL;
+      const testModuleUrl = `${base}data/${slug}/lecture_${number}/${projectId}/tests.js`;
+      
+      const response = await fetch(testModuleUrl);
+      if (!response.ok) throw new Error("Tests file not found");
+      
+      const testText = await response.text();
+      const blob = new Blob([testText], { type: 'application/javascript' });
+      const blobUrl = URL.createObjectURL(blob);
+      
+      const module = await import(/* @vite-ignore */ blobUrl);
+      URL.revokeObjectURL(blobUrl);
+      
+      if (module && module.runTests) {
+        const result = module.runTests(code);
+        if (result.passed || result.success) {
+          setStatus("success");
+          setOutput(`✅ Submission Successful!\n\nAll hidden test cases passed.`);
+        } else {
+          setStatus("error");
+          setOutput(`❌ Submission Failed.\n\nPlease review your logic.\n\n${result.message || ""}`);
+        }
+      } else {
+        throw new Error("No runTests function found");
+      }
+    } catch (e) {
+      console.error(e);
       setStatus("error");
-
-      setOutput(
-`❌ Submission Failed.
-
-Please review your logic.`
-      );
+      setOutput(`❌ Submission Failed.\n\nCould not load tests for this project.`);
     }
   }
 
