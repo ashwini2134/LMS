@@ -8,3 +8,4 @@ export { Breadcrumb } from './Breadcrumb';
 export { PageHeader } from './PageHeader';
 export { LoadingCard } from './LoadingCard';
 export { AuthLayout } from './AuthLayout';
+export { ErrorBoundary } from './ErrorBoundary';

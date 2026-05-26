@@ -1,68 +1,42 @@
 import { useEffect, useState } from "react";
-
 import { useParams } from "react-router-dom";
-
 import ReactMarkdown from "react-markdown";
-
 import remarkGfm from "remark-gfm";
 
 export default function CodingProjectPage() {
-
-  const {
-    slug,
-    number,
-    projectId,
-  } = useParams();
+  const { slug, number, projectId } = useParams();
 
   // MARKDOWN CONTENT
 
-  const [question, setQuestion] =
-    useState("");
-
-  const [understanding, setUnderstanding] =
-    useState("");
-
-  const [specification, setSpecification] =
-    useState("");
-
-  const [hints, setHints] =
-    useState("");
-
-  const [testing, setTesting] =
-    useState("");
+  const [question, setQuestion] = useState("");
+  const [understanding, setUnderstanding] = useState("");
+  const [specification, setSpecification] = useState("");
+  const [hints, setHints] = useState("");
+  const [testing, setTesting] = useState("");
 
   // CODE
 
-  const [code, setCode] =
-    useState("");
+  const [code, setCode] = useState("");
 
   // OUTPUT
 
-  const [output, setOutput] =
-    useState("");
-
-  const [status, setStatus] =
-    useState<"success" | "error" | "">("");
+  const [output, setOutput] = useState("");
+  const [status, setStatus] = useState<
+    "success" | "error" | ""
+  >("");
 
   // LOAD OPTIONAL FILE
 
-  async function loadOptionalFile(
-    path: string
-  ) {
-
+  async function loadOptionalFile(path: string) {
     try {
-
-      const response =
-        await fetch(path);
+      const response = await fetch(path);
 
       if (!response.ok) {
         return "";
       }
 
       return await response.text();
-
     } catch {
-
       return "";
     }
   }
@@ -70,20 +44,15 @@ export default function CodingProjectPage() {
   // LOAD ALL FILES
 
   useEffect(() => {
-
     async function loadFiles() {
-
       try {
-
-        const base =
-          import.meta.env.BASE_URL;
+        const base = import.meta.env.BASE_URL;
 
         // QUESTION (REQUIRED)
 
-        const questionResponse =
-          await fetch(
-            `${base}data/${slug}/lecture_${number}/${projectId}/question.md`
-          );
+        const questionResponse = await fetch(
+          `${base}data/${slug}/lecture_${number}/${projectId}/question.md`
+        );
 
         const questionText =
           await questionResponse.text();
@@ -118,17 +87,16 @@ export default function CodingProjectPage() {
 
         // STARTER CODE
 
-        const starterResponse =
-          await fetch(
-            `${base}data/${slug}/lecture_${number}/${projectId}/starter.py`
-          );
+        const starterResponse = await fetch(
+          `${base}data/${slug}/lecture_${number}/${projectId}/starter.py`
+        );
 
         const starterText =
           await starterResponse.text();
 
         setCode(starterText);
-
       } catch (error) {
+        console.error(error);
 
         setStatus("error");
 
@@ -139,93 +107,158 @@ export default function CodingProjectPage() {
     }
 
     loadFiles();
-
   }, [slug, number, projectId]);
+
+  // LOAD TEST MODULE
+
+  async function runDynamicTests() {
+    const base = import.meta.env.BASE_URL;
+
+    const testPath = `${base}data/${slug}/lecture_${number}/${projectId}/tests.js`;
+
+    const response = await fetch(testPath);
+
+    if (!response.ok) {
+      throw new Error(
+        `Tests not found for ${projectId}`
+      );
+    }
+
+    const testText = await response.text();
+
+    const blob = new Blob([testText], {
+      type: "application/javascript",
+    });
+
+    const blobUrl =
+      URL.createObjectURL(blob);
+
+    try {
+      const module = await import(
+        /* @vite-ignore */
+        blobUrl
+      );
+
+      if (
+        !module ||
+        typeof module.runTests !== "function"
+      ) {
+        throw new Error(
+          "runTests(code) not found in tests.js"
+        );
+      }
+
+      const result = await module.runTests(
+        code
+      );
+
+      return result;
+    } finally {
+      URL.revokeObjectURL(blobUrl);
+    }
+  }
 
   // RUN BUTTON
 
   async function handleRun() {
+    setStatus("");
+
+    if (!code.trim()) {
+      setStatus("error");
+
+      setOutput(
+        "❌ Code cannot be empty."
+      );
+
+      return;
+    }
 
     setOutput("Running tests...");
 
-    setStatus("");
-
     try {
-      const base = import.meta.env.BASE_URL;
-      const testModuleUrl = `${base}data/${slug}/lecture_${number}/${projectId}/tests.js`;
-      
-      const response = await fetch(testModuleUrl);
-      if (!response.ok) throw new Error("Tests file not found");
-      
-      const testText = await response.text();
-      const blob = new Blob([testText], { type: 'application/javascript' });
-      const blobUrl = URL.createObjectURL(blob);
-      
-      const module = await import(/* @vite-ignore */ blobUrl);
-      URL.revokeObjectURL(blobUrl);
-      
-      if (module && module.runTests) {
-        const result = module.runTests(code);
-        if (result.passed || result.success) {
-          setStatus("success");
-          setOutput(result.message || "✅ All test cases passed!");
-        } else {
-          setStatus("error");
-          setOutput(result.message || "❌ Test cases failed.\n\nImplementation incomplete.");
-        }
+      const result =
+        await runDynamicTests();
+
+      if (result.passed || result.success) {
+        setStatus("success");
+
+        setOutput(
+          result.message ||
+            "✅ All test cases passed!"
+        );
       } else {
-        throw new Error("No runTests function found");
+        setStatus("error");
+
+        setOutput(
+          result.message ||
+            "❌ Test cases failed."
+        );
       }
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
+
       setStatus("error");
-      setOutput(`❌ Test execution failed.\n\nCould not load tests for this project.`);
+
+      setOutput(
+        `❌ Test execution failed.\n\n${
+          e?.message || "Unknown error"
+        }`
+      );
     }
   }
 
   // SUBMIT BUTTON
 
   async function handleSubmit() {
-    setOutput("Submitting code...");
     setStatus("");
 
-    try {
-      const base = import.meta.env.BASE_URL;
-      const testModuleUrl = `${base}data/${slug}/lecture_${number}/${projectId}/tests.js`;
-      
-      const response = await fetch(testModuleUrl);
-      if (!response.ok) throw new Error("Tests file not found");
-      
-      const testText = await response.text();
-      const blob = new Blob([testText], { type: 'application/javascript' });
-      const blobUrl = URL.createObjectURL(blob);
-      
-      const module = await import(/* @vite-ignore */ blobUrl);
-      URL.revokeObjectURL(blobUrl);
-      
-      if (module && module.runTests) {
-        const result = module.runTests(code);
-        if (result.passed || result.success) {
-          setStatus("success");
-          setOutput(`✅ Submission Successful!\n\nAll hidden test cases passed.`);
-        } else {
-          setStatus("error");
-          setOutput(`❌ Submission Failed.\n\nPlease review your logic.\n\n${result.message || ""}`);
-        }
-      } else {
-        throw new Error("No runTests function found");
-      }
-    } catch (e) {
-      console.error(e);
+    if (!code.trim()) {
       setStatus("error");
-      setOutput(`❌ Submission Failed.\n\nCould not load tests for this project.`);
+
+      setOutput(
+        "❌ Code cannot be empty."
+      );
+
+      return;
+    }
+
+    setOutput("Submitting code...");
+
+    try {
+      const result =
+        await runDynamicTests();
+
+      if (result.passed || result.success) {
+        setStatus("success");
+
+        setOutput(
+          "✅ Submission Successful!\n\nAll hidden test cases passed."
+        );
+      } else {
+        setStatus("error");
+
+        setOutput(
+          `❌ Submission Failed.\n\n${
+            result.message ||
+            "Please review your logic."
+          }`
+        );
+      }
+    } catch (e: any) {
+      console.error(e);
+
+      setStatus("error");
+
+      setOutput(
+        `❌ Submission Failed.\n\n${
+          e?.message || "Unknown error"
+        }`
+      );
     }
   }
 
   return (
-
     <div className="h-screen flex bg-[#0d1117] text-white">
-
       {/* LEFT PANEL */}
 
       <div
@@ -238,7 +271,6 @@ export default function CodingProjectPage() {
           bg-[#0d1117]
         "
       >
-
         <h1 className="text-4xl font-bold mb-8 capitalize">
           {projectId}
         </h1>
@@ -253,204 +285,172 @@ export default function CodingProjectPage() {
             mb-8
           "
         >
-
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
           >
             {question}
           </ReactMarkdown>
-
         </div>
 
         {/* UNDERSTANDING */}
 
-        {
-          understanding && (
-
-            <details
+        {understanding && (
+          <details
+            className="
+              mb-4
+              rounded-xl
+              border border-slate-700
+              bg-slate-900
+              p-5
+            "
+          >
+            <summary
               className="
-                mb-4
-                rounded-xl
-                border border-slate-700
-                bg-slate-900
-                p-5
+                cursor-pointer
+                text-xl
+                font-semibold
               "
             >
+              Understanding
+            </summary>
 
-              <summary
-                className="
-                  cursor-pointer
-                  text-xl
-                  font-semibold
-                "
+            <div
+              className="
+                mt-6
+                prose
+                prose-invert
+                max-w-none
+              "
+            >
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
               >
-                Understanding
-              </summary>
-
-              <div
-                className="
-                  mt-6
-                  prose
-                  prose-invert
-                  max-w-none
-                "
-              >
-
-                <ReactMarkdown
-                  remarkPlugins={[remarkGfm]}
-                >
-                  {understanding}
-                </ReactMarkdown>
-
-              </div>
-
-            </details>
-          )
-        }
+                {understanding}
+              </ReactMarkdown>
+            </div>
+          </details>
+        )}
 
         {/* SPECIFICATION */}
 
-        {
-          specification && (
-
-            <details
+        {specification && (
+          <details
+            className="
+              mb-4
+              rounded-xl
+              border border-slate-700
+              bg-slate-900
+              p-5
+            "
+          >
+            <summary
               className="
-                mb-4
-                rounded-xl
-                border border-slate-700
-                bg-slate-900
-                p-5
+                cursor-pointer
+                text-xl
+                font-semibold
               "
             >
+              Specification
+            </summary>
 
-              <summary
-                className="
-                  cursor-pointer
-                  text-xl
-                  font-semibold
-                "
+            <div
+              className="
+                mt-6
+                prose
+                prose-invert
+                max-w-none
+              "
+            >
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
               >
-                Specification
-              </summary>
-
-              <div
-                className="
-                  mt-6
-                  prose
-                  prose-invert
-                  max-w-none
-                "
-              >
-
-                <ReactMarkdown
-                  remarkPlugins={[remarkGfm]}
-                >
-                  {specification}
-                </ReactMarkdown>
-
-              </div>
-
-            </details>
-          )
-        }
+                {specification}
+              </ReactMarkdown>
+            </div>
+          </details>
+        )}
 
         {/* HINTS */}
 
-        {
-          hints && (
-
-            <details
+        {hints && (
+          <details
+            className="
+              mb-4
+              rounded-xl
+              border border-slate-700
+              bg-slate-900
+              p-5
+            "
+          >
+            <summary
               className="
-                mb-4
-                rounded-xl
-                border border-slate-700
-                bg-slate-900
-                p-5
+                cursor-pointer
+                text-xl
+                font-semibold
               "
             >
+              Hints
+            </summary>
 
-              <summary
-                className="
-                  cursor-pointer
-                  text-xl
-                  font-semibold
-                "
+            <div
+              className="
+                mt-6
+                prose
+                prose-invert
+                max-w-none
+              "
+            >
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
               >
-                Hints
-              </summary>
-
-              <div
-                className="
-                  mt-6
-                  prose
-                  prose-invert
-                  max-w-none
-                "
-              >
-
-                <ReactMarkdown
-                  remarkPlugins={[remarkGfm]}
-                >
-                  {hints}
-                </ReactMarkdown>
-
-              </div>
-
-            </details>
-          )
-        }
+                {hints}
+              </ReactMarkdown>
+            </div>
+          </details>
+        )}
 
         {/* TESTING */}
 
-        {
-          testing && (
-
-            <details
+        {testing && (
+          <details
+            className="
+              rounded-xl
+              border border-slate-700
+              bg-slate-900
+              p-5
+            "
+          >
+            <summary
               className="
-                rounded-xl
-                border border-slate-700
-                bg-slate-900
-                p-5
+                cursor-pointer
+                text-xl
+                font-semibold
               "
             >
+              Testing
+            </summary>
 
-              <summary
-                className="
-                  cursor-pointer
-                  text-xl
-                  font-semibold
-                "
+            <div
+              className="
+                mt-6
+                prose
+                prose-invert
+                max-w-none
+              "
+            >
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
               >
-                Testing
-              </summary>
-
-              <div
-                className="
-                  mt-6
-                  prose
-                  prose-invert
-                  max-w-none
-                "
-              >
-
-                <ReactMarkdown
-                  remarkPlugins={[remarkGfm]}
-                >
-                  {testing}
-                </ReactMarkdown>
-
-              </div>
-
-            </details>
-          )
-        }
-
+                {testing}
+              </ReactMarkdown>
+            </div>
+          </details>
+        )}
       </div>
 
       {/* RIGHT PANEL */}
 
       <div className="w-1/2 flex flex-col">
-
         {/* TOP BAR */}
 
         <div
@@ -465,13 +465,11 @@ export default function CodingProjectPage() {
             bg-[#161b22]
           "
         >
-
           <h2 className="text-xl font-semibold">
             Code Editor
           </h2>
 
           <div className="flex gap-4">
-
             <button
               onClick={handleRun}
               className="
@@ -499,9 +497,7 @@ export default function CodingProjectPage() {
             >
               Submit
             </button>
-
           </div>
-
         </div>
 
         {/* CODE EDITOR */}
@@ -542,13 +538,9 @@ export default function CodingProjectPage() {
             }
           `}
         >
-
           <pre>{output}</pre>
-
         </div>
-
       </div>
-
     </div>
   );
 }

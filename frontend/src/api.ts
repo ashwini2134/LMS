@@ -15,20 +15,11 @@ export type ProblemDetail = ProblemSummary & {
   common_mistakes?: string[];
 };
 export type Lecture = { number: number; title: string; content: string };
-export type Submission = {
-  id: number;
-  problem_id: number;
-  code: string;
-  output: string;
-  passed: boolean;
-  created_at: string;
-};
 export type ChatMsg = { role: string; content: string; created_at: string };
 
 // ── localStorage helpers ──────────────────────────────────────────────────────
 const TOKEN_KEY = "fa_token";
 const USERS_KEY = "fa_users";
-const SUBS_KEY  = "fa_submissions";
 const CHAT_KEY  = "fa_chat";
 
 export function getToken(): string | null { return localStorage.getItem(TOKEN_KEY); }
@@ -53,12 +44,6 @@ function parseToken(t: string): { id: number; email: string; name: string } | nu
     return p;
   } catch { return null; }
 }
-
-// ── Submission storage ────────────────────────────────────────────────────────
-function getSubs(): Submission[] {
-  try { return JSON.parse(localStorage.getItem(SUBS_KEY) ?? "[]"); } catch { return []; }
-}
-function saveSubs(s: Submission[]) { localStorage.setItem(SUBS_KEY, JSON.stringify(s)); }
 
 // ── Chat storage ─────────────────────────────────────────────────────────────
 function getChatHistory(problemId: number): ChatMsg[] {
@@ -232,23 +217,6 @@ export const api = {
     const detail = _problemDetailCache.get(id);
     if (!detail) throw new Error("Problem not found");
     return detail;
-  },
-
-  // ── Submissions (localStorage-based, no actual code execution) ────────────
-  submit: async (problemId: number, code: string): Promise<Submission> => {
-    // Simulate a brief delay then mark as passed (no real runner)
-    await new Promise((r) => setTimeout(r, 800));
-    const subs = getSubs();
-    const newSub: Submission = {
-      id: Date.now(),
-      problem_id: problemId,
-      code,
-      output: "✓ Code saved locally. Connect a backend runner to execute real checks.",
-      passed: true,
-      created_at: new Date().toISOString(),
-    };
-    saveSubs([newSub, ...subs]);
-    return newSub;
   },
 
   // ── Mentor chat (localStorage-based Socratic hints, no LLM call) ──────────
