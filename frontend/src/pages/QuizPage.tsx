@@ -18,6 +18,9 @@ export default function QuizPage() {
   const [selected, setSelected] =
     useState<{ [key: number]: string }>({});
 
+  const [error, setError] =
+    useState<string | null>(null);
+
   useEffect(() => {
 
     async function loadQuiz() {
@@ -25,15 +28,29 @@ export default function QuizPage() {
       const base =
         import.meta.env.BASE_URL;
 
-      const response =
-        await fetch(
-          `${base}data/${slug}/lecture_${number}/quiz.json`
-        );
+      try {
 
-      const data =
-        await response.json();
+        const response =
+          await fetch(
+            `${base}data/${slug}/lecture_${number}/quiz.json`
+          );
 
-      setQuestions(data);
+        if (!response.ok) {
+          setError("No quiz available for this lecture yet.");
+          setQuestions([]);
+          return;
+        }
+
+        const data =
+          await response.json();
+
+        setError(null);
+        setQuestions(data);
+
+      } catch {
+        setError("No quiz available for this lecture yet.");
+        setQuestions([]);
+      }
     }
 
     loadQuiz();
@@ -48,9 +65,24 @@ export default function QuizPage() {
         Quiz {number}
       </h1>
 
+      {error && (
+        <div
+          className="
+            rounded-3xl
+            border
+            border-slate-700
+            bg-[#08112b]
+            p-8
+            text-slate-300
+          "
+        >
+          {error}
+        </div>
+      )}
+
       <div className="space-y-10">
 
-        {questions.map((q, index) => {
+        {!error && questions.map((q, index) => {
 
           const selectedAnswer =
             selected[index];
