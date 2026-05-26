@@ -1,5 +1,27 @@
 # Testing
 
-> TODO: Describe how to run tests locally.
+Try the following test cases to verify your program:
 
-- TODO
+```text
+Input:
+HELLO
+
+Expected Output:
+hello
+```
+
+```text
+Input:
+Python IS Fun
+
+Expected Output:
+python is fun
+```
+
+```text
+Input:
+CS50P
+
+Expected Output:
+cs50p
+```
