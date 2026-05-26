@@ -1,13 +1,23 @@
 # Specification
 
-## Requirements
+Write a Python program that asks the user to type text.
 
-> TODO: List the explicit requirements the student's program must satisfy.
+The program should convert the text to lowercase using the `.lower()` method and then print the result.
 
-## Constraints
+## Example
 
-> TODO: List language/library/runtime constraints.
+```text
+Input:
+HELLO
 
-## Examples
+Output:
+hello
+```
 
-> TODO: Provide input/output examples.
+```text
+Input:
+This Is CS50P
+
+Output:
+this is cs50p
+```

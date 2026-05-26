@@ -1,13 +1,26 @@
 # Specification
 
-## Requirements
+Write a Python program that asks the user for a number and prints the square of that number.
 
-> TODO: List the explicit requirements the student's program must satisfy.
+The program should:
+- Accept numeric input from the user
+- Calculate the square using the `**` operator
+- Display the result clearly
 
-## Constraints
+## Example
 
-> TODO: List language/library/runtime constraints.
+```text
+Input:
+5
 
-## Examples
+Output:
+25
+```
 
-> TODO: Provide input/output examples.
+```text
+Input:
+2.5
+
+Output:
+6.25
+```

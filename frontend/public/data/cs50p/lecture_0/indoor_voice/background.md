@@ -1,3 +1,5 @@
-# Background — Indoor Voice
+# Background
 
-> TODO: Replace with a short paragraph (2-4 sentences) explaining the concept students are learning by solving this problem.
+Strings are one of the most commonly used data types in Python. Python provides several built-in string methods that allow programmers to modify and work with text easily.
+
+One useful string method is `.lower()`, which converts all uppercase letters in a string to lowercase. In this problem, students will practice taking input from the user and transforming text using string methods.
