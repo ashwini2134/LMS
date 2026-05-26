@@ -21,10 +21,6 @@ const Login = lazy(
   () => import("./pages/Login")
 );
 
-const ProblemPage = lazy(
-  () => import("./pages/ProblemPage")
-);
-
 const ProjectPage = lazy(
   () => import("./pages/ProjectPage")
 );
@@ -186,13 +182,6 @@ export default function App() {
           <Route
             path="course/:slug/lecture/:number/project/:projectId"
             element={<CodingProjectPage />}
-          />
-
-          {/* Problems */}
-
-          <Route
-            path="problem/:id"
-            element={<ProblemPage />}
           />
 
         </Route>

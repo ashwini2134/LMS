@@ -1,102 +1,22 @@
 import { useEffect, useState } from "react";
-import { NavLink, Outlet, useLocation } from "react-router-dom";
+import { NavLink, Outlet } from "react-router-dom";
 import { useAuth } from "./auth";
-import { api, type Course, type ProblemSummary } from "./api";
+import { api, type Course } from "./api";
 
-function groupByWeek(problems: ProblemSummary[]): [string, ProblemSummary[]][] {
-  const map = new Map<string, ProblemSummary[]>();
-  for (const p of problems) {
-    const list = map.get(p.week_label) ?? [];
-    list.push(p);
-    map.set(p.week_label, list);
-  }
-  return [...map.entries()];
-}
-
-function CourseNavItem({
-  course,
-  autoExpand,
-}: {
-  course: Course;
-  autoExpand: boolean;
-}) {
-  const [open, setOpen] = useState(autoExpand);
-  const [problems, setProblems] = useState<ProblemSummary[] | null>(null);
-
-  useEffect(() => {
-    if (autoExpand) setOpen(true);
-  }, [autoExpand]);
-
-  useEffect(() => {
-    if (open && problems === null) {
-      api
-        .courseProblems(course.slug)
-        .then(setProblems)
-        .catch(() => setProblems([]));
-    }
-  }, [open, course.slug, problems]);
-
-  const weeks = problems ? groupByWeek(problems) : null;
-
+function CourseNavItem({ course }: { course: Course }) {
   return (
-    <div className="mb-3">
-      <button
-        type="button"
-        onClick={() => setOpen((o) => !o)}
-        aria-label={`${open ? "Collapse" : "Expand"} ${course.title}`}
-        className={`flex w-full items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-medium transition-all duration-200 border ${
-          open
+    <NavLink
+      to={`/course/${course.slug}`}
+      className={({ isActive }) =>
+        `flex w-full items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-medium transition-all duration-200 border mb-1 ${
+          isActive
             ? "bg-blue-600/15 text-blue-300 border-blue-500/30 shadow-sm"
             : "text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 border-transparent hover:border-slate-700/50"
-        }`}
-      >
-        <svg
-          className={`h-4 w-4 flex-shrink-0 transition-transform duration-200 ${
-            open ? "rotate-90" : ""
-          }`}
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth={3}
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-        </svg>
-        <span className="truncate flex-1 text-left">{course.title}</span>
-      </button>
-
-      {open && (
-        <div className="ml-4 border-l border-slate-700/60 pl-3 mt-2 pb-1 space-y-0.5">
-          {weeks === null ? (
-            <p className="py-2 px-3 text-xs text-slate-500">Loading…</p>
-          ) : weeks.length === 0 ? (
-            <p className="py-2 px-3 text-xs text-slate-500">No problems yet</p>
-          ) : (
-            weeks.map(([week, probs]) => (
-              <div key={week} className="mt-3 first:mt-1">
-                <p className="mb-2 text-[11px] font-semibold uppercase tracking-widest text-slate-600 px-3">
-                  {week}
-                </p>
-                {probs.map((p) => (
-                  <NavLink
-                    key={p.id}
-                    to={`/problem/${p.id}`}
-                    className={({ isActive }) =>
-                      `block truncate rounded px-3 py-2 text-xs transition-all duration-200 border ${
-                        isActive
-                          ? "bg-blue-600/20 text-blue-300 border-blue-500/30 font-medium shadow-sm"
-                          : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border-transparent hover:border-slate-700/30"
-                      }`
-                    }
-                  >
-                    {p.title}
-                  </NavLink>
-                ))}
-              </div>
-            ))
-          )}
-        </div>
-      )}
-    </div>
+        }`
+      }
+    >
+      <span className="truncate flex-1 text-left">{course.title}</span>
+    </NavLink>
   );
 }
 
@@ -119,10 +39,6 @@ export default function Shell() {
   const { user, logout } = useAuth();
   const [courses, setCourses] = useState<Course[]>([]);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const location = useLocation();
-
-  const courseMatch = location.pathname.match(/\/course\/([^/]+)/);
-  const activeCourseSlug = courseMatch?.[1] ?? null;
 
   useEffect(() => {
     api.courses().then(setCourses).catch(() => {});
@@ -232,7 +148,6 @@ export default function Shell() {
                   <CourseNavItem
                     key={course.id}
                     course={course}
-                    autoExpand={course.slug === activeCourseSlug}
                   />
                 ))}
               </>
