@@ -114,7 +114,7 @@ export default function CodingProjectPage() {
   async function runDynamicTests() {
     const base = import.meta.env.BASE_URL;
 
-    const testPath = `${base}data/${slug}/lecture_${number}/${projectId}/tests.js`;
+    const testPath = `${base}data/${slug}/lecture_${number}/${projectId}/tests.js?t=${Date.now()}`;
 
     const response = await fetch(testPath);
 
