@@ -1,26 +1,16 @@
 # Specification
 
-Write a Python program that asks the user for a number and prints the square of that number.
+Write a program that asks the user for a number and prints its square.
 
 The program should:
-- Accept numeric input from the user
-- Calculate the square using the `**` operator
-- Display the result clearly
+1. Take a number as input
+2. Calculate the square of the number
+3. Display the result
 
-## Example
+Example:
 
-```text
 Input:
 5
 
 Output:
 25
-```
-
-```text
-Input:
-2.5
-
-Output:
-6.25
-```

@@ -1,7 +1,7 @@
 # Hints
 
 - Use the `input()` function to get a number from the user.
-- Convert the input into a numeric type using `int()` or `float()`.
-- Remember that squaring means multiplying a number by itself.
-- Python provides the `**` operator for exponentiation.
-- Print the final result using `print()`.
+- Convert the input using `int()` or `float()`.
+- To square a number, multiply it by itself.
+- You can also use the `**` operator.
+- Print the result using `print()`.
