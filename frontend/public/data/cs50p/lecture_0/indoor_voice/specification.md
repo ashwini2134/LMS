@@ -1,23 +1,24 @@
 # Specification
 
-Write a Python program that asks the user to type text.
+Write a program that asks the user to enter text and prints the same text in lowercase.
 
-The program should convert the text to lowercase using the `.lower()` method and then print the result.
+The program should:
+1. Take a string as input
+2. Convert the text to lowercase using `.lower()`
+3. Display the converted text
 
-## Example
+Example:
 
-```text
 Input:
 HELLO
 
 Output:
 hello
-```
 
-```text
+Another Example:
+
 Input:
-This Is CS50P
+Welcome To Python
 
 Output:
-this is cs50p
-```
+welcome to python

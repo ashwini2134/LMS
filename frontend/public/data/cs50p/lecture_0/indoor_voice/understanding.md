@@ -2,8 +2,9 @@
 
 Before attempting this problem, students should understand:
 
-- How to use the `input()` function
-- What strings are in Python
-- How string methods work
-- How to use `.lower()` to convert text to lowercase
-- How to print output using `print()`
+- How to take input using `input()`
+- How to store values in variables
+- Arithmetic operators in Python
+- Conditional statements (`if`, `elif`, `else`)
+- Difference between integers and floating-point numbers
+- How to print results using `print()`
