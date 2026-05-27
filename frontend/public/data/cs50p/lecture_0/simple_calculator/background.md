@@ -1,5 +1,7 @@
 # Background
 
-Calculators are a great way to practice arithmetic operations and conditional logic in Python. Programs can perform addition, subtraction, multiplication, and division using operators such as `+`, `-`, `*`, and `/`.
+A calculator program performs mathematical operations such as addition, subtraction, multiplication, and division. In Python, arithmetic operators like `+`, `-`, `*`, and `/` are used to perform these calculations.
 
-In this problem, students will create a simple calculator that takes two numbers and an operator from the user. The program must decide which operation to perform based on the operator entered. This introduces the use of conditionals like `if`, `elif`, and `else` in combination with arithmetic expressions.
+Programs often need to make decisions based on user input. Conditional statements such as `if`, `elif`, and `else` allow the program to choose which operation to perform depending on the operator entered by the user.
+
+Python also supports both integer and floating-point calculations. Division using `/` returns a floating-point result even when dividing whole numbers.

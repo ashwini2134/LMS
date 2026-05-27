@@ -2,8 +2,9 @@
 
 Before attempting this problem, students should understand:
 
-- How to take user input using `input()`
-- How to convert values using `int()` or `float()`
-- How arithmetic operators work in Python
-- How to use `if`, `elif`, and `else`
-- How to compare strings in conditions
+- How to take input using `input()`
+- How to store values in variables
+- Arithmetic operators in Python
+- Conditional statements (`if`, `elif`, `else`)
+- Difference between integers and floating-point numbers
+- How to print results using `print()`

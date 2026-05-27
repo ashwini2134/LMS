@@ -1,16 +1,15 @@
 # Specification
 
-Write a Python program that works like a simple calculator.
+Write a program that acts as a simple calculator.
 
 The program should:
-- Ask the user for two numbers
-- Ask the user for an arithmetic operator (`+`, `-`, `*`, or `/`)
-- Perform the correct calculation
-- Print the result
+1. Ask the user for two numbers
+2. Ask the user for an operator (`+`, `-`, `*`, or `/`)
+3. Perform the correct mathematical operation
+4. Display the result
 
-## Example
+Example:
 
-```text
 Input:
 10
 +
@@ -18,9 +17,9 @@ Input:
 
 Output:
 15
-```
 
-```text
+Another Example:
+
 Input:
 8
 /
@@ -28,4 +27,3 @@ Input:
 
 Output:
 4.0
-```
