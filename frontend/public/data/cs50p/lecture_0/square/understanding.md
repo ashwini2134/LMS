@@ -1,5 +1,9 @@
 # Understanding
 
-> TODO: Add the expected interaction / sample run for the student to compare against.
+Before solving this problem, students should understand:
 
-- TODO
+- How to take input from the user
+- How to store values in variables
+- Arithmetic operators in Python
+- The `**` exponentiation operator
+- Difference between integers and floating-point numbers

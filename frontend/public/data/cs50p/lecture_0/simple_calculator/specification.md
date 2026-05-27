@@ -1,13 +1,29 @@
 # Specification
 
-## Requirements
+Write a program that acts as a simple calculator.
 
-> TODO: List the explicit requirements the student's program must satisfy.
+The program should:
+1. Ask the user for two numbers
+2. Ask the user for an operator (`+`, `-`, `*`, or `/`)
+3. Perform the correct mathematical operation
+4. Display the result
 
-## Constraints
+Example:
 
-> TODO: List language/library/runtime constraints.
+Input:
+10
++
+5
 
-## Examples
+Output:
+15
 
-> TODO: Provide input/output examples.
+Another Example:
+
+Input:
+8
+/
+2
+
+Output:
+4.0

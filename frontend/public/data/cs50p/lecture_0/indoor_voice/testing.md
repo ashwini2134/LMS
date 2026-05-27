@@ -1,5 +1,19 @@
 # Testing
 
-> TODO: Describe how to run tests locally.
+Input:
+HELLO
 
-- TODO
+Expected Output:
+hello
+
+Input:
+Python IS Fun
+
+Expected Output:
+python is fun
+
+Input:
+CS50P
+
+Expected Output:
+cs50p

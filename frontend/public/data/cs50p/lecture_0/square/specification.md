@@ -1,13 +1,16 @@
 # Specification
 
-## Requirements
+Write a program that asks the user for a number and prints its square.
 
-> TODO: List the explicit requirements the student's program must satisfy.
+The program should:
+1. Take a number as input
+2. Calculate the square of the number
+3. Display the result
 
-## Constraints
+Example:
 
-> TODO: List language/library/runtime constraints.
+Input:
+5
 
-## Examples
-
-> TODO: Provide input/output examples.
+Output:
+25
