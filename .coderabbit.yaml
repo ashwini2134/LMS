@@ -1,0 +1,47 @@
+# .coderabbit.yaml
+language: en
+early_access: false
+reviews:
+  profile: chill  # 'assertive' floods PRs with noise; 'chill' surfaces real issues
+  request_changes_workflow: true  # require resolution before approval
+  high_level_summary: true
+  poem: false  # turn off the cutesy poems
+  review_status: true
+  collapse_walkthrough: false
+  auto_review:
+    enabled: true
+    drafts: false  # don't burn tokens on drafts
+    base_branches:
+      - feature/cs50p-content
+      - develop
+      - main
+  path_filters:
+    - "!**/node_modules/**"
+    - "!**/dist/**"
+    - "!frontend/public/static/images/**"
+  path_instructions:
+    - path: "frontend/src/**/*.{ts,tsx}"
+      instructions: |
+        This is React 19 + Vite + TypeScript. Strict rules:
+        - Flag any hardcoded path checks (e.g., code.includes("keyword")) as suspicious — we had a fake grader bug from this pattern
+        - Flag any use of localStorage for auth tokens without comment acknowledging it's temporary
+        - Always require error handling for fetch() calls
+        - Use import.meta.env.BASE_URL for asset paths, not hardcoded "/"
+        - No new browser-storage APIs without flagging
+    - path: "frontend/public/data/**/*.json"
+      instructions: |
+        These are content files for the LMS. Check:
+        - Valid JSON syntax (will break the page if invalid)
+        - quiz.json: no "TODO: Replace…" placeholders should remain
+        - problems.json: every problem has id, title, description
+    - path: "frontend/public/data/**/*.md"
+      instructions: |
+        Lecture/problem content. Flag:
+        - Files that are just "TODO" placeholders
+        - Broken markdown links
+        - Files under 50 characters (probably stubs)
+    - path: ".github/workflows/**"
+      instructions: |
+        Deployment workflow. Be extra cautious — bad changes break the deploy.
+chat:
+  auto_reply: true
