@@ -76,6 +76,24 @@ To add a problem to CS50 Python lecture 3:
 - Don't commit `node_modules/`, lockfiles for tools we don't use, or auto-generated build output.
 - Don't reformat unrelated code in a PR. Reformat-only PRs are fine; mixing is not.
 
+## Testing
+
+We use [Vitest](https://vitest.dev/) for our testing framework. Tests are co-located with the files they test (e.g. `api.test.ts` for `api.ts`).
+To run the tests, navigate to the `frontend` folder and run:
+```bash
+npm run test
+```
+All new utility functions or features should have accompanying unit tests.
+
+## Mentor Architecture
+
+The AI Mentor feature is currently implemented entirely on the frontend via a local mock in `api.ts` (the `chat` method).
+- **Current Behavior:** It detects common Python mistakes using simple pattern matching on `_studentCode` (e.g. checking for missing colons or explicit boolean comparison). If no specific mistake is caught, it responds with a randomly selected Socratic hint.
+- **Future Integration:** To integrate a real LLM (like Gemini or OpenAI):
+  1. Replace the local `chat` method logic with a `fetch` call to a backend endpoint.
+  2. Send the `problemId`, the user's `message`, their `_studentCode`, and the `existing` chat history as context in the prompt.
+  3. Ensure the LLM system prompt enforces a Socratic teaching style, just like the current hardcoded hints do.
+
 ## When in doubt
 
 Ask in the team chat before opening the PR. Cheaper than a contentious review.
