@@ -1,0 +1,39 @@
+[
+  {
+    "id": "emojize",
+    "title": "Emojize",
+    "description": "Implement a program that prompts the user for text and outputs it with emoji codes converted to actual emojis using the `emoji` library.\n\n**Examples:**\n```\nInput: Hello :grinning_face_with_smiling_eyes:\nOutput: Hello 😄\n```\n```\nInput: I love :red_heart: Python\nOutput: I love ❤️ Python\n```\n\n**Constraints:**\n- Use the `emoji` library\n- Convert text like `:red_heart:` to actual emoji characters\n- Use `emoji.emojize()` function",
+    "check50_slug": "cs50/problems/2024/python/emojize",
+    "difficulty": "easy",
+    "common_mistakes": [
+      "Not installing the emoji library first",
+      "Using incorrect emoji code names",
+      "Not using the correct emoji.emojize() syntax"
+    ]
+  },
+  {
+    "id": "itunes",
+    "title": "iTunes",
+    "description": "Implement a program that prompts the user for a search query and uses the iTunes API to search for songs.\n\n**Examples:**\n```\nHow many results? 5\nSearch term? Drake\n[displays 5 songs by Drake with title, artist, album]\n```\n\n**Constraints:**\n- Use the `requests` library to make HTTP requests\n- Use the iTunes API: https://itunes.apple.com/search?entity=song&limit=LIMIT&term=TERM\n- Display the song title, artist, and album name\n- Handle API requests gracefully",
+    "check50_slug": "cs50/problems/2024/python/itunes",
+    "difficulty": "medium",
+    "common_mistakes": [
+      "Not using the correct iTunes API endpoint",
+      "Forgetting to handle JSON responses from the API",
+      "Not parsing the API results correctly",
+      "Not handling network errors"
+    ]
+  },
+  {
+    "id": "json_demo",
+    "title": "Pytunes",
+    "description": "Implement a program that reads and displays data from a JSON file using the `json` library.\n\n**Specification:**\n- Read a JSON file containing song data\n- Display songs in a formatted table\n- Sort songs by various criteria (artist, title, etc.)\n\n**Constraints:**\n- Use the `json` library to parse JSON\n- Handle FileNotFoundError if file doesn't exist\n- Provide meaningful output formatting",
+    "check50_slug": "cs50/problems/2024/python/pytunes",
+    "difficulty": "easy",
+    "common_mistakes": [
+      "Not using json.load() correctly",
+      "Not handling FileNotFoundError",
+      "Trying to iterate over JSON objects incorrectly"
+    ]
+  }
+]

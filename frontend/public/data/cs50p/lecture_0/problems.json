@@ -1,53 +1,69 @@
 [
   {
-    "id": "hello_world",
-    "title": "Hello World",
-    "description": "Write a Python program that prints \"Hello, World!\" to the screen.\n\n**Sample Output:**\nHello, World!\n\n**Constraints:**\nUse the `print()` function.",
-    "check50_slug": "content/cs50p/lecture_0/test_hello_world.py",
-    "difficulty": "Easy",
+    "id": "hello",
+    "title": "Hello",
+    "description": "Implement a program that prompts the user for their name and prints a personalised greeting.\n\n**Expected Behavior:**\n```\nWhat's your name?\nBruno\nHello, Bruno!\n```\n\n**Constraints:**\n- Use the `input()` function to get user input\n- Use `print()` to display output\n- Your program should work for any name entered",
+    "check50_slug": "cs50/problems/2024/python/hello",
+    "difficulty": "easy",
     "common_mistakes": [
-      "Forgetting quotation marks around the string"
+      "Forgetting to store the result of input() in a variable",
+      "Not using the + operator or f-strings to concatenate strings",
+      "Including extra spaces in the output that don't match the expected format",
+      "Forgetting quotation marks around the greeting string"
     ]
   },
   {
-    "id": "sum",
-    "title": "Sum of Two Numbers",
-    "description": "Write a program that takes two numbers as input and prints their sum.\n\n**Sample Input:**\n3\n5\n\n**Sample Output:**\n8\n\n**Constraints:**\nUse the `input()` function and `int()` to convert.",
-    "check50_slug": "content/cs50p/lecture_0/test_sum.py",
-    "difficulty": "Easy",
+    "id": "einstein",
+    "title": "Einstein",
+    "description": "Implement a program that prompts the user for mass in kilograms and outputs the equivalent energy in joules using Einstein's mass-energy equivalence formula: E = mc²\n\n**Expected Behavior:**\n```\nMass (in kg): 1\n90000000000000000 joules\n```\n\n**Constraints:**\n- The speed of light (c) is 300,000,000 m/s (or 3 × 10⁸)\n- Use `input()` to get mass from the user\n- Convert the input string to a number\n- Use `print()` to display the energy result",
+    "check50_slug": "cs50/problems/2024/python/einstein",
+    "difficulty": "easy",
     "common_mistakes": [
-      "Forgetting to cast input() to an int"
+      "Using ^ instead of ** for exponentiation",
+      "Forgetting to convert the input string to an int or float",
+      "Using the wrong value for the speed of light",
+      "Printing the result with decimal places when the expected output is an integer"
     ]
   },
   {
-    "id": "even_odd",
-    "title": "Even or Odd",
-    "description": "Write a program that takes a number as input and prints \"Even\" if it is even, or \"Odd\" if it is odd.\n\n**Sample Input:**\n4\n\n**Sample Output:**\nEven\n\n**Constraints:**\nUse the modulo operator `%`.",
-    "check50_slug": "content/cs50p/lecture_0/test_even_odd.py",
-    "difficulty": "Easy",
+    "id": "playback_speed",
+    "title": "Playback Speed",
+    "description": "Implement a program that prompts the user for a playback speed and outputs the prompt with emoji substitutions.\n\n**Expected Behavior:**\n```\nHow fast, in percent, was the playback speed?\n75\n0.75x\n```\n\n**Constraints:**\n- Prompt the user: \"How fast, in percent, was the playback speed?\"\n- Convert the input to a float and divide by 100\n- Output the result followed by 'x'\n- Handle valid numerical input only",
+    "check50_slug": "cs50/problems/2024/python/playback",
+    "difficulty": "easy",
     "common_mistakes": [
-      "Using division (/) instead of modulo (%)"
+      "Forgetting to convert the input to a number (int or float)",
+      "Forgetting to divide by 100 to convert percentage to decimal",
+      "Not including the 'x' suffix in the output",
+      "Using the wrong string formatting method"
     ]
   },
   {
-    "id": "square",
-    "title": "Square of a Number",
-    "description": "Write a program that takes a number as input and prints its square.\n\n**Sample Input:**\n6\n\n**Sample Output:**\n36\n\n**Constraints:**\nUse the `**` operator or multiply the number by itself.",
-    "check50_slug": "content/cs50p/lecture_0/test_square.py",
-    "difficulty": "Easy",
+    "id": "tip_calculator",
+    "title": "Tip Calculator",
+    "description": "Implement a program that calculates the tip and total for a restaurant bill.\n\n**Expected Behavior:**\n```\nCost of meal: 50.00\nTip percent: 15\nTip: $7.50\nTotal: $57.50\n```\n\n**Constraints:**\n- Prompt for the cost of the meal (as a float)\n- Prompt for the tip percentage (as an integer)\n- Calculate and display the tip amount\n- Calculate and display the total amount (meal + tip)\n- Format currency to 2 decimal places",
+    "check50_slug": "cs50/problems/2024/python/tip",
+    "difficulty": "easy",
     "common_mistakes": [
-      "Using ^ instead of **"
+      "Forgetting to convert inputs to numbers",
+      "Calculating tip as a percentage incorrectly (e.g., tip = cost * tip_percent instead of cost * tip_percent / 100)",
+      "Not formatting currency output to exactly 2 decimal places",
+      "Forgetting the $ sign in the output"
     ]
   },
   {
-    "id": "simple_calculator",
-    "title": "Simple Calculator",
-    "description": "Write a program that takes two numbers and an operator (+, -, *, /) as input and prints the result.\n\n**Sample Input:**\n10\n5\n+\n\n**Sample Output:**\n15\n\n**Constraints:**\nHandle all four basic operators.",
-    "check50_slug": "content/cs50p/lecture_0/test_calculator.py",
-    "difficulty": "Easy",
+    "id": "indoor_voice",
+    "title": "Indoor Voice",
+    "description": "Implement a program that converts text entered by the user to lowercase.\n\n**Expected Behavior:**\n```\nShout: HELLO\nhello\n```\n\n**Constraints:**\n- Prompt the user: \"Shout: \"\n- Convert the input to lowercase\n- Print the result",
+    "check50_slug": "cs50/problems/2024/python/indoor",
+    "difficulty": "easy",
     "common_mistakes": [
-      "Not handling division properly"
+      "Using the wrong string method (e.g., lower instead of .lower())",
+      "Forgetting to call the method on the string",
+      "Attempting to print without converting to lowercase first"
     ]
+  }
+]
   },
   {
     "id": "indoor_voice",

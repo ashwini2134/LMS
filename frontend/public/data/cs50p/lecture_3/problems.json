@@ -1,0 +1,41 @@
+[
+  {
+    "id": "fuel_gauge",
+    "title": "Fuel Gauge",
+    "description": "Implement a program that prompts the user for a fuel level (as a fraction like 1/4) and outputs a fuel gauge.\n\n**Specification:**\n- Output \"E\" (empty) if the gauge is 1% or lower\n- Output \"F\" (full) if the gauge is 99% or higher\n- Otherwise output the percentage rounded to the nearest integer followed by \"%\"\n- If the user enters invalid input (denominator is 0, numerator > denominator, or non-integer), raise a ValueError\n\n**Examples:**\n```\nFuel: 3/4\n75%\n```\n```\nFuel: 1/4\n25%\n```\n```\nFuel: 1/100\nE\n```",
+    "check50_slug": "cs50/problems/2024/python/fuel",
+    "difficulty": "easy",
+    "common_mistakes": [
+      "Not handling ValueError for invalid input (division by zero)",
+      "Rounding incorrectly (should be to nearest integer, not floor or ceil)",
+      "Not parsing the fraction string correctly",
+      "Forgetting to re-prompt the user after an exception"
+    ]
+  },
+  {
+    "id": "numb3rs",
+    "title": "numb3rs",
+    "description": "Implement a program that prompts the user for an IPv4 address and validates it. An IPv4 address consists of four numbers, each between 0 and 255, separated by dots.\n\n**Examples:**\n```\nIPv4 Address: 192.168.1.1\nValid\n```\n```\nIPv4 Address: 256.1.1.1\nInvalid\n```\n```\nIPv4 Address: 1.1.1\nInvalid\n```\n\n**Constraints:**\n- Each number must be between 0 and 255\n- There must be exactly 4 numbers\n- Raise ValueError for invalid input\n- Use a try/except block to handle exceptions",
+    "check50_slug": "cs50/problems/2024/python/numb3rs",
+    "difficulty": "easy",
+    "common_mistakes": [
+      "Not checking that each part is between 0 and 255",
+      "Not checking that there are exactly 4 parts",
+      "Not handling non-integer input",
+      "Not using a try/except block to catch exceptions"
+    ]
+  },
+  {
+    "id": "outdated",
+    "title": "Outdated",
+    "description": "Implement a program that converts a date from Month Day, Year format to YYYY-MM-DD format.\n\n**Examples:**\n```\nDate: January 1, 2000\n2000-01-01\n```\n```\nDate: December 25, 2023\n2023-12-25\n```\n\n**Constraints:**\n- Prompt for a date in \"Month Day, Year\" format\n- Convert to \"YYYY-MM-DD\" format\n- If the date is invalid, re-prompt the user\n- Use a dictionary to map month names to numbers\n- Handle ValueError if the day or year is not a valid integer",
+    "check50_slug": "cs50/problems/2024/python/outdated",
+    "difficulty": "easy",
+    "common_mistakes": [
+      "Not handling month names that don't exist in the dictionary",
+      "Not padding single-digit months and days with zeros",
+      "Not handling ValueError when day or year is not an integer",
+      "Not re-prompting after an invalid date"
+    ]
+  }
+]
