@@ -11,14 +11,14 @@ export function runTests(code) {
   if (!normalized.includes("input(")) {
     return { passed: false, message: "❌ Expected code to read input with input()." };
   }
-  if (!normalized.includes(".isupper(") && !normalized.includes(".islower(")) {
-    return { passed: false, message: "❌ Expected code to detect uppercase letters (e.g. .isupper())." };
+  if (!normalized.includes("calories:")) {
+    return { passed: false, message: "❌ Expected code to print 'Calories: <n>'." };
   }
-  if (!normalized.includes('"_"') && !normalized.includes("'_'")) {
-    return { passed: false, message: "❌ Expected code to insert an underscore before each capitalized word." };
+  if (!normalized.includes(".title(") && !normalized.includes(".lower(") && !normalized.includes(".upper(") && !normalized.includes(".capitalize(")) {
+    return { passed: false, message: "❌ Expected case-insensitive handling of the fruit name." };
   }
   if (!normalized.includes("print(")) {
-    return { passed: false, message: "❌ Expected code to print the snake_case result." };
+    return { passed: false, message: "❌ Expected code to print the result with print()." };
   }
   return { passed: true, message: "✅ All test cases passed!" };
 }

@@ -1,4 +1,4 @@
-# TODO: implement.
-def solve():
-    """TODO: implement per specification.md."""
-    pass
+# camel.py
+# Prompt for a camelCase variable name and output the snake_case equivalent.
+
+# TODO: implement

@@ -1,3 +1,4 @@
+# REFERENCE SOLUTION - DO NOT SHIP TO STUDENTS
 name = input("camelCase: ")
 result = ""
 for c in name:
