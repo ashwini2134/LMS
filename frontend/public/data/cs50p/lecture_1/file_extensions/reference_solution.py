@@ -1,3 +1,4 @@
+# REFERENCE SOLUTION - DO NOT SHIP TO STUDENTS
 filename = input("File name: ").strip().lower()
 types = {
     ".gif": "image/gif",
