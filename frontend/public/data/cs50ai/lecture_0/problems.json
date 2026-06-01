@@ -2,25 +2,28 @@
   {
     "id": "degrees",
     "title": "Degrees of Separation",
-    "description": "Write a program that determines how many \"degrees of separation\" apart two actors are using BFS through a movie database. Two actors are connected if they both starred in a movie together.\n\n**Example:**\n```\nName: Emma Watson\nName: Jennifer Lawrence\n3 degrees of separation.\n1: Emma Watson and Brendan Gleeson starred in Harry Potter and the Order of the Phoenix\n2: Brendan Gleeson and Michael Fassbender starred in Centurion\n3: Michael Fassbender and Jennifer Lawrence starred in X-Men: First Class\n```",
+    "description": "Implement a program that determines how many degrees of separation apart two actors are using BFS (Breadth-First Search) through a movie database. Two actors are connected if they both starred in a movie together.\n\n**Example:**\n```\nName: Emma Watson\nName: Jennifer Lawrence\n3 degrees of separation.\n1: Emma Watson and Brendan Gleeson starred in Harry Potter and the Order of the Phoenix\n2: Brendan Gleeson and Michael Fassbender starred in Centurion\n3: Michael Fassbender and Jennifer Lawrence starred in X-Men: First Class\n```\n\n**Constraints:**\n- Use BFS, not DFS (BFS guarantees shortest path)\n- Track visited nodes to avoid infinite loops\n- Load actor/movie data from database\n- Return None if no path exists",
     "check50_slug": "cs50/problems/2024/ai/degrees",
-    "difficulty": "Medium",
+    "difficulty": "medium",
     "common_mistakes": [
-      "Using DFS instead of BFS — BFS guarantees the shortest path",
+      "Using DFS instead of BFS - BFS guarantees the shortest path",
       "Not tracking visited nodes, causing infinite loops in cyclic graphs",
-      "Returning None when no path exists instead of an empty list"
+      "Forgetting to check if both actors exist before searching",
+      "Mutating the queue or visited set incorrectly"
     ]
   },
   {
     "id": "tictactoe",
-    "title": "Tic-Tac-Toe",
-    "description": "Implement an AI that plays Tic-Tac-Toe optimally using Minimax. The AI should never lose — it should always win or draw.\n\nYou must implement: `player(board)`, `actions(board)`, `result(board, action)`, `winner(board)`, `terminal(board)`, `utility(board)`, and `minimax(board)`.",
+    "title": "Tic-Tac-Toe with Minimax",
+    "description": "Implement an AI that plays Tic-Tac-Toe optimally using the Minimax algorithm. The AI should never lose - it should always win or draw.\n\n**Required Functions:**\n- player(board) - Returns which player's turn it is\n- actions(board) - Returns set of available moves\n- result(board, action) - Returns new board after move\n- winner(board) - Returns winner or None\n- terminal(board) - Returns True if game is over\n- utility(board) - Returns +1 (X wins), -1 (O wins), or 0 (tie)\n- minimax(board) - Returns optimal move using minimax algorithm\n\n**Constraints:**\n- Implement minimax recursively\n- Always return a new board, never mutate the original\n- Pruning is optional but recommended",
     "check50_slug": "cs50/problems/2024/ai/tictactoe",
-    "difficulty": "Medium",
+    "difficulty": "hard",
     "common_mistakes": [
-      "Not handling the terminal state check before recursing in minimax",
-      "Returning the wrong player (X vs O) from the player() function",
-      "Mutating the board in result() instead of returning a deep copy"
+      "Not checking terminal state before recursing in minimax",
+      "Returning the wrong player (X vs O)",
+      "Mutating the board in result() instead of returning a deep copy",
+      "Not implementing full minimax recursion",
+      "Incorrect utility values or winning conditions"
     ]
   }
 ]

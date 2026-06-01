@@ -1,0 +1,39 @@
+[
+  {
+    "id": "test_shirtsize",
+    "title": "Test Shirt Size",
+    "description": "Implement a program that takes a shirt size (XS, S, M, L, XL, XXL) and returns the price in dollars. Then write unit tests to verify the function works correctly.\n\n**Examples:**\n```\nShirt Size: M\nPrice: $25\n```\n\n**Constraints:**\n- Create a `shirtsize()` function that takes size and returns price\n- XS/S: $25, M/L: $30, XL/XXL: $35\n- Write tests using the `unittest` module\n- Test valid sizes and invalid sizes",
+    "check50_slug": "cs50/problems/2024/python/test_shirtsize",
+    "difficulty": "easy",
+    "common_mistakes": [
+      "Not writing tests for edge cases",
+      "Forgetting to assert both valid and invalid inputs",
+      "Not using self.assertEqual() correctly",
+      "Forgetting to inherit from unittest.TestCase"
+    ]
+  },
+  {
+    "id": "test_bank",
+    "title": "Test Bank",
+    "description": "Implement a `bank()` function that takes a greeting and returns the amount to withdraw based on the greeting. Write comprehensive unit tests.\n\n**Rules:**\n- If greeting starts with \"hello\": withdraw $0\n- If greeting starts with \"h\" (but not \"hello\"): withdraw $20\n- Otherwise: withdraw $100\n\n**Constraints:**\n- Make greeting comparison case-insensitive\n- Write at least 5 test cases\n- Use unittest.TestCase",
+    "check50_slug": "cs50/problems/2024/python/test_bank",
+    "difficulty": "easy",
+    "common_mistakes": [
+      "Not testing case-insensitive matching",
+      "Missing test cases for edge cases",
+      "Not using the correct unittest assertions"
+    ]
+  },
+  {
+    "id": "test_plates",
+    "title": "Test Plates",
+    "description": "Implement a `is_valid()` function that validates a vanity license plate. Then write unit tests.\n\n**Rules:**\n- Exactly 2-6 characters\n- Only uppercase letters and numbers\n- First two characters must be letters\n- Numbers must come after letters (no mixing)\n\n**Examples:**\n```\nValid: CS50, HELLO, A22BC\nInvalid: CS05O, AAA2AA, A2B\n```",
+    "check50_slug": "cs50/problems/2024/python/test_plates",
+    "difficulty": "medium",
+    "common_mistakes": [
+      "Not testing mixed letters and numbers correctly",
+      "Forgetting edge cases (too short, too long, etc.)",
+      "Not validating that numbers don't come before letters"
+    ]
+  }
+]

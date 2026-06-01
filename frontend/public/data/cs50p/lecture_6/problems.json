@@ -1,0 +1,22 @@
+[
+  {
+    "id": "lines",
+    "title": "Lines",
+    "description": "Implement a program that counts the number of lines in a Python file, excluding blank lines and comments.\n\n**Specification:**\n- Read a Python file specified as a command-line argument\n- Count lines of actual code\n- Ignore blank lines\n- Ignore lines with only comments (starting with #)\n- Return the count\n\n**Examples:**\n```\n$ python lines.py hello.py\n3\n```",
+    "check50_slug": "cs50/problems/2024/python/lines",
+    "difficulty": "easy",
+    "common_mistakes": [
+      "Counting blank lines",
+      "Not properly detecting comment-only lines",
+      "Not handling file not found errors",
+      "Counting comments at the end of code lines"
+    ]
+  },
+  {
+    "id": "scourgify",
+    "title": "Scourgify",
+    "description": "Implement a program that reads a CSV file and converts names from \"Last, First\" format to \"First Last\" format, writing the results to a new CSV file.\n\n**Input CSV format:**\n```\nLast,First\nSweigart,Al\nGaddis,Tony\n```\n\n**Output CSV format:**\n```\nFirst,Last\nAl Sweigart\nTony Gaddis\n```\n\n**Constraints:**\n- Take input and output filenames as command-line arguments\n- Use the csv module\n- Handle errors gracefully",
+    "check50_slug": "cs50/problems/2024/python/scourgify",
+    "difficulty": "easy",
+    "common_mistakes": [
+      "Not using csv.DictReader and csv.DictWriter correctly",\n      \"Forgetting to change column order (Last,First → First,Last)\",\n      \"Not writing the header row\",\n      \"Not handling FileNotFoundError\"\n    ]\n  },\n  {\n    \"id\": \"season\",\n    \"title\": \"Season\",\n    \"description\": \"Implement a program that prompts the user for a month (by name or number) and prints the corresponding season.\n\nSave the mapping in a CSV or JSON file and read it during program execution.\n\n**Seasons:**\n- December, January, February → Winter\n- March, April, May → Spring\n- June, July, August → Summer\n- September, October, November → Fall\n\n**Example:**\n```\nMonth: December\nWinter\n```\",\n    \"check50_slug\": \"cs50/problems/2024/python/season\",\n    \"difficulty\": \"easy\",\n    \"common_mistakes\": [\n      \"Not loading the season data from a file\",\n      \"Not handling case-insensitive month names\",\n      \"Not handling invalid month input\"\n    ]\n  }\n]\n

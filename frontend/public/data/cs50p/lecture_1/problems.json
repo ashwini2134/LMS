@@ -1,71 +1,39 @@
 [
   {
-    "id": "indoor",
-    "title": "Indoor Voice",
-    "description": "Write a program in Python that prompts the user for input and then outputs that same input in lowercase. Assume the user's input will be in English.",
-    "check50_slug": "cs50/problems/2022/python/indoor",
-    "difficulty": "easy",
-    "common_mistakes": [
-      "Forgetting to call input() to read user input",
-      "Calling str.lower() on the class instead of an instance",
-      "Not understanding that lower() returns a new string, it does not modify in place"
-    ]
-  },
-  {
-    "id": "playback",
-    "title": "Playback Speed",
-    "description": "Write a program that prompts the user for input and then outputs that same input, replacing each space with ... (three periods).",
-    "check50_slug": "cs50/problems/2022/python/playback",
-    "difficulty": "easy",
-    "common_mistakes": [
-      "Using split() and join() incorrectly",
-      "Replacing only the first space using str.replace with a count argument",
-      "Forgetting that replace() returns a new string"
-    ]
-  },
-  {
-    "id": "faces",
-    "title": "Making Faces",
-    "description": "Implement a function called convert that accepts a str as input and returns that same input with :) converted to the emoji and :( converted to the emoji. Then, in the same file, implement a function called main that prompts the user for a string of text, calls convert on that input, and prints the result.",
-    "check50_slug": "cs50/problems/2022/python/faces",
-    "difficulty": "easy",
-    "common_mistakes": [
-      "Not defining both main() and convert() as separate functions",
-      "Forgetting to call main() at the bottom of the file",
-      "Using the wrong emoji characters"
-    ]
-  },
-  {
     "id": "deep_thought",
     "title": "Deep Thought",
-    "description": "According to the Hitchhiker's Guide to the Galaxy, the answer to the Great Question of Life, the Universe and Everything is 42. Write a program that prompts the user for the answer to the Great Question. If the answer is 42 (or \"forty-two\" or \"forty two\"), output \"Yes, that's the answer!\". Otherwise output \"No\".\n\n**Example:**\n```\nWhat is the Answer to the Great Question of Life, the Universe, and Everything? 42\nYes, that's the answer!\n```",
+    "description": "According to the Hitchhiker's Guide to the Galaxy, the answer to the Great Question of Life, the Universe and Everything is 42.\n\nPrompt the user for the answer to the Great Question. If the answer is 42, output \"Yes, that's the answer!\". Otherwise output \"No\".\n\n**Examples:**\n```\nWhat is the Answer to the Great Question of Life, the Universe, and Everything? 42\nYes, that's the answer!\n```\n```\nWhat is the Answer to the Great Question of Life, the Universe, and Everything? 50\nNo\n```\n\n**Constraints:**\n- Accept the answer as an integer\n- Use conditional statements (if/else)",
     "check50_slug": "cs50/problems/2024/python/deep",
-    "difficulty": "Easy",
+    "difficulty": "easy",
     "common_mistakes": [
-      "Not handling the string variants (forty-two, forty two)",
-      "Case-sensitive comparison instead of case-insensitive"
+      "Comparing the input as a string instead of converting to int first",
+      "Forgetting to convert input() to an integer before comparison",
+      "Using == with the wrong data type"
     ]
   },
   {
     "id": "home_federal",
     "title": "Home Federal Savings Bank",
-    "description": "Prompt the user for a greeting. If it starts with \"hello\" (case-insensitive), output $0. If it starts with an \"h\" but not \"hello\", output $20. Otherwise output $100.\n\n**Example:**\n```\nGreeting: Hello, Newman\n$0\n```",
+    "description": "Prompt the user for a greeting. If it starts with \"hello\" (case-insensitive), output `$0`. If it starts with an \"h\" but not \"hello\", output `$20`. Otherwise output `$100`.\n\n**Examples:**\n```\nGreeting: Hello, Newman\n$0\n```\n```\nGreeting: hi, there\n$20\n```\n```\nGreeting: Good morning\n$100\n```\n\n**Constraints:**\n- Use the `.lower()` method to handle case-insensitivity\n- Use `.startswith()` to check the beginning of a string\n- Use `elif` for multiple conditions",
     "check50_slug": "cs50/problems/2024/python/bank",
-    "difficulty": "Easy",
+    "difficulty": "easy",
     "common_mistakes": [
-      "Not stripping leading whitespace before checking the greeting",
-      "Using startswith incorrectly without lowercasing first"
+      "Forgetting to call .lower() before checking startswith()",
+      "Checking if the string equals 'hello' instead of checking if it starts with 'hello'",
+      "Not stripping leading/trailing whitespace from input"
     ]
   },
   {
     "id": "file_extensions",
     "title": "File Extensions",
-    "description": "Prompt the user for the name of a file and output that file's media type based on the extension. Handle: .gif → image/gif, .jpg/.jpeg → image/jpeg, .png → image/png, .pdf → application/pdf, .txt → text/plain, .zip → application/zip. Anything else outputs application/octet-stream.",
+    "description": "Prompt the user for the name of a file and output that file's media type based on its extension.\n\n**Supported extensions:**\n- `.gif` → `image/gif`\n- `.jpg`, `.jpeg` → `image/jpeg`\n- `.png` → `image/png`\n- `.pdf` → `application/pdf`\n- `.txt` → `text/plain`\n- `.zip` → `application/zip`\n- Anything else → `application/octet-stream`\n\n**Examples:**\n```\nFile name: photo.jpg\nimage/jpeg\n```\n```\nFile name: document.pdf\napplication/pdf\n```\n```\nFile name: mystery.bin\napplication/octet-stream\n```\n\n**Constraints:**\n- Make file extension checking case-insensitive",
     "check50_slug": "cs50/problems/2024/python/extensions",
-    "difficulty": "Easy",
+    "difficulty": "easy",
     "common_mistakes": [
-      "Not lowercasing the extension before comparison",
-      "Missing the .jpeg alias for .jpg"
+      "Forgetting to convert the file extension to lowercase",
+      "Missing the `.jpeg` alias for `.jpg`",
+      "Not using the correct media type for each extension",
+      "Forgetting to handle the default case (application/octet-stream)"
     ]
   }
 ]
