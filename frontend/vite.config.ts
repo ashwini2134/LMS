@@ -7,8 +7,10 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+
+  base: "/LMS/",
   test: {
-    environment: "jsdom",
+    environment: "stage",
   },
-  base: "/",
+ 
 });
