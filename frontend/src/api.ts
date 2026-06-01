@@ -46,16 +46,16 @@ function parseToken(t: string): { id: number; email: string; name: string } | nu
 }
 
 // ── Chat storage ─────────────────────────────────────────────────────────────
-function getChatHistory(problemId: number): ChatMsg[] {
+function getChatHistory(problemId: number | string): ChatMsg[] {
   try {
-    const all: Record<number, ChatMsg[]> = JSON.parse(localStorage.getItem(CHAT_KEY) ?? "{}");
-    return all[problemId] ?? [];
+    const all: Record<string, ChatMsg[]> = JSON.parse(localStorage.getItem(CHAT_KEY) ?? "{}");
+    return all[String(problemId)] ?? [];
   } catch { return []; }
 }
-function saveChatHistory(problemId: number, msgs: ChatMsg[]) {
+function saveChatHistory(problemId: number | string, msgs: ChatMsg[]) {
   try {
-    const all: Record<number, ChatMsg[]> = JSON.parse(localStorage.getItem(CHAT_KEY) ?? "{}");
-    all[problemId] = msgs;
+    const all: Record<string, ChatMsg[]> = JSON.parse(localStorage.getItem(CHAT_KEY) ?? "{}");
+    all[String(problemId)] = msgs;
     localStorage.setItem(CHAT_KEY, JSON.stringify(all));
   } catch { /* ignore */ }
 }
@@ -220,18 +220,40 @@ export const api = {
   },
 
   // ── Mentor chat (localStorage-based Socratic hints, no LLM call) ──────────
-  chat: async (problemId: number, message: string, _studentCode: string | null): Promise<{ reply: string }> => {
+  chat: async (problemId: number | string, message: string, _studentCode: string | null): Promise<{ reply: string }> => {
     await new Promise((r) => setTimeout(r, 600));
-    const hints = [
-      "What does your code do step by step? Walk me through it.",
-      "What is the expected output for the sample input? Does your code produce that?",
-      "Have you checked the edge cases — what happens with unexpected input?",
-      "Try reading the problem description again. What is it specifically asking for?",
-      "Can you simplify your approach? What is the minimum code needed to pass?",
-      "What Python built-ins might help here? Check the docs for `str`, `int`, `list`.",
-      "Good thinking! Now verify your logic handles every constraint in the problem.",
-    ];
-    const reply = hints[Math.floor(Math.random() * hints.length)];
+    
+    let reply = "";
+    
+    // Simple logic to detect common Python mistakes and suggest targeted questions
+    if (_studentCode) {
+      if (_studentCode.includes("== True") || _studentCode.includes("== False")) {
+        reply = "I noticed you're using `== True` in your condition. In Python, boolean expressions already evaluate to True or False. Can you simplify the condition and see if it's still correct?";
+      } else if (_studentCode.includes("def convert(text):") && _studentCode.includes("print(")) {
+        reply = "The convert function currently prints the transformed text. The specification asks the function to return a value. How could you modify the function so the caller decides when to print?";
+      } else if (_studentCode.includes("print(") && !_studentCode.includes("return")) {
+        reply = "Your function is printing a value, but does the problem expect the function to return a value instead? What happens if another function tries to use the result?";
+      } else if (/\bdef\s+\w+\s*\(/.test(_studentCode) && !_studentCode.includes("return")) {
+        reply = "I can see you calculate the result, but what value does the function send back to the caller? Check whether a return statement is needed.";
+      } else if (/\bdef \w+\(.*\)(?!:)/.test(_studentCode)) {
+        reply = "Take a close look at your function definition. Are you missing a colon at the end?";
+      } else if (/\bif \w+ = /.test(_studentCode)) {
+        reply = "I see a single equals sign (`=`) inside an `if` statement. What's the difference between assignment and comparison in Python?";
+      }
+    }
+
+    if (!reply) {
+      const hints = [
+        "What does your code do step by step? Walk me through it.",
+        "What is the expected output for the sample input? Does your code produce that?",
+        "Have you checked the edge cases — what happens with unexpected input?",
+        "Try reading the problem description again. What is it specifically asking for?",
+        "Can you simplify your approach? What is the minimum code needed to pass?",
+        "What Python built-ins might help here? Check the docs for `str`, `int`, `list`.",
+        "Good thinking! Now verify your logic handles every constraint in the problem.",
+      ];
+      reply = hints[Math.floor(Math.random() * hints.length)];
+    }
 
     const existing = getChatHistory(problemId);
     const userMsg: ChatMsg  = { role: "user",   content: message, created_at: new Date().toISOString() };
@@ -241,7 +263,7 @@ export const api = {
     return { reply };
   },
 
-  chatHistory: async (problemId: number): Promise<ChatMsg[]> => {
+  chatHistory: async (problemId: number | string): Promise<ChatMsg[]> => {
     return getChatHistory(problemId);
   },
 };

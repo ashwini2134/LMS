@@ -9,4 +9,8 @@ export default defineConfig({
   ],
 
   base: "/LMS/",
+  test: {
+    environment: "stage",
+  },
+ 
 });

@@ -3,10 +3,11 @@ import { NavLink, Outlet } from "react-router-dom";
 import { useAuth } from "./auth";
 import { api, type Course } from "./api";
 
-function CourseNavItem({ course }: { course: Course }) {
+function CourseNavItem({ course, onClick }: { course: Course, onClick?: () => void }) {
   return (
     <NavLink
       to={`/course/${course.slug}`}
+      onClick={onClick}
       className={({ isActive }) =>
         `flex w-full items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-medium transition-all duration-200 border mb-1 ${
           isActive
@@ -148,6 +149,7 @@ export default function Shell() {
                   <CourseNavItem
                     key={course.id}
                     course={course}
+                    onClick={() => setSidebarOpen(false)}
                   />
                 ))}
               </>

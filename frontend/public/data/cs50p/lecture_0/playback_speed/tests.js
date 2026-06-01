@@ -1,9 +1,6 @@
 export function runTests(code) {
-  // Remove comment lines completely
-  const cleanCode = code
-    .split("\n")
-    .filter(line => !line.trim().startsWith("#"))
-    .join("\n");
+  // Remove comments
+  const cleanCode = code.replace(/#.*$/gm, "");
 
   // Normalize code
   const normalized = cleanCode
@@ -36,18 +33,16 @@ export function runTests(code) {
     };
   }
 
-  // Check replacing ... with spaces
+  // Check replacing spaces with ...
   const hasPlaybackLogic =
-    normalized.includes('replace("...","")') ||
-    normalized.includes("replace('...','')") ||
-    normalized.includes('replace("..."," ")') ||
-    normalized.includes("replace('...',' ')");
+    normalized.includes('replace(" ","...")') ||
+    normalized.includes("replace(' ','...')");
 
   if (!hasPlaybackLogic) {
     return {
       passed: false,
       message:
-        '❌ Expected code to replace "..." with spaces.',
+        '❌ Expected code to replace spaces with "...".',
     };
   }
 
