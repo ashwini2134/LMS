@@ -1,7 +1,37 @@
 [
   {
-    "id": "format",
-    "title": "Format",
-    "description": "Implement a program that reads name(s) from a text file and outputs them in \"Last, First\" format.\n\n**Input format (name.txt):**\n```\nAl Sweigart\nTony Gaddis\n```\n\n**Output:**\n```\nSweigart, Al\nGaddis, Tony\n```\n\n**Constraints:**\n- Use regular expressions to split names\n- Handle names with multiple parts\n- Read from and write to files",
-    "check50_slug": "cs50/problems/2024/python/format",
-    "difficulty": "easy",\n    \"common_mistakes\": [\n      \"Not using regex correctly to parse names\",\n      \"Not handling edge cases (single name, multiple spaces)\",\n      \"Incorrect regex pattern matching\"\n    ]\n  },\n  {\n    \"id\": \"validate\",\n    \"title\": \"Validate\",\n    \"description\": \"Implement a program that validates email addresses and phone numbers using regular expressions.\n\n**Email validation:**\n- Must have exactly one @ symbol\n- Must have at least one character before @\n- Must have domain with . and top-level domain\n\n**Phone validation:**\n- Accepts formats like: (123) 456-7890, 123-456-7890, 1234567890\n\n**Constraints:**\n- Use the `re` module\n- Write comprehensive regex patterns\n- Test multiple formats\",\n    \"check50_slug\": \"cs50/problems/2024/python/validate\",\n    \"difficulty\": \"medium\",\n    \"common_mistakes\": [\n      \"Regex pattern too simple (doesn't catch invalid formats)\",\n      \"Not testing all valid/invalid formats\",\n      \"Using ^ and $ anchors incorrectly\"\n    ]\n  },\n  {\n    \"id\": \"watch\",\n    \"title\": \"Watch\",\n    \"description\": \"Implement a program that extracts YouTube video IDs from URLs using regular expressions.\n\n**URL formats to support:**\n- https://www.youtube.com/watch?v=VIDEO_ID\n- https://youtu.be/VIDEO_ID\n- http://youtube.com/watch?v=VIDEO_ID\n\n**Example:**\n```\nURL: https://www.youtube.com/watch?v=dQw4w9WgXcQ\nVideo ID: dQw4w9WgXcQ\n```\",\n    \"check50_slug\": \"cs50/problems/2024/python/watch\",\n    \"difficulty\": \"easy\",\n    \"common_mistakes\": [\n      \"Not handling both youtu.be and youtube.com URLs\",\n      \"Regex pattern not capturing video ID correctly\",\n      \"Not handling optional protocol (http vs https)\"\n    ]\n  }\n]\n
+    "id": "numb3rs",
+    "title": "NUMB3RS",
+    "description": "An IPv4 address is a numeric identifier typically formatted in dot-decimal notation as `#.#.#.#`, but each `#` should be a number between `0` and `255`, inclusive.\n\nIn a file called `numb3rs.py`, implement a function called `validate` that expects an IPv4 address as input as a `str` and then returns `True` or `False`, respectively, if that input is a valid IPv4 address or not. You may use `re` and/or `sys`. (CS50 also asks you to write `test_numb3rs.py` with your own pytest tests.)\n\n**How to Test:**\n```\n127.0.0.1        -> True\n255.255.255.255  -> True\n512.512.512.512  -> False\n1.2.3.1000       -> False\ncat              -> False\n```",
+    "check50_slug": "cs50/problems/2022/python/numb3rs",
+    "difficulty": "medium"
+  },
+  {
+    "id": "watch",
+    "title": "Watch on YouTube",
+    "description": "YouTube videos can be embedded in other sites via an `<iframe>` whose `src` attribute is a URL like `https://www.youtube.com/embed/xvFZjo5PgG0`.\n\nIn a file called `watch.py`, implement a function called `parse` that expects a `str` of HTML as input, extracts any YouTube URL that's the value of a `src` attribute of an `iframe` element therein, and returns its shorter, shareable `youtu.be` equivalent as a `str`. Assume the `src` value is surrounded by double quotes and that the input contains no more than one such URL. If the input does not contain any such URL, return `None`.\n\n**How to Test:**\n```\n<iframe src=\"http://www.youtube.com/embed/xvFZjo5PgG0\"></iframe>  -> https://youtu.be/xvFZjo5PgG0\n<iframe src=\"https://cs50.harvard.edu/python\"></iframe>          -> None\n```",
+    "check50_slug": "cs50/problems/2022/python/watch",
+    "difficulty": "medium"
+  },
+  {
+    "id": "working",
+    "title": "Working 9 to 5",
+    "description": "The United States tends to use a 12-hour clock (e.g. `9:00 AM to 5:00 PM`).\n\nIn a file called `working.py`, implement a function called `convert` that expects a `str` in any of the 12-hour formats below and returns the corresponding `str` in 24-hour format (e.g. `09:00 to 17:00`). Expect that `AM`/`PM` are capitalized with a space before each. Raise a `ValueError` if the input is not in one of these formats or if either time is invalid (e.g. `12:60 AM`, `13:00 PM`). Do not assume hours start AM and end PM.\n\nFormats: `9:00 AM to 5:00 PM`, `9 AM to 5 PM`, `9:00 AM to 5 PM`, `9 AM to 5:00 PM`. (CS50 also asks you to write `test_working.py`.)\n\n**How to Test:**\n```\n9 AM to 5 PM        -> 09:00 to 17:00\n10 AM to 8:50 PM    -> 10:00 to 20:50\n10:30 PM to 8 AM    -> 22:30 to 08:00\n9:60 AM to 5:60 PM  -> raises ValueError\n9 AM - 5 PM         -> raises ValueError\n```",
+    "check50_slug": "cs50/problems/2022/python/working",
+    "difficulty": "hard"
+  },
+  {
+    "id": "um",
+    "title": "Regular, um, Expressions",
+    "description": "In a file called `um.py`, implement a function called `count` that expects a line of text as input as a `str` and returns, as an `int`, the number of times that \"um\" appears in that text, case-insensitively, as a word unto itself, not as a substring of some other word. For instance, given `hello, um, world`, the function should return `1`; given `yummy`, it should return `0`. (CS50 also asks you to write `test_um.py`.)\n\n**How to Test:**\n```\num                       -> 1\num?                      -> 1\nUm, thanks for the album -> 1\nUm, thanks, um...        -> 2\nyummy                    -> 0\n```",
+    "check50_slug": "cs50/problems/2022/python/um",
+    "difficulty": "easy"
+  },
+  {
+    "id": "response",
+    "title": "Response Validation",
+    "description": "In a file called `response.py`, using either `validator-collection` or `validators` from PyPI, implement a program that prompts the user for an email address via `input` and then prints `Valid` or `Invalid`, respectively, if the input is a syntactically valid email address. You may not use `re`. Do not validate whether the email address's domain name actually exists.\n\n(Uses the third-party `validators` module: `pip install validators`.)\n\n**How to Test:**\n```\nmalan@harvard.edu     -> Valid\nmalan@@@harvard.edu   -> Invalid\n```",
+    "check50_slug": "cs50/problems/2022/python/response",
+    "difficulty": "easy"
+  }
+]

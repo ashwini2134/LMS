@@ -1,236 +1,270 @@
-# Lecture 7: Regular Expressions
+# Lecture 7
 
-## Overview
-In this lecture, we learn how to use regular expressions (regex) to search, match, and manipulate strings. Regular expressions are powerful patterns for text processing.
+> Source: [CS50P 2022 — Lecture 7](https://cs50.harvard.edu/python/2022/notes/7/#regular-expressions)
 
-## Key Concepts
+## Regular Expressions
 
-### 1. What Are Regular Expressions?
-Patterns used to match and manipulate strings.
+- Regular expressions or "regexes" will enable us to examine patterns within our code. For example, we might want to validate that an email address is formatted correctly.
+- To begin, consider validating an email address naively:
+
+```python
+email = input("What's your email? ").strip()
+
+if "@" in email:
+    print("Valid")
+else:
+    print("Invalid")
+```
+
+- One could input `@@` alone and it would be regarded as valid. We could require at least one `@` and a `.`:
+
+```python
+email = input("What's your email? ").strip()
+
+if "@" in email and "." in email:
+    print("Valid")
+else:
+    print("Invalid")
+```
+
+- Python has an existing library called `re` with functions that can validate user inputs against patterns. One of the most versatile is `search`, with signature `re.search(pattern, string, flags=0)`.
+- Many special symbols can be passed to the interpreter for validation. A non-exhaustive list:
+
+```text
+.   any character except a new line
+*   0 or more repetitions
++   1 or more repetitions
+?   0 or 1 repetition
+{m} m repetitions
+{m,n} m-n repetitions
+```
+
+- Implementing this:
 
 ```python
 import re
 
-# Check if string matches pattern
-if re.search(r"^[a-z]+@[a-z]+\\.[a-z]+$", "user@example.com"):
-    print("Valid email")
+email = input("What's your email? ").strip()
+
+if re.search(".+@.+", email):
+    print("Valid")
+else:
+    print("Invalid")
 ```
 
-### 2. Basic Matching
+  `.+` is used to determine if anything is to the left and right of the `@`.
 
-**`re.search(pattern, string)` - First match:**
+- We can be more precise. More symbols:
+
+```text
+^   matches the start of the string
+$   matches the end of the string
+```
+
+- Then:
+
 ```python
 import re
 
-text = "The year is 2024"
-result = re.search(r"\\d{4}", text)  # Find 4 digits
-if result:
-    print(result.group())  # 2024
+email = input("What's your email? ").strip()
+
+if re.search(r"^.+@.+\.edu$", email):
+    print("Valid")
+else:
+    print("Invalid")
 ```
 
-**`re.match(pattern, string)` - Match at beginning:**
+  We utilize the "escape character" `\` to treat the `.` as a literal period. The `r` prefix makes this a "raw string" so the interpreter won't treat `\.` as a special character.
+
+- More symbols for sets:
+
+```text
+[]    set of characters
+[^]   complementing the set
+```
+
+- We can use these:
+
 ```python
-if re.match(r"^Hello", "Hello, World!"):
-    print("Starts with Hello")
+import re
+
+email = input("What's your email? ").strip()
+
+if re.search(r"^[^@]+@[^@]+\.edu$", email):
+    print("Valid")
+else:
+    print("Invalid")
 ```
 
-**`re.fullmatch(pattern, string)` - Match entire string:**
+  `[^@]+` means any character except an `@`.
+
+- Common patterns are built in:
+
+```text
+\d    decimal digit
+\D    not a decimal digit
+\s    whitespace characters
+\S    not a whitespace character
+\w    word character, as well as numbers and the underscore
+\W    not a word character
+```
+
+  `\w` is the same as `[a-zA-Z0-9_]`.
+
+- We could support multiple TLDs using the `|` ("or"):
+
 ```python
-if re.fullmatch(r"[0-9]{3}-[0-9]{3}-[0-9]{4}", "555-123-4567"):
-    print("Valid phone format")
+import re
+
+email = input("What's your email? ").strip()
+
+if re.search(r"^\w+@\w+\.(com|edu|gov|net|org)$", email):
+    print("Valid")
+else:
+    print("Invalid")
 ```
 
-### 3. Character Classes
+- Grouping symbols:
 
-**`.` - Any character (except newline):**
+```text
+A|B     either A or B
+(...)   a group
+(?:...) non-capturing version
+```
+
+## Case Sensitivity
+
+- Within `re.search`, there is a parameter for `flags`. Some built-in flag variables are `re.IGNORECASE`, `re.MULTILINE`, and `re.DOTALL`:
+
 ```python
-re.search(r"c.t", "cat")   # Matches
-re.search(r"c.t", "cut")   # Matches
+import re
+
+email = input("What's your email? ").strip()
+
+if re.search(r"^\w+@\w+\.edu$", email, re.IGNORECASE):
+    print("Valid")
+else:
+    print("Invalid")
 ```
 
-**`[abc]` - Any character in brackets:**
+- We can group together ideas to allow optional subdomains:
+
 ```python
-re.search(r"[aeiou]", "hello")  # Matches vowel
+import re
+
+email = input("What's your email? ").strip()
+
+if re.search(r"^\w+@(\w+\.)?\w+\.edu$", email, re.IGNORECASE):
+    print("Valid")
+else:
+    print("Invalid")
 ```
 
-**`[^abc]` - Any character NOT in brackets:**
+  The `(\w+\.)?` communicates that this expression can be there once or not at all.
+
+## Cleaning Up User Input
+
+- Consider standardizing a name typed as `Last, First`:
+
 ```python
-re.search(r"[^aeiou]", "hello")  # Matches consonant
+name = input("What's your name? ").strip()
+if "," in name:
+    last, first = name.split(", ")
+    name = f"{first} {last}"
+print(f"hello, {name}")
 ```
 
-**`[a-z]` - Range of characters:**
+- Using regular expressions:
+
 ```python
-re.search(r"[a-z]", "Hello")   # Matches lowercase
-re.search(r"[0-9]", "abc123")  # Matches digit
-re.search(r"[A-Z0-9]", "Test")  # Matches uppercase or digit
+import re
+
+name = input("What's your name? ").strip()
+matches = re.search(r"^(.+), (.+)$", name)
+if matches:
+    last, first = matches.groups()
+    name = first + " " + last
+print(f"hello, {name}")
 ```
 
-**Shorthand character classes:**
-- `\\d` - Digit [0-9]
-- `\\D` - Non-digit [^0-9]
-- `\\w` - Word character [a-zA-Z0-9_]
-- `\\W` - Non-word character
-- `\\s` - Whitespace
-- `\\S` - Non-whitespace
+- We can request specific groups back using `matches.group`:
 
-### 4. Quantifiers
-
-**`*` - Zero or more:**
 ```python
-re.search(r"ca*t", "cat")    # Matches
-re.search(r"ca*t", "caat")   # Matches
-re.search(r"ca*t", "ct")     # Matches
+import re
+
+name = input("What's your name? ").strip()
+matches = re.search(r"^(.+), (.+)$", name)
+if matches:
+    name = matches.group(2) + " " + matches.group(1)
+print(f"hello, {name}")
 ```
 
-**`+` - One or more:**
+- We can combine the search and the assignment with the walrus `:=` operator:
+
 ```python
-re.search(r"ca+t", "cat")    # Matches
-re.search(r"ca+t", "caat")   # Matches
-re.search(r"ca+t", "ct")     # Doesn't match
+import re
+
+name = input("What's your name? ").strip()
+if matches := re.search(r"^(.+), *(.+)$", name):
+    name = matches.group(2) + " " + matches.group(1)
+print(f"hello, {name}")
 ```
 
-**`?` - Zero or one:**
+## Extracting User Input
+
+- Now, let's extract specific information. To extract a Twitter username from a URL:
+
 ```python
-re.search(r"colou?r", "color")   # Matches
-re.search(r"colou?r", "colour")  # Matches
+import re
+
+url = input("URL: ").strip()
+
+username = url.replace("https://twitter.com/", "")
+print(f"Username: {username}")
 ```
 
-**`{n}` - Exactly n times:**
+- `removeprefix` is cleaner than `replace`:
+
 ```python
-re.search(r"\\d{3}", "12345")    # Matches "123"
-re.search(r"\\d{3}", "12")       # Doesn't match
+import re
+
+url = input("URL: ").strip()
+
+username = url.removeprefix("https://twitter.com/")
+print(f"Username: {username}")
 ```
 
-**`{n,m}` - Between n and m times:**
+- Using `re.sub` with signature `re.sub(pattern, repl, string, count=0, flags=0)`:
+
 ```python
-re.search(r"\\d{2,4}", "12345")  # Matches "1234"
+import re
+
+url = input("URL: ").strip()
+
+username = re.sub(r"^(https?://)?(www\.)?twitter\.com/", "", url)
+print(f"Username: {username}")
 ```
 
-### 5. Anchors
+- Using `re.search` to be more robust:
 
-**`^` - Start of string:**
 ```python
-re.match(r"^Hello", "Hello, World!")  # Matches
-re.match(r"^World", "Hello, World!")  # Doesn't match
+import re
+
+url = input("URL: ").strip()
+
+if matches := re.search(r"^https?://(?:www\.)?twitter\.com/([a-z0-9_]+)", url, re.IGNORECASE):
+    print(f"Username:", matches.group(1))
 ```
 
-**`$` - End of string:**
-```python
-re.search(r"World!$", "Hello, World!")  # Matches
-re.search(r"World$", "Hello, World!")   # Doesn't match
-```
+  The `?:` tells the interpreter it does not have to capture what is in that spot.
 
-### 6. Groups and Capturing
+- You can learn more in Python's documentation of [re](https://docs.python.org/3/library/re.html).
 
-**`()` - Capturing group:**
-```python
-result = re.search(r"([a-z]+)@([a-z]+)\\.([a-z]+)", "user@example.com")
-print(result.group(0))  # user@example.com (entire match)
-print(result.group(1))  # user
-print(result.group(2))  # example
-print(result.group(3))  # com
-```
+## Summing Up
 
-**`(?:)` - Non-capturing group:**
-```python
-re.search(r"(?:jpg|png|gif)", "image.png")  # Matches
-```
+Now, you've learned a whole new language of regular expressions that can be utilized to validate, clean up, and extract user input.
 
-### 7. Alternation
-
-**`|` - OR:**
-```python
-re.search(r"cat|dog", "I have a dog")  # Matches
-re.search(r"cat|dog", "I have a cat")  # Matches
-```
-
-### 8. Finding All Matches
-
-**`re.findall()` - Find all matches:**
-```python
-emails = re.findall(r"\\b[a-z]+@[a-z]+\\.[a-z]+\\b", 
-                    "Contact: alice@example.com or bob@test.com")
-print(emails)  # ['alice@example.com', 'bob@test.com']
-```
-
-### 9. Replacing Text
-
-**`re.sub()` - Replace matches:**
-```python
-text = "Hello 2024, goodbye 2023"
-result = re.sub(r"\\d{4}", "YEAR", text)
-print(result)  # Hello YEAR, goodbye YEAR
-```
-
-**Replace with function:**
-```python
-def uppercase_match(match):
-    return match.group(0).upper()
-
-text = "hello world"
-result = re.sub(r"\\b\\w+\\b", uppercase_match, text)
-print(result)  # HELLO WORLD
-```
-
-### 10. Splitting Text
-
-**`re.split()` - Split by pattern:**
-```python
-text = "apple,banana;orange:grape"
-fruits = re.split(r"[,;:]", text)
-print(fruits)  # ['apple', 'banana', 'orange', 'grape']
-```
-
-## Common Pitfalls
-
-### ❌ Pitfall 1: Forgetting Raw String Prefix
-```python
-# WRONG: Backslashes are interpreted as escape sequences
-pattern = "\\d+"  # This is actually just "d+"
-
-# CORRECT: Raw string prefix
-pattern = r"\\d+"  # This is the digit regex
-```
-
-### ❌ Pitfall 2: Using `re.match()` Instead of `re.search()`
-```python
-# WRONG: re.match() only matches at the beginning
-re.match(r"\\d+", "Hello 123")  # None
-
-# CORRECT: re.search() finds anywhere in string
-re.search(r"\\d+", "Hello 123")  # Matches "123"
-```
-
-### ❌ Pitfall 3: Forgetting to Escape Special Characters
-```python
-# WRONG: . matches any character
-re.search(r"example.com", "exampleXcom")  # Matches!
-
-# CORRECT: Escape the dot
-re.search(r"example\\.com", "example.com")  # Matches
-```
-
-### ❌ Pitfall 4: Incorrect Anchors
-```python
-# WRONG: Will match "testing" (has "test" at start)
-re.search(r"^test$", "testing")  # None
-
-# CORRECT:
-re.search(r"^test$", "test")  # Matches
-```
-
-## Summary
-- **Patterns** match and manipulate text
-- **Character classes** like `\\d` and `[a-z]` match specific types
-- **Quantifiers** like `+`, `*`, `?` specify how many times to match
-- **Anchors** like `^` and `$` mark positions
-- **Groups** capture substrings with `()`
-- **`re.search()`** finds first match
-- **`re.findall()`** finds all matches
-- **`re.sub()`** replaces matches
-- **Always use raw strings** (r\"...\") for patterns
-
-## Practice Problems
-1. Write a regex to validate credit card numbers (16 digits, grouped by 4)
-2. Write a program to extract all URLs from a text file
-3. Write a program to validate IP addresses (xxx.xxx.xxx.xxx format)
+- Regular Expressions
+- Case Sensitivity
+- Cleaning Up User Input
+- Extracting User Input
