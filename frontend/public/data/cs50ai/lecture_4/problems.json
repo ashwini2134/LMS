@@ -1,26 +1,16 @@
 [
   {
-    "id": "quiz",
-    "title": "Quiz 4",
-    "description": "Test your understanding of machine learning, supervised vs unsupervised learning, classification, regression, and neural networks.",
-    "check50_slug": "cs50/quizzes/2024/ai/4",
-    "difficulty": "Medium",
-    "common_mistakes": [
-      "Confusing overfitting with underfitting",
-      "Not understanding the bias-variance tradeoff",
-      "Incorrect loss function selection for the task"
-    ]
-  },
-  {
     "id": "shopping",
     "title": "Shopping",
-    "description": "Write an AI to predict whether online shopping customers will complete a purchase. Train a nearest-neighbor classifier on customer data to predict purchase outcomes.",
-    "check50_slug": "cs50/problems/2024/ai/shopping",
-    "difficulty": "Medium",
-    "common_mistakes": [
-      "Not normalizing features before computing distances",
-      "Using incorrect distance metric",
-      "Not properly splitting train/test data"
-    ]
+    "description": "Write an AI to predict whether online shopping customers will complete a purchase, using a nearest-neighbor classifier. The classifier is evaluated by sensitivity (true positive rate) and specificity (true negative rate).\n\nIn `shopping.py`, complete `load_data`, `train_model`, and `evaluate`:\n\n- `load_data(filename)` reads the CSV and returns `(evidence, labels)`. Each evidence row is a list of 17 numeric values with the specified int/float types (Month 0–11, VisitorType 1 for returning else 0, Weekend 1/0); each label is 1 if Revenue is TRUE else 0.\n- `train_model(evidence, labels)` returns a fitted `KNeighborsClassifier(n_neighbors=1)`.\n- `evaluate(labels, predictions)` returns `(sensitivity, specificity)` as floats in [0, 1].\n\n(Uses scikit-learn.)\n\n**Example:**\n```\n$ python shopping.py shopping.csv\nCorrect: 4088\nIncorrect: 844\nTrue Positive Rate: 41.02%\nTrue Negative Rate: 90.55%\n```",
+    "check50_slug": "ai50/projects/2024/x/shopping",
+    "difficulty": "medium"
+  },
+  {
+    "id": "nim",
+    "title": "Nim",
+    "description": "Write an AI that teaches itself to play Nim through reinforcement learning (Q-learning). Players take turns removing objects from piles; whoever removes the last object loses.\n\nIn `nim.py`, complete the `NimAI` methods `get_q_value`, `update_q_value`, `best_future_reward`, and `choose_action`:\n\n- `get_q_value(state, action)` returns `self.q[(tuple(state), action)]`, or 0 if unknown.\n- `update_q_value(state, action, old_q, reward, future_rewards)` applies `Q ← old_q + alpha * (reward + future_rewards - old_q)`.\n- `best_future_reward(state)` returns the max Q-value over available actions (0 if none / unknown).\n- `choose_action(state, epsilon=True)` returns the best action greedily, or (with probability epsilon) a random available action.\n\n**Example:**\n```\n$ python play.py\nPlaying training game 1\n...\nDone training\nAI's Turn\nAI chose to take 1 from pile 2.\n```",
+    "check50_slug": "ai50/projects/2024/x/nim",
+    "difficulty": "hard"
   }
 ]

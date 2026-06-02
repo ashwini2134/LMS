@@ -1,12 +1,8 @@
-﻿def main():
-    camel = input("camelCase: ")
-    snake = ""
-    for c in camel:
-        if c.isupper():
-            snake += "_" + c.lower()
-        else:
-            snake += c
-    print("snake_case:", snake)
-
-if __name__ == "__main__":
-    main()
+name = input("camelCase: ")
+result = ""
+for c in name:
+    if c.isupper():
+        result += "_" + c.lower()
+    else:
+        result += c
+print(result)

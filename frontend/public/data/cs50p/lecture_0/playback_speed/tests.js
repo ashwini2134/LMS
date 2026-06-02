@@ -1,66 +1,24 @@
 export function runTests(code) {
-  // Remove comment lines completely
   const cleanCode = code
     .split("\n")
-    .filter(line => !line.trim().startsWith("#"))
+    .map((line) => line.replace(/#.*$/, ""))
     .join("\n");
+  const normalized = cleanCode.toLowerCase().replace(/\s/g, "");
 
-  // Normalize code
-  const normalized = cleanCode
-    .toLowerCase()
-    .replace(/\s/g, "");
-
-  // Empty check
   if (normalized.length === 0) {
-    return {
-      passed: false,
-      message:
-        "❌ Code cannot be empty or comments only.",
-    };
+    return { passed: false, message: "❌ Code cannot be empty or comments only." };
   }
-
-  // Check input()
   if (!normalized.includes("input(")) {
-    return {
-      passed: false,
-      message: "❌ Expected code to use input().",
-    };
+    return { passed: false, message: "❌ Expected code to read input with input()." };
   }
-
-  // Check replace()
   if (!normalized.includes(".replace(")) {
-    return {
-      passed: false,
-      message:
-        "❌ Expected code to use .replace() string method.",
-    };
+    return { passed: false, message: "❌ Expected code to use the .replace() string method." };
   }
-
-  // Check replacing ... with spaces
-  const hasPlaybackLogic =
-    normalized.includes('replace("...","")') ||
-    normalized.includes("replace('...','')") ||
-    normalized.includes('replace("..."," ")') ||
-    normalized.includes("replace('...',' ')");
-
-  if (!hasPlaybackLogic) {
-    return {
-      passed: false,
-      message:
-        '❌ Expected code to replace "..." with spaces.',
-    };
+  if (!normalized.includes("...")) {
+    return { passed: false, message: "❌ Expected code to insert '...' between words." };
   }
-
-  // Check print()
   if (!normalized.includes("print(")) {
-    return {
-      passed: false,
-      message: "❌ Expected code to use print().",
-    };
+    return { passed: false, message: "❌ Expected code to print the result with print()." };
   }
-
-  return {
-    passed: true,
-    message: "✅ All test cases passed!",
-  };
+  return { passed: true, message: "✅ All test cases passed!" };
 }

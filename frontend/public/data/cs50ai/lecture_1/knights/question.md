@@ -1,1 +1,1 @@
-Write a program to solve logic puzzles.
+Write a program to solve logic puzzles. You will need to fill in knowledge bases in `puzzle.py`.

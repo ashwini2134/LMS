@@ -58,6 +58,27 @@ export default function ProjectPage() {
         Lecture {number} Projects
       </h1>
 
+      {projects.length === 0 && (
+        <div
+          className="
+            rounded-3xl
+            border
+            border-slate-800
+            bg-[#08112b]
+            p-10
+            text-slate-300
+          "
+        >
+          <h2 className="mb-2 text-3xl font-bold text-white">
+            Hands-on exercises coming soon
+          </h2>
+          <p className="text-lg">
+            This lecture's notes are available now. Auto-graded coding
+            exercises for this topic are on the way.
+          </p>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
 
         {
