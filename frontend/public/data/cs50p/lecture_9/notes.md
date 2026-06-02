@@ -1,317 +1,349 @@
-# Lecture 9: Type Hints
+# Lecture 9
 
-## Overview
-In this final Python lecture, we cover advanced features: type hints, docstrings, argparse, unpacking, and functional programming utilities like map, filter, and zip.
+> Source: [CS50P 2022 — Lecture 9](https://cs50.harvard.edu/python/2022/notes/9/#et-cetera)
 
-## Key Concepts
+## Et Cetera
 
-### 1. Type Hints
-Annotations that indicate expected types for function parameters and return values.
+- Over the many past lessons, we have covered so much related to Python!
+- In this lesson, we will be focusing upon many of the "et cetera" items not previously discussed. "Et cetera" literally means "and the rest"!
 
-```python
-def greet(name: str) -> str:
-    return f\"Hello, {name}!\"
+## set
 
-result: str = greet(\"Alice\")
-```
-
-**Common types:**
-```python
-def process(
-    age: int,
-    score: float,
-    name: str,
-    is_active: bool,
-    items: list,
-    mapping: dict
-) -> None:
-    pass
-```
-
-**Generic types:**
-```python
-from typing import List, Dict, Tuple, Optional, Union
-
-def get_scores(names: List[str]) -> Dict[str, int]:
-    return {name: 100 for name in names}
-
-def get_coordinates() -> Tuple[int, int]:
-    return (10, 20)
-
-def find_user(user_id: int) -> Optional[str]:
-    return \"Alice\" if user_id == 1 else None
-
-def process_value(value: Union[int, str]) -> None:
-    pass
-```
-
-### 2. Docstrings
-Documentation for functions and classes.
+- In math, a set is a collection of values without any duplicates.
 
 ```python
-def add(a: int, b: int) -> int:
-    \"\"\"
-    Add two numbers together.
+students = [
+    {"name": "Hermione", "house": "Gryffindor"},
+    {"name": "Harry", "house": "Gryffindor"},
+    {"name": "Ron", "house": "Gryffindor"},
+    {"name": "Draco", "house": "Slytherin"},
+    {"name": "Padma", "house": "Ravenclaw"},
+]
 
-    Args:
-        a: First number
-        b: Second number
+houses = set()
+for student in students:
+    houses.add(student["house"])
 
-    Returns:
-        The sum of a and b
-
-    Raises:
-        TypeError: If arguments are not numbers
-    \"\"\"
-    return a + b
+for house in sorted(houses):
+    print(house)
 ```
 
-**For classes:**
+  The `set` object takes care of eliminating duplicates for us automatically.
+
+- You can learn more in Python's documentation of [`set`](https://docs.python.org/3/library/stdtypes.html#set).
+
+## Global Variables
+
+- We can leverage global variables within Python. To interact with a global variable inside a function, use the `global` keyword:
+
 ```python
-class Student:
-    \"\"\"
-    Represents a student with name and GPA.
+balance = 0
 
-    Attributes:
-        name (str): Student's name
-        gpa (float): Student's GPA
-    \"\"\"
 
-    def __init__(self, name: str, gpa: float) -> None:
-        \"\"\"Initialize a Student.\"\"\"
-        self.name = name
-        self.gpa = gpa
+def main():
+    print("Balance:", balance)
+    deposit(100)
+    withdraw(50)
+    print("Balance:", balance)
+
+
+def deposit(n):
+    global balance
+    balance += n
+
+
+def withdraw(n):
+    global balance
+    balance -= n
+
+
+if __name__ == "__main__":
+    main()
 ```
 
-### 3. argparse Module
-Parse command-line arguments.
+- Utilizing object-oriented programming, we can use a class instead of a global variable:
+
+```python
+class Account:
+    def __init__(self):
+        self._balance = 0
+
+    @property
+    def balance(self):
+        return self._balance
+
+    def deposit(self, n):
+        self._balance += n
+
+    def withdraw(self, n):
+        self._balance -= n
+
+
+def main():
+    account = Account()
+    print("Balance:", account.balance)
+    account.deposit(100)
+    account.withdraw(50)
+    print("Balance:", account.balance)
+
+
+if __name__ == "__main__":
+    main()
+```
+
+  Generally speaking, global variables should be used quite sparingly, if at all!
+
+## Constants
+
+- Some languages allow you to create unchangeable variables, called "constants". Python actually has no mechanism to prevent us from changing a value. Instead, you're on the honor system: if a variable name is written in all caps, just don't change it!
+
+```python
+class Cat:
+    MEOWS = 3
+
+    def meow(self):
+        for _ in range(Cat.MEOWS):
+            print("meow")
+
+
+cat = Cat()
+cat.meow()
+```
+
+## Type Hints
+
+- `mypy` is a program that can help you test to make sure all your variables are of the right type. A type hint can be added to give Python a hint of what type a function should expect:
+
+```python
+def meow(n: int):
+    for _ in range(n):
+        print("meow")
+
+
+number: int = int(input("Number: "))
+meow(number)
+```
+
+- We can also annotate the return values of functions:
+
+```python
+def meow(n: int) -> str:
+    return "meow\n" * n
+
+
+number: int = int(input("Number: "))
+meows: str = meow(number)
+print(meows, end="")
+```
+
+- You can learn more in Python's documentation of [Type Hints](https://docs.python.org/3/library/typing.html) and about [`mypy`](https://mypy.readthedocs.io/).
+
+## Docstrings
+
+- A standard way of commenting your function's purpose is to use a docstring:
+
+```python
+def meow(n):
+    """
+    Meow n times.
+
+    :param n: Number of times to meow
+    :type n: int
+    :raise TypeError: If n is not an int
+    :return: A string of n meows, one per line
+    :rtype: str
+    """
+    return "meow\n" * n
+
+
+number = int(input("Number: "))
+meows = meow(number)
+print(meows, end="")
+```
+
+- You can learn more in Python's documentation of [docstrings](https://peps.python.org/pep-0257/).
+
+## argparse
+
+- `argparse` is a library that handles all the parsing of complicated command-line arguments:
 
 ```python
 import argparse
 
-parser = argparse.ArgumentParser(description=\"Process student data\")
-parser.add_argument(\"name\", help=\"Student's name\")
-parser.add_argument(\"--gpa\", type=float, default=3.0, help=\"Student's GPA\")
-parser.add_argument(\"-v\", \"--verbose\", action=\"store_true\", help=\"Verbose output\")
-
+parser = argparse.ArgumentParser(description="Meow like a cat")
+parser.add_argument("-n", default=1, help="number of times to meow", type=int)
 args = parser.parse_args()
 
-print(f\"Name: {args.name}\")
-print(f\"GPA: {args.gpa}\")
-if args.verbose:
-    print(\"Verbose mode enabled\")
+for _ in range(args.n):
+    print("meow")
 ```
 
-**Running:**
-```bash
-$ python program.py Alice --gpa 3.5 -v
-Name: Alice
-GPA: 3.5
-Verbose mode enabled
-```
+  Not only is help documentation included, but you can provide a `default` value when no arguments are provided.
 
-### 4. Unpacking
-Extract values from sequences.
+- You can learn more in Python's documentation of [`argparse`](https://docs.python.org/3/library/argparse.html).
 
-**Basic unpacking:**
-```python
-a, b, c = [1, 2, 3]
-print(a, b, c)  # 1 2 3
-```
+## Unpacking
 
-**Extended unpacking:**
-```python
-first, *middle, last = [1, 2, 3, 4, 5]
-print(first)    # 1
-print(middle)   # [2, 3, 4]
-print(last)     # 5
-```
-
-**Unpacking in function calls:**
-```python
-def add(a, b, c):
-    return a + b + c
-
-numbers = [1, 2, 3]
-result = add(*numbers)  # Unpacks the list
-print(result)  # 6
-```
-
-**Dictionary unpacking:**
-```python
-def greet(name, greeting=\"Hello\"):
-    print(f\"{greeting}, {name}!\")
-
-params = {\"name\": \"Alice\", \"greeting\": \"Hi\"}
-greet(**params)  # Unpacks dictionary
-```
-
-### 5. map()
-Apply a function to each item in an iterable.
+- You can unpack a sequence into a function's arguments using `*`:
 
 ```python
-numbers = [\"1\", \"2\", \"3\"]
-int_numbers = list(map(int, numbers))
-print(int_numbers)  # [1, 2, 3]
+def total(galleons, sickles, knuts):
+    return (galleons * 17 + sickles) * 29 + knuts
 
-# With lambda
-squared = list(map(lambda x: x ** 2, [1, 2, 3, 4]))
-print(squared)  # [1, 4, 9, 16]
+
+coins = [100, 50, 25]
+
+print(total(*coins), "Knuts")
 ```
 
-### 6. filter()
-Keep only items that satisfy a condition.
+- And you can unpack a dictionary using `**`:
 
 ```python
-numbers = [1, 2, 3, 4, 5, 6]
-evens = list(filter(lambda x: x % 2 == 0, numbers))
-print(evens)  # [2, 4, 6]
+def total(galleons, sickles, knuts):
+    return (galleons * 17 + sickles) * 29 + knuts
 
-# Filter non-None values
-data = [1, None, 2, None, 3]
-filtered = list(filter(None, data))
-print(filtered)  # [1, 2, 3]
+
+coins = {"galleons": 100, "sickles": 50, "knuts": 25}
+
+print(total(**coins), "Knuts")
 ```
 
-### 7. zip()
-Combine multiple iterables.
+## args and kwargs
+
+- We can tell a function to expect an unknown number of positional arguments (`*args`) and keyword arguments (`**kwargs`):
 
 ```python
-names = [\"Alice\", \"Bob\", \"Charlie\"]
-ages = [20, 21, 22]
+def f(*args, **kwargs):
+    print("Positional:", args)
+    print("Named:", kwargs)
 
-pairs = list(zip(names, ages))
-print(pairs)
-# [(\"Alice\", 20), (\"Bob\", 21), (\"Charlie\", 22)]
 
-# Iterate over pairs
-for name, age in zip(names, ages):
-    print(f\"{name} is {age} years old\")
+f(100, 50, 25)
+f(galleons=100, sickles=50, knuts=25)
 ```
 
-**Unzipping:**
-```python
-pairs = [(\"Alice\", 20), (\"Bob\", 21), (\"Charlie\", 22)]
-names, ages = zip(*pairs)
-print(names)  # (\"Alice\", \"Bob\", \"Charlie\")
-print(ages)   # (20, 21, 22)
-```
+  `args` are positional arguments; `kwargs` are named ("keyword") arguments.
 
-### 8. List Comprehensions (Alternative to map/filter)
-More Pythonic way to create lists.
+## map
+
+- `map` allows you to map a function to a sequence of values:
 
 ```python
-# Equivalent to map()
-squares = [x ** 2 for x in range(5)]
-print(squares)  # [0, 1, 4, 9, 16]
+def main():
+    yell("This", "is", "CS50")
 
-# Equivalent to filter()
-evens = [x for x in range(10) if x % 2 == 0]
-print(evens)  # [0, 2, 4, 6, 8]
 
-# Combining map and filter
-data = [1, 2, 3, 4, 5]
-result = [x ** 2 for x in data if x % 2 == 0]
-print(result)  # [4, 16]
+def yell(*words):
+    uppercased = map(str.upper, words)
+    print(*uppercased)
+
+
+if __name__ == "__main__":
+    main()
 ```
 
-### 9. Lambda Functions
-Anonymous functions for short operations.
+  `map` takes a function to apply to every element, and the list itself.
+
+## List Comprehensions
+
+- List comprehensions allow you to create a list on the fly in one elegant one-liner:
 
 ```python
-square = lambda x: x ** 2
-print(square(5))  # 25
+students = [
+    {"name": "Hermione", "house": "Gryffindor"},
+    {"name": "Harry", "house": "Gryffindor"},
+    {"name": "Ron", "house": "Gryffindor"},
+    {"name": "Draco", "house": "Slytherin"},
+]
 
-# Useful with map/filter
-numbers = [1, 2, 3, 4, 5]
-doubled = list(map(lambda x: x * 2, numbers))
-print(doubled)  # [2, 4, 6, 8, 10]
+gryffindors = [
+    student["name"] for student in students if student["house"] == "Gryffindor"
+]
+
+for gryffindor in sorted(gryffindors):
+    print(gryffindor)
 ```
 
-### 10. Combining Advanced Features
+## filter
+
+- `filter` returns a subset of a sequence for which a certain condition is true:
+
 ```python
-# Type hints, docstrings, and functional programming
-from typing import List, Callable
+students = [
+    {"name": "Hermione", "house": "Gryffindor"},
+    {"name": "Harry", "house": "Gryffindor"},
+    {"name": "Ron", "house": "Gryffindor"},
+    {"name": "Draco", "house": "Slytherin"},
+]
 
-def transform_numbers(
-    numbers: List[int],
-    transformer: Callable[[int], int]
-) -> List[int]:
-    \"\"\"
-    Apply transformer function to numbers.
+gryffindors = filter(lambda s: s["house"] == "Gryffindor", students)
 
-    Args:
-        numbers: List of integers
-        transformer: Function to apply to each number
-
-    Returns:
-        List of transformed numbers
-    \"\"\"
-    return list(map(transformer, numbers))
-
-result = transform_numbers([1, 2, 3], lambda x: x ** 2)
-print(result)  # [1, 4, 9]
+for gryffindor in sorted(gryffindors, key=lambda s: s["name"]):
+    print(gryffindor["name"])
 ```
 
-## Common Pitfalls
+- You can learn more in Python's documentation of [`filter`](https://docs.python.org/3/library/functions.html#filter).
 
-### ❌ Pitfall 1: Type Hints Don't Enforce Types
+## Dictionary Comprehensions
+
+- We can apply the same idea behind list comprehensions to dictionaries:
+
 ```python
-# Type hints are suggestions, not enforced
-def add(a: int, b: int) -> int:
-    return a + b
+students = ["Hermione", "Harry", "Ron"]
 
-result = add(\"hello\", \"world\")  # No error! (bad code)
+gryffindors = {student: "Gryffindor" for student in students}
+
+print(gryffindors)
 ```
 
-✅ **Use a type checker:**
-```bash
-pip install mypy
-mypy program.py  # Catches type errors
-```
+## enumerate
 
-### ❌ Pitfall 2: Forgetting to Convert map() to list
+- `enumerate` presents the index and the value of each element:
+
 ```python
-# map() returns an iterator, not a list
-result = map(int, [\"1\", \"2\", \"3\"])
-print(result)  # <map object at 0x...>
+students = ["Hermione", "Harry", "Ron"]
 
-# Need to convert
-result = list(map(int, [\"1\", \"2\", \"3\"]))
-print(result)  # [1, 2, 3]
+for i, student in enumerate(students):
+    print(i + 1, student)
 ```
 
-### ❌ Pitfall 3: Overcomplicating with Lambdas
+- You can learn more in Python's documentation of [`enumerate`](https://docs.python.org/3/library/functions.html#enumerate).
+
+## Generators and Iterators
+
+- In Python, there is a way to protect against your system running out of resources when problems become too large. The `yield` generator can return a small bit of the results at a time:
+
 ```python
-# WRONG: Lambda is harder to read
-result = list(filter(lambda x: x > 0 and x < 10, numbers))
+def main():
+    n = int(input("What's n? "))
+    for s in sheep(n):
+        print(s)
 
-# BETTER: Use list comprehension
-result = [x for x in numbers if 0 < x < 10]
+
+def sheep(n):
+    for i in range(n):
+        yield "🐑" * i
+
+
+if __name__ == "__main__":
+    main()
 ```
 
-### ❌ Pitfall 4: Ignoring zip() Length Mismatch
-```python
-# zip() stops at shortest sequence
-names = [\"Alice\", \"Bob\", \"Charlie\"]
-ages = [20, 21]  # Only 2 ages!
+  `yield` provides only one value at a time while the `for` loop keeps working.
 
-pairs = list(zip(names, ages))
-print(pairs)  # [(\"Alice\", 20), (\"Bob\", 21)] — Charlie is missing!
-```
+- You can learn more in Python's documentation of [generators](https://docs.python.org/3/howto/functional.html#generators) and [iterators](https://docs.python.org/3/howto/functional.html#iterators).
 
-## Summary
-- **Type hints** improve code clarity and enable type checking
-- **Docstrings** document expected behavior
-- **argparse** handles command-line arguments
-- **Unpacking** extracts values with `*` and `**`
-- **map()** applies functions to iterables
-- **filter()** keeps matching items
-- **zip()** combines iterables
-- **List comprehensions** are often better than map/filter
-- **Lambda functions** are useful for short operations
+## Final Project
 
-## Practice Problems
-1. Write a program that uses argparse to accept multiple numbers and computes their average
-2. Write a program that reads a CSV file, filters rows, and maps data using type hints
-3. Create a Student class with type hints and comprehensive docstrings
+This was the final lecture of CS50P! Once you've worked through these notes, it's time to implement your own project, a Python program of your very own. Per CS50's requirements, your project must:
+
+- Be implemented in Python.
+- Have a `main` function and three or more additional functions, at least three of which are accompanied by tests that can be executed with `pytest`.
+- Your `main` function and your custom functions must be in a file called `project.py` in the root of your project; your tests must be in `test_project.py`.
+- List any `pip`-installable libraries your project requires in `requirements.txt`.
+
+See [the project specification](https://cs50.harvard.edu/python/2022/project/) for full details.
+
+## This was CS50!
+
+Our great hope is that you will use what you learned in this course to address real problems in the world. This was CS50!

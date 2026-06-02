@@ -8,5 +8,5 @@
   { "number": 6, "label": "Week 6", "title": "File I/O" },
   { "number": 7, "label": "Week 7", "title": "Regular Expressions" },
   { "number": 8, "label": "Week 8", "title": "Object-Oriented Programming" },
-  { "number": 9, "label": "Week 9", "title": "Et Cetera" }
+  { "number": 9, "label": "Week 9", "title": "Et Cetera", "problems_available": false }
 ]
