@@ -1,299 +1,243 @@
-# Lecture 5: Unit Tests
+# Lecture 5
 
-## Overview
-In this lecture, we learn how to write tests for our code to ensure it works correctly. Unit tests verify that individual functions and methods work as expected.
+> Source: [CS50P 2022 — Lecture 5](https://cs50.harvard.edu/python/2022/notes/5/#unit-tests)
 
-## Key Concepts
+## Unit Tests
 
-### 1. Why Write Tests?
-- Catch bugs early
-- Ensure code works as expected
-- Document expected behavior
-- Make refactoring safer
-- Improve code quality
+- Up until now, you have likely been testing your own code using `print` statements, or relying upon CS50 to test your code for you.
+- It's most common in industry to write code to test your own programs.
+- In your console window, type `code calculator.py`:
 
-### 2. unittest Module
-Python's built-in testing framework.
-
-**Basic structure:**
 ```python
-import unittest
+def main():
+    x = int(input("What's x? "))
+    print("x squared is", square(x))
 
-def square(x):
-    return x ** 2
 
-class TestSquare(unittest.TestCase):
-    def test_positive(self):
-        self.assertEqual(square(3), 9)
+def square(n):
+    return n * n
 
-    def test_zero(self):
-        self.assertEqual(square(0), 0)
-
-    def test_negative(self):
-        self.assertEqual(square(-3), 9)
 
 if __name__ == "__main__":
-    unittest.main()
+    main()
 ```
 
-### 3. Common Assertions
-
-**`assertEqual(a, b)` - Check if equal:**
-```python
-self.assertEqual(2 + 2, 4)
-```
-
-**`assertNotEqual(a, b)` - Check if not equal:**
-```python
-self.assertNotEqual(1, 2)
-```
-
-**`assertTrue(condition)` - Check if true:**
-```python
-self.assertTrue(5 > 3)
-```
-
-**`assertFalse(condition)` - Check if false:**
-```python
-self.assertFalse(2 > 5)
-```
-
-**`assertIn(item, container)` - Check if item in container:**
-```python
-self.assertIn("a", "abc")
-```
-
-**`assertIsNone(value)` - Check if None:**
-```python
-self.assertIsNone(None)
-```
-
-**`assertRaises(exception, function)` - Check if exception raised:**
-```python
-with self.assertRaises(ValueError):
-    int("not a number")
-```
-
-### 4. Test Naming Conventions
-Test methods should start with `test_` and have descriptive names.
+- Following convention, let's create a new test program by typing `code test_calculator.py`:
 
 ```python
-class TestCalculator(unittest.TestCase):
-    def test_addition_positive_numbers(self):
-        pass
+from calculator import square
 
-    def test_addition_negative_numbers(self):
-        pass
 
-    def test_division_by_zero_raises_error(self):
-        pass
-```
+def main():
+    test_square()
 
-### 5. setUp and tearDown
-Set up before each test and clean up after.
 
-```python
-class TestDatabase(unittest.TestCase):
-    def setUp(self):
-        # Run before each test
-        self.db = create_connection()
+def test_square():
+    if square(2) != 4:
+        print("2 squared was not 4")
+    if square(3) != 9:
+        print("3 squared was not 9")
 
-    def tearDown(self):
-        # Run after each test
-        self.db.close()
-
-    def test_insert(self):
-        result = self.db.insert("test data")
-        self.assertTrue(result)
-```
-
-### 6. Testing Exceptions
-Verify that functions raise the correct exceptions.
-
-```python
-class TestValidation(unittest.TestCase):
-    def test_invalid_email_raises_error(self):
-        with self.assertRaises(ValueError):
-            validate_email("not an email")
-
-    def test_negative_age_raises_error(self):
-        with self.assertRaises(ValueError):
-            age = -5
-            if age < 0:
-                raise ValueError("Age must be positive")
-```
-
-### 7. Testing Edge Cases
-Cover boundary conditions and special cases.
-
-```python
-class TestLength(unittest.TestCase):
-    def test_empty_string(self):
-        self.assertEqual(len(""), 0)
-
-    def test_single_character(self):
-        self.assertEqual(len("a"), 1)
-
-    def test_long_string(self):
-        self.assertEqual(len("a" * 1000), 1000)
-```
-
-### 8. Test Organization
-Organize related tests in separate classes.
-
-```python
-import unittest
-
-class TestStringMethods(unittest.TestCase):
-    def test_upper(self):
-        self.assertEqual("hello".upper(), "HELLO")
-
-    def test_split(self):
-        self.assertEqual("hello world".split(), ["hello", "world"])
-
-class TestNumericMethods(unittest.TestCase):
-    def test_abs(self):
-        self.assertEqual(abs(-5), 5)
-
-    def test_max(self):
-        self.assertEqual(max([1, 2, 3]), 3)
 
 if __name__ == "__main__":
-    unittest.main()
+    main()
 ```
 
-### 9. Running Tests
-Run tests from the command line.
+  We are importing the `square` function on the first line. By convention, we create a function called `test_square`.
 
-```bash
-# Run all tests
-python -m unittest
+## assert
 
-# Run specific test file
-python -m unittest test_calculator.py
-
-# Run specific test class
-python -m unittest test_calculator.TestCalculator
-
-# Run specific test method
-python -m unittest test_calculator.TestCalculator.test_addition
-
-# Verbose output
-python -m unittest -v
-```
-
-### 10. Test-Driven Development (TDD)
-Write tests before writing code.
-
-1. Write a failing test
-2. Write minimal code to pass the test
-3. Refactor to improve quality
+- Python's `assert` command allows us to tell the interpreter that some assertion is true:
 
 ```python
-# Write this test first
-class TestGrade(unittest.TestCase):
-    def test_passing_grade(self):
-        self.assertEqual(get_grade(85), "B")
+from calculator import square
 
-# Then write the function
-def get_grade(score):
-    if score >= 90:
-        return "A"
-    elif score >= 80:
-        return "B"
-    else:
-        return "C"
+
+def main():
+    test_square()
+
+
+def test_square():
+    assert square(2) == 4
+    assert square(3) == 9
+
+
+if __name__ == "__main__":
+    main()
 ```
 
-## Common Pitfalls
+- If an assertion is not met, the interpreter raises an `AssertionError`.
+- One challenge: our code could become burdensome if we wanted to provide more descriptive error output:
 
-### ❌ Pitfall 1: Not Testing Edge Cases
 ```python
-# WRONG: Only tests happy path
-def test_divide(self):
-    self.assertEqual(divide(10, 2), 5)
+from calculator import square
+
+
+def main():
+    test_square()
+
+
+def test_square():
+    try:
+        assert square(2) == 4
+    except AssertionError:
+        print("2 squared is not 4")
+    try:
+        assert square(3) == 9
+    except AssertionError:
+        print("3 squared is not 9")
+
+
+if __name__ == "__main__":
+    main()
 ```
 
-✅ **Correct:**
+- You can learn more in Python's documentation of [`assert`](https://docs.python.org/3/reference/simple_stmts.html#assert).
+
+## pytest
+
+- `pytest` is a third-party library that allows you to unit test your program. To utilize `pytest`, type `pip install pytest`.
+- Modify your `test_calculator` function as follows:
+
 ```python
-def test_divide_positive(self):
-    self.assertEqual(divide(10, 2), 5)
+from calculator import square
 
-def test_divide_by_zero(self):
-    with self.assertRaises(ZeroDivisionError):
-        divide(10, 0)
 
-def test_divide_floats(self):
-    self.assertAlmostEqual(divide(10, 3), 3.333, places=2)
+def test_assert():
+    assert square(2) == 4
+    assert square(3) == 9
+    assert square(-2) == 4
+    assert square(-3) == 9
+    assert square(0) == 0
 ```
 
-### ❌ Pitfall 2: Testing Implementation, Not Behavior
+- In the terminal window, type `pytest test_calculator.py`. Output will be provided, with a red `F` near the top indicating that something failed.
+- It is not ideal that `pytest` will stop running after the first failed test. Let's divide the code into different groups of tests:
+
 ```python
-# WRONG: Tests internal details
-def test_uses_list(self):
-    self.assertIsInstance(get_items(), list)
+from calculator import square
+
+
+def test_positive():
+    assert square(2) == 4
+    assert square(3) == 9
+
+
+def test_negative():
+    assert square(-2) == 4
+    assert square(-3) == 9
+
+
+def test_zero():
+    assert square(0) == 0
 ```
 
-✅ **Correct:**
+  Testing frameworks like `pytest` will run each function, even if there was a failure in one of them.
+
+- Finally, we can test that our program handles exceptions:
+
 ```python
-def test_returns_items(self):
-    self.assertEqual(get_items(), [1, 2, 3])
+import pytest
+
+from calculator import square
+
+
+def test_positive():
+    assert square(2) == 4
+    assert square(3) == 9
+
+
+def test_negative():
+    assert square(-2) == 4
+    assert square(-3) == 9
+
+
+def test_zero():
+    assert square(0) == 0
+
+
+def test_str():
+    with pytest.raises(TypeError):
+        square("cat")
 ```
 
-### ❌ Pitfall 3: Not Testing Error Cases
+  Instead of using `assert`, we take advantage of `pytest.raises`, which allows you to express that you expect an error to be raised.
+
+- You can learn more in Pytest's documentation of [`pytest`](https://docs.pytest.org/en/7.1.x/getting-started.html).
+
+## Testing Strings
+
+- Consider the following code for `hello.py`:
+
 ```python
-# WRONG: Doesn't test error handling
-def test_login(self):
-    self.assertTrue(login("user", "correct_password"))
+def main():
+    name = input("What's your name? ")
+    hello(name)
+
+
+def hello(to="world"):
+    print("hello,", to)
+
+
+if __name__ == "__main__":
+    main()
 ```
 
-✅ **Correct:**
+- Why might a test not work well here? Notice that the `hello` function *prints* something: it does not *return* a value! We can change our `hello` function to return a string:
+
 ```python
-def test_login_correct_password(self):
-    self.assertTrue(login("user", "correct_password"))
+def main():
+    name = input("What's your name? ")
+    print(hello(name))
 
-def test_login_wrong_password(self):
-    self.assertFalse(login("user", "wrong_password"))
 
-def test_login_nonexistent_user(self):
-    self.assertFalse(login("nonexistent", "password"))
+def hello(to="world"):
+    return f"hello, {to}"
+
+
+if __name__ == "__main__":
+    main()
 ```
 
-### ❌ Pitfall 4: Test Interdependency
+- Now we can use `pytest` to test the `hello` function:
+
 ```python
-# WRONG: Tests depend on each other
-class TestData(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.data = []
+from hello import hello
 
-    def test_1_add_item(self):
-        self.data.append(1)
-        self.assertEqual(len(self.data), 1)
 
-    def test_2_verify_item_exists(self):
-        # Fails if test_1 doesn't run first
-        self.assertEqual(self.data[0], 1)
+def test_default():
+    assert hello() == "hello, world"
+
+
+def test_argument():
+    assert hello("David") == "hello, David"
 ```
 
-✅ **Correct:**
+## Organizing Tests into Folders
+
+- Unit testing code using multiple tests is so common that you can run a whole folder of tests with a single command.
+- First, in the terminal window, execute `mkdir test` to create a folder called `test`.
+- Then create a test within that folder: `code test/test_hello.py`:
+
 ```python
-def test_add_item(self):
-    data = []
-    data.append(1)
-    self.assertEqual(len(data), 1)
+from hello import hello
+
+
+def test_default():
+    assert hello() == "hello, world"
+
+
+def test_argument():
+    assert hello("David") == "hello, David"
 ```
 
-## Summary
-- **Unit tests** verify that functions work correctly
-- **unittest.TestCase** is Python's testing framework
-- **Assertions** check expected behavior
-- **Edge cases** are important to test
-- **Test naming** should be descriptive
-- **setUp/tearDown** initialize and clean up tests
-- **Run tests** frequently during development
+- `pytest` will not allow us to run tests as a folder without a special `__init__` file. Create this file by typing `code test/__init__.py`. Even leaving this `__init__.py` file empty, `pytest` is informed that the whole folder containing `__init__.py` has tests that can be run.
+- Now, typing `pytest test` in the terminal, you can run the entire `test` folder of code.
 
-## Practice Problems
-1. Write a function and comprehensive unit tests for checking if a string is a palindrome
-2. Write tests for a function that validates email addresses
-3. Write tests for a calculator that handles multiple operations
+## Summing Up
+
+Testing your code is a natural part of the programming process. Unit tests allow you to test specific aspects of your code. In this lecture, you learned about…
+
+- Unit tests
+- `assert`
+- `pytest`
