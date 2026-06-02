@@ -108,14 +108,7 @@ export default function CodingProjectPage() {
         if (savedCode) {
           setCode(savedCode);
         } else {
-          const starterResponse = await fetch(
-            `${base}data/${slug}/lecture_${number}/${projectId}/starter.py`
-          );
-
-          const starterText =
-            await starterResponse.text();
-
-          setCode(starterText);
+          setCode("# Write a Python program below\n");
         }
       } catch (error) {
         console.error(error);

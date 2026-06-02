@@ -3,7 +3,7 @@
 //  All data comes from /public/data/ JSON files.
 //  Auth & submissions are persisted in localStorage.
 // ─────────────────────────────────────────────────────────────────────────────
-import { getMentorHint, MentorContext } from './mentor';
+import { getMentorHint } from './mentor';
 // ── Types (public API unchanged so pages need zero edits) ─────────────────────
 export type Course = { id: number; slug: string; title: string; description: string };
 export type ProblemSummary = { id: number; slug: string; title: string; week_label: string; sort_order: number };
