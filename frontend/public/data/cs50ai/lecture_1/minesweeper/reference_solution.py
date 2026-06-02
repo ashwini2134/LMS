@@ -1,3 +1,6 @@
+# REFERENCE SOLUTION - DO NOT SHIP TO STUDENTS
+# Only the Sentence methods and MinesweeperAI methods below are implemented by
+# the student; the Minesweeper class is distribution code.
 import random
 
 
@@ -55,6 +58,7 @@ class MinesweeperAI():
         self.moves_made.add(cell)
         self.mark_safe(cell)
 
+        # Build the set of undetermined neighbors, adjusting count for known mines.
         neighbors = set()
         for i in range(max(0, cell[0] - 1), min(cell[0] + 2, self.height)):
             for j in range(max(0, cell[1] - 1), min(cell[1] + 2, self.width)):
@@ -67,6 +71,7 @@ class MinesweeperAI():
 
         self.knowledge.append(Sentence(neighbors, count))
 
+        # Iterate until no new conclusions can be drawn.
         while True:
             changed = False
 

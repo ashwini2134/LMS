@@ -1,3 +1,5 @@
+# REFERENCE SOLUTION - DO NOT SHIP TO STUDENTS
+# This is puzzle.py; logic.py is distribution code and must not be modified.
 from logic import *
 
 AKnight = Symbol("A is a Knight")
@@ -35,7 +37,10 @@ knowledge2 = And(
     Biconditional(BKnight, Or(And(AKnight, BKnave), And(AKnave, BKnight))),
 )
 
-# Puzzle 3
+# Puzzle 3:
+# A says either "I am a knight." or "I am a knave.", but you don't know which.
+# B says "A said 'I am a knave'." B then says "C is a knave."
+# C says "A is a knight."
 knowledge3 = And(
     rules,
     Biconditional(AKnight, Or(AKnight, AKnave)),
