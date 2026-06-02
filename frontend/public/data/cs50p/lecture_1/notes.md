@@ -1,282 +1,333 @@
-# Lecture 1: Conditionals
+# Lecture 1
 
-## Overview
-In this lecture, we learn how to make our programs make decisions using conditional statements. We explore comparison operators, logical operators, and how to structure if/elif/else blocks.
+> Source: [CS50P 2022 — Lecture 1](https://cs50.harvard.edu/python/2022/notes/1/#conditionals)
 
-## Key Concepts
+## Conditionals
 
-### 1. Comparison Operators
-These operators compare two values and return True or False.
+- Conditionals allow you, the programmer, to allow your program to make decisions: as if your program has the choice between taking the left-hand road or the right-hand road based upon certain conditions.
+- Built within Python are a set of "operators" that are used to ask mathematical questions.
+- `>` and `<` symbols are probably quite familiar to you.
+- `>=` denotes "greater than or equal to."
+- `<=` denotes "less than or equal to."
+- `==` denotes "equals" — do notice the double equal sign! A single equal sign would assign a value. Double equal signs are used to compare variables.
+- `!=` denotes "not equal to."
+- Conditional statements compare a left-hand term to a right-hand term.
 
-```python
-x = 10
-y = 20
+## if Statements
 
-print(x == y)  # Equal: False
-print(x != y)  # Not equal: True
-print(x < y)   # Less than: True
-print(x > y)   # Greater than: False
-print(x <= y)  # Less than or equal: True
-print(x >= y)  # Greater than or equal: False
-```
-
-### 2. The `if` Statement
-Execute a block of code only if a condition is true.
+- In your terminal window, type `code compare.py`. In the text editor window, begin with the following:
 
 ```python
-age = 18
+x = int(input("What's x? "))
+y = int(input("What's y? "))
 
-if age >= 18:
-    print("You are an adult")
+if x < y:
+    print("x is less than y")
 ```
 
-Output:
-```
-You are an adult
-```
+  Your program takes the input of the user for both x and y, casting them as integers. Then, the `if` statement compares x and y. If the condition `x < y` is met, the `print` statement is executed.
 
-### 3. The `if/else` Statement
-Execute one block if a condition is true, otherwise execute another block.
+- `if` statements use `bool` or boolean values (true or false) to decide whether or not to execute.
+
+## Control Flow, elif, and else
+
+- Further revise your code as follows:
 
 ```python
-age = 15
+x = int(input("What's x? "))
+y = int(input("What's y? "))
 
-if age >= 18:
-    print("You are an adult")
+if x < y:
+    print("x is less than y")
+if x > y:
+    print("x is greater than y")
+if x == y:
+    print("x is equal to y")
+```
+
+  This flow of decisions is called "control flow."
+
+- This program can be improved by not asking three consecutive questions. After all, not all three questions can have an outcome of `true`:
+
+```python
+x = int(input("What's x? "))
+y = int(input("What's y? "))
+
+if x < y:
+    print("x is less than y")
+elif x > y:
+    print("x is greater than y")
+elif x == y:
+    print("x is equal to y")
+```
+
+  The use of `elif` allows the program to make fewer decisions.
+
+- We can create a "catch-all" default outcome using an `else` statement:
+
+```python
+x = int(input("What's x? "))
+y = int(input("What's y? "))
+
+if x < y:
+    print("x is less than y")
+elif x > y:
+    print("x is greater than y")
 else:
-    print("You are a minor")
+    print("x is equal to y")
 ```
 
-Output:
-```
-You are a minor
-```
+## or
 
-### 4. The `if/elif/else` Statement
-Handle multiple conditions with `elif` (else if).
+- `or` allows your program to decide between one or more alternatives:
 
 ```python
-score = 85
+x = int(input("What's x? "))
+y = int(input("What's y? "))
+
+if x < y or x > y:
+    print("x is not equal to y")
+else:
+    print("x is equal to y")
+```
+
+- We could further edit our code to ask one and only one question:
+
+```python
+x = int(input("What's x? "))
+y = int(input("What's y? "))
+
+if x != y:
+    print("x is not equal to y")
+else:
+    print("x is equal to y")
+```
+
+- For the purpose of illustration:
+
+```python
+x = int(input("What's x? "))
+y = int(input("What's y? "))
+
+if x == y:
+    print("x is equal to y")
+else:
+    print("x is not equal to y")
+```
+
+  Notice that the `==` operator evaluates if what is on the left and right are equal to one another. The use of double equal signs is very important.
+
+## and
+
+- Similar to `or`, `and` can be used within conditional statements.
+- Execute in the terminal window `code grade.py`. Start your new program as follows:
+
+```python
+score = int(input("Score: "))
+
+if score >= 90 and score <= 100:
+    print("Grade: A")
+elif score >= 80 and score < 90:
+    print("Grade: B")
+elif score >= 70 and score < 80:
+    print("Grade: C")
+elif score >= 60 and score < 70:
+    print("Grade: D")
+else:
+    print("Grade: F")
+```
+
+- Python allows you to chain together the operators and conditions in a way quite uncommon to other programming languages:
+
+```python
+score = int(input("Score: "))
+
+if 90 <= score <= 100:
+    print("Grade: A")
+elif 80 <= score < 90:
+    print("Grade: B")
+elif 70 <= score < 80:
+    print("Grade: C")
+elif 60 <= score < 70:
+    print("Grade: D")
+else:
+    print("Grade: F")
+```
+
+- Still, we can further improve our program by asking fewer questions:
+
+```python
+score = int(input("Score: "))
 
 if score >= 90:
-    grade = "A"
+    print("Grade: A")
 elif score >= 80:
-    grade = "B"
+    print("Grade: B")
 elif score >= 70:
-    grade = "C"
+    print("Grade: C")
 elif score >= 60:
-    grade = "D"
+    print("Grade: D")
 else:
-    grade = "F"
-
-print(f"Your grade is: {grade}")
+    print("Grade: F")
 ```
 
-Output:
-```
-Your grade is: B
-```
+- You can learn more in Python's documentation on [control flow](https://docs.python.org/3/tutorial/controlflow.html).
 
-### 5. Logical Operators
-Combine multiple conditions using `and`, `or`, and `not`.
+## Modulo
 
-**`and` operator** (both conditions must be true):
-```python
-age = 25
-income = 50000
-
-if age >= 18 and income > 30000:
-    print("You qualify for the loan")
-```
-
-**`or` operator** (at least one condition must be true):
-```python
-day = "Saturday"
-
-if day == "Saturday" or day == "Sunday":
-    print("It's the weekend!")
-```
-
-**`not` operator** (reverses the boolean):
-```python
-is_raining = False
-
-if not is_raining:
-    print("Let's go outside!")
-```
-
-### 6. String Methods for Conditionals
-
-**`.lower()` and `.upper()`:**
-```python
-greeting = input("What's your greeting? ")
-
-if greeting.lower().startswith("hello"):
-    print("Hello to you!")
-```
-
-**`.startswith()` and `.endswith()`:**
-```python
-filename = input("File name: ")
-
-if filename.endswith(".pdf"):
-    print("PDF file detected")
-```
-
-**`.isdigit()`, `.isalpha()`, `.isalnum()`:**
-```python
-text = "123"
-
-if text.isdigit():
-    print("This is all numbers")
-
-if text.isalpha():
-    print("This is all letters")
-
-if text.isalnum():
-    print("This is letters and/or numbers")
-```
-
-### 7. Boolean Variables
-A variable that stores True or False.
+- In mathematics, parity refers to whether a number is either even or odd.
+- The modulo `%` operator in programming allows one to see if two numbers divide evenly or divide and have a remainder.
+- For example, `4 % 2` would result in zero, because it evenly divides. However, `3 % 2` does not divide evenly and would result in a number other than zero.
 
 ```python
-is_student = True
-has_license = False
+x = int(input("What's x? "))
 
-if is_student and not has_license:
-    print("You need a license to drive")
+if x % 2 == 0:
+    print("Even")
+else:
+    print("Odd")
 ```
 
-### 8. Truthiness
-In Python, certain values are considered "truthy" or "falsy" in a boolean context.
+## Creating Our Own Parity Function
 
-**Falsy values:**
-- `None`
-- `False`
-- `0`, `0.0`
-- Empty string: `""`
-- Empty list: `[]`
-- Empty dict: `{}`
+- We can create our own function to check whether a number is even or odd:
 
-**Truthy values:**
-- `True`
-- Non-zero numbers: `1`, `-5`, `3.14`
-- Non-empty strings: `"hello"`
-- Non-empty lists: `[1, 2, 3]`
+```python
+def main():
+    x = int(input("What's x? "))
+    if is_even(x):
+        print("Even")
+    else:
+        print("Odd")
+
+
+def is_even(n):
+    if n % 2 == 0:
+        return True
+    else:
+        return False
+
+
+main()
+```
+
+  Our function returns a `bool` (true or false) back to the main function. The `if` statement simply evaluates whether or not `is_even` of `x` is true or false.
+
+## Pythonic
+
+- There are ways to program that are sometimes only seen in Python programming. Consider the following revision:
+
+```python
+def main():
+    x = int(input("What's x? "))
+    if is_even(x):
+        print("Even")
+    else:
+        print("Odd")
+
+
+def is_even(n):
+    return True if n % 2 == 0 else False
+
+
+main()
+```
+
+- We can further revise our code and make it more and more readable:
+
+```python
+def main():
+    x = int(input("What's x? "))
+    if is_even(x):
+        print("Even")
+    else:
+        print("Odd")
+
+
+def is_even(n):
+    return n % 2 == 0
+
+
+main()
+```
+
+## match
+
+- Similar to `if`, `elif`, and `else` statements, `match` statements can be used to conditionally run code that matches certain values.
+- Consider the following program:
 
 ```python
 name = input("What's your name? ")
 
-if name:  # Checks if name is not empty
-    print(f"Hello, {name}")
+if name == "Harry":
+    print("Gryffindor")
+elif name == "Hermione":
+    print("Gryffindor")
+elif name == "Ron":
+    print("Gryffindor")
+elif name == "Draco":
+    print("Slytherin")
 else:
-    print("You didn't enter a name")
+    print("Who?")
 ```
 
-## Common Pitfalls
+- We can improve this code slightly with the use of the `or` keyword:
 
-### ❌ Pitfall 1: Using `=` Instead of `==`
 ```python
-# WRONG: This assigns 18 to age, doesn't compare
-if age = 18:
-    print("You are 18")
+name = input("What's your name? ")
 
-# Syntax Error: can't assign in condition
+if name == "Harry" or name == "Hermione" or name == "Ron":
+    print("Gryffindor")
+elif name == "Draco":
+    print("Slytherin")
+else:
+    print("Who?")
 ```
 
-✅ **Correct:**
+- Alternatively, we can use `match` statements to map names to houses:
+
 ```python
-if age == 18:
-    print("You are 18")
+name = input("What's your name? ")
+
+match name:
+    case "Harry":
+        print("Gryffindor")
+    case "Hermione":
+        print("Gryffindor")
+    case "Ron":
+        print("Gryffindor")
+    case "Draco":
+        print("Slytherin")
+    case _:
+        print("Who?")
 ```
 
-### ❌ Pitfall 2: Forgetting `elif` and Using Multiple `if` Statements
+  The `_` symbol in the last case will match with any input, resulting in similar behavior as an `else` statement.
+
+- We can improve the code using the single vertical bar `|`, which (much like the `or` keyword) allows us to check for multiple values in the same `case` statement:
+
 ```python
-# WRONG: All conditions are checked (inefficient)
-score = 95
+name = input("What's your name? ")
 
-if score >= 90:
-    grade = "A"
-if score >= 80:
-    grade = "B"
-if score >= 70:
-    grade = "C"
-
-print(grade)  # Prints "A" (but checks all conditions)
+match name:
+    case "Harry" | "Hermione" | "Ron":
+        print("Gryffindor")
+    case "Draco":
+        print("Slytherin")
+    case _:
+        print("Who?")
 ```
 
-✅ **Correct:**
-```python
-score = 95
+## Summing Up
 
-if score >= 90:
-    grade = "A"
-elif score >= 80:
-    grade = "B"
-elif score >= 70:
-    grade = "C"
+You now have the power within Python to use conditional statements to ask questions and have your program take action accordingly. In this lecture, we discussed…
 
-print(grade)  # Prints "A" (stops after first match)
-```
-
-### ❌ Pitfall 3: Case Sensitivity Issues
-```python
-# WRONG: "Hello" != "hello" in Python
-greeting = input("Say hello: ")
-
-if greeting == "hello":
-    print("You said hello!")
-# If user types "Hello", this won't work
-```
-
-✅ **Correct:**
-```python
-greeting = input("Say hello: ")
-
-if greeting.lower() == "hello":
-    print("You said hello!")
-```
-
-### ❌ Pitfall 4: Incorrect String Methods with Conditionals
-```python
-# WRONG: startswith() returns True/False, doesn't modify
-filename = "document.pdf"
-
-if filename.lower() == ".pdf":  # Always False
-    print("This is a PDF")
-```
-
-✅ **Correct:**
-```python
-filename = "document.pdf"
-
-if filename.lower().endswith(".pdf"):
-    print("This is a PDF")
-```
-
-### ❌ Pitfall 5: Forgetting Parentheses with `and`/`or`
-```python
-# WRONG: Due to operator precedence, this is confusing
-if x > 5 and y > 10 or z > 20:
-    # Is this (x > 5 and y > 10) or (z > 20)?
-    # Or is it x > 5 and (y > 10 or z > 20)?
-
-# Use explicit parentheses:
-if (x > 5 and y > 10) or (z > 20):
-    pass
-```
-
-## Summary
-- **Comparison operators** (`==`, `!=`, `<`, `>`, `<=`, `>=`) compare values
-- **Logical operators** (`and`, `or`, `not`) combine conditions
-- **`if/elif/else`** structures handle multiple branching paths
-- **String methods** like `.lower()` and `.startswith()` are useful for conditionals
-- **Always use `==` for comparison, not `=` for assignment**
-- **Use `elif` instead of multiple `if` statements for efficiency**
-
-## Practice Problems
-1. Write a program that determines if a number is positive, negative, or zero
-2. Write a program that checks if a year is a leap year (divisible by 4, except centuries unless divisible by 400)
-3. Write a program that outputs the absolute value of a number without using `abs()`
-
+- Conditionals
+- `if` Statements
+- Control flow, `elif`, and `else`
+- `or`
+- `and`
+- Modulo
+- Creating your own function
+- Pythonic coding
+- `match`

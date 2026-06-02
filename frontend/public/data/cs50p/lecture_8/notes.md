@@ -1,339 +1,292 @@
-# Lecture 8: Object-Oriented Programming
+# Lecture 8
 
-## Overview
-In this lecture, we learn how to organize code using classes and objects. Object-Oriented Programming (OOP) helps structure large programs by grouping related data and functions together.
+> Source: [CS50P 2022 — Lecture 8](https://cs50.harvard.edu/python/2022/notes/8/#object-oriented-programming)
 
-## Key Concepts
+## Object-Oriented Programming
 
-### 1. Classes and Objects
-A class is a blueprint for creating objects.
+- There are different paradigms of programming. Up until this point, you have worked procedurally, step-by-step.
+- Object-oriented programming (OOP) is a compelling solution to programming-related problems.
+- Consider a procedural program:
 
 ```python
-class Person:
-    def __init__(self, name, age):
-        self.name = name
-        self.age = age
-
-# Create an object
-person = Person("Alice", 20)
-print(person.name)  # Alice
+name = input("Name: ")
+house = input("House: ")
+print(f"{name} from {house}")
 ```
 
-### 2. Constructor (`__init__`)
-The `__init__` method initializes an object when created.
+- We can abstract parts away with functions, and even return two values as a `tuple`:
+
+```python
+def main():
+    name, house = get_student()
+    print(f"{name} from {house}")
+
+
+def get_student():
+    name = input("Name: ")
+    house = input("House: ")
+    return name, house
+
+
+if __name__ == "__main__":
+    main()
+```
+
+- `tuple`s are immutable. A `list` is mutable. A `dict` provides key-value pairs:
+
+```python
+def main():
+    student = get_student()
+    print(f"{student['name']} from {student['house']}")
+
+
+def get_student():
+    name = input("Name: ")
+    house = input("House: ")
+    return {"name": name, "house": house}
+
+
+if __name__ == "__main__":
+    main()
+```
+
+## Classes
+
+- Classes are a way by which, in object-oriented programming, we can create our own type of data and give them names. A class is like a mold for a type of data.
 
 ```python
 class Student:
-    def __init__(self, name, gpa):
+    ...
+
+
+def main():
+    student = get_student()
+    print(f"{student.name} from {student.house}")
+
+
+def get_student():
+    student = Student()
+    student.name = input("Name: ")
+    student.house = input("House: ")
+    return student
+
+
+if __name__ == "__main__":
+    main()
+```
+
+  Any time you use a class blueprint to create something, you create an "object" or an "instance".
+
+- We can lay groundwork for the attributes expected inside an object using `__init__`:
+
+```python
+class Student:
+    def __init__(self, name, house):
         self.name = name
-        self.gpa = gpa
+        self.house = house
 
-student = Student("Bob", 3.5)
+
+def main():
+    student = get_student()
+    print(f"{student.name} from {student.house}")
+
+
+def get_student():
+    name = input("Name: ")
+    house = input("House: ")
+    return Student(name, house)
+
+
+if __name__ == "__main__":
+    main()
 ```
 
-### 3. Methods
-Functions defined inside a class.
+  `self` refers to the current object that was just created.
+
+- You can learn more in Python's documentation of [classes](https://docs.python.org/3/tutorial/classes.html).
+
+## raise
+
+- What if someone tries to create a student without a name? We can `raise` our own exceptions:
 
 ```python
-class Calculator:
-    def add(self, a, b):
-        return a + b
-
-    def subtract(self, a, b):
-        return a - b
-
-calc = Calculator()
-result = calc.add(5, 3)  # 8
-```
-
-### 4. The `self` Parameter
-Refers to the object itself. Always the first parameter in methods.
-
-```python
-class Dog:
-    def __init__(self, name):
-        self.name = name  # self.name is an attribute
-
-    def speak(self):
-        print(f"{self.name} says woof!")
-
-dog = Dog("Rex")
-dog.speak()  # Rex says woof!
-```
-
-### 5. Dunder Methods (Magic Methods)
-
-**`__str__()` - String representation:**
-```python
-class Person:
-    def __init__(self, name):
+class Student:
+    def __init__(self, name, house):
+        if not name:
+            raise ValueError("Missing name")
+        if house not in ["Gryffindor", "Hufflepuff", "Ravenclaw", "Slytherin"]:
+            raise ValueError("Invalid house")
         self.name = name
+        self.house = house
+```
+
+- Python allows you to define how an object is printed via `__str__`:
+
+```python
+class Student:
+    def __init__(self, name, house):
+        if not name:
+            raise ValueError("Missing name")
+        if house not in ["Gryffindor", "Hufflepuff", "Ravenclaw", "Slytherin"]:
+            raise ValueError("Invalid house")
+        self.name = name
+        self.house = house
 
     def __str__(self):
-        return f"Person({self.name})"
-
-p = Person("Alice")
-print(p)  # Person(Alice)
+        return f"{self.name} from {self.house}"
 ```
 
-**`__repr__()` - Developer representation:**
-```python
-class Point:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
+  `__str__` provides a means by which an object is returned (as a string) when printed.
 
-    def __repr__(self):
-        return f"Point({self.x}, {self.y})"
+## Decorators
 
-p = Point(3, 4)
-print(repr(p))  # Point(3, 4)
-```
-
-**`__eq__()` - Equality comparison:**
-```python
-class Student:
-    def __init__(self, name, id):
-        self.name = name
-        self.id = id
-
-    def __eq__(self, other):
-        return self.id == other.id
-
-s1 = Student("Alice", 1)
-s2 = Student("Alice", 1)
-print(s1 == s2)  # True
-```
-
-**`__len__()` - Length:**
-```python
-class Team:
-    def __init__(self, members):
-        self.members = members
-
-    def __len__(self):
-        return len(self.members)
-
-team = Team(["Alice", "Bob", "Charlie"])
-print(len(team))  # 3
-```
-
-### 6. Properties
-Use `@property` decorator to define getters.
-
-```python
-class Circle:
-    def __init__(self, radius):
-        self._radius = radius
-
-    @property
-    def radius(self):
-        return self._radius
-
-    @radius.setter
-    def radius(self, value):
-        if value <= 0:
-            raise ValueError("Radius must be positive")
-        self._radius = value
-
-    @property
-    def area(self):
-        return 3.14 * self._radius ** 2
-
-c = Circle(5)
-print(c.area)  # 78.5
-c.radius = 10  # Uses setter
-```
-
-### 7. Class Variables
-Shared across all instances.
+- Properties can be utilized to harden our code. In Python, we define properties using function "decorators", which begin with `@`:
 
 ```python
 class Student:
-    count = 0  # Class variable
+    def __init__(self, name, house):
+        self.name = name
+        self.house = house
 
-    def __init__(self, name):
-        self.name = name  # Instance variable
-        Student.count += 1
+    def __str__(self):
+        return f"{self.name} from {self.house}"
 
-s1 = Student("Alice")
-s2 = Student("Bob")
-print(Student.count)  # 2
+    @property
+    def house(self):
+        return self._house
+
+    @house.setter
+    def house(self, house):
+        if house not in ["Gryffindor", "Hufflepuff", "Ravenclaw", "Slytherin"]:
+            raise ValueError("Invalid house")
+        self._house = house
 ```
 
-### 8. Inheritance
-A class can inherit from another class.
+  `@property` defines `house` as a property of our class. The "setter", via `@house.setter`, is called whenever the house property is set. `_house` is the class attribute itself; the leading underscore indicates users shouldn't modify it directly.
+
+## Class Methods
+
+- Sometimes, we want to add functionality to a class itself, not to instances of that class. `@classmethod` is used for this:
 
 ```python
-class Animal:
+import random
+
+
+class Hat:
+
+    houses = ["Gryffindor", "Hufflepuff", "Ravenclaw", "Slytherin"]
+
+    @classmethod
+    def sort(cls, name):
+        print(name, "is in", random.choice(cls.houses))
+
+
+Hat.sort("Harry")
+```
+
+  We specify `sort` as a `@classmethod`, replacing `self` with `cls`. It can be called without instantiating a `Hat`.
+
+- Returning to `students.py`:
+
+```python
+class Student:
+    def __init__(self, name, house):
+        self.name = name
+        self.house = house
+
+    def __str__(self):
+        return f"{self.name} from {self.house}"
+
+    @classmethod
+    def get(cls):
+        name = input("Name: ")
+        house = input("House: ")
+        return cls(name, house)
+
+
+def main():
+    student = Student.get()
+    print(student)
+
+
+if __name__ == "__main__":
+    main()
+```
+
+## Static Methods
+
+- Besides `@classmethod`, there are other types of methods. Using `@staticmethod` may be something you might wish to explore.
+
+## Inheritance
+
+- Inheritance is, perhaps, the most powerful feature of object-oriented programming. You can create a class that "inherits" methods, variables, and attributes from another class:
+
+```python
+class Wizard:
     def __init__(self, name):
+        if not name:
+            raise ValueError("Missing name")
         self.name = name
 
-    def speak(self):
-        print(f"{self.name} makes a sound")
 
-class Dog(Animal):
-    def speak(self):
-        print(f"{self.name} barks")
+class Student(Wizard):
+    def __init__(self, name, house):
+        super().__init__(name)
+        self.house = house
 
-dog = Dog("Rex")
-dog.speak()  # Rex barks
+
+class Professor(Wizard):
+    def __init__(self, name, subject):
+        super().__init__(name)
+        self.subject = subject
+
+
+wizard = Wizard("Albus")
+student = Student("Harry", "Gryffindor")
+professor = Professor("Severus", "Defense Against the Dark Arts")
 ```
 
-**Calling parent method with `super()`:**
-```python
-class Vehicle:
-    def __init__(self, make, model):
-        self.make = make
-        self.model = model
+  Within the "child" class `Student`, the line `super().__init__(name)` runs the `init` method of `Wizard`.
 
-class Car(Vehicle):
-    def __init__(self, make, model, doors):
-        super().__init__(make, model)
-        self.doors = doors
-```
+## Operator Overloading
 
-### 9. Polymorphism
-Different classes can have methods with the same name.
+- Some operators such as `+` can be "overloaded" such that they can have more abilities beyond simple arithmetic:
 
 ```python
-class Cat:
-    def speak(self):
-        return "Meow"
+class Vault:
+    def __init__(self, galleons=0, sickles=0, knuts=0):
+        self.galleons = galleons
+        self.sickles = sickles
+        self.knuts = knuts
 
-class Dog:
-    def speak(self):
-        return "Woof"
+    def __str__(self):
+        return f"{self.galleons} Galleons, {self.sickles} Sickles, {self.knuts} Knuts"
 
-def animal_sound(animal):
-    print(animal.speak())
+    def __add__(self, other):
+        galleons = self.galleons + other.galleons
+        sickles = self.sickles + other.sickles
+        knuts = self.knuts + other.knuts
+        return Vault(galleons, sickles, knuts)
 
-animal_sound(Cat())  # Meow
-animal_sound(Dog())  # Woof
+
+potter = Vault(100, 50, 25)
+weasley = Vault(25, 50, 100)
+total = potter + weasley
+print(total)
 ```
 
-### 10. Encapsulation
-Hide internal details with private attributes.
+  `self` is what is on the left of the `+` operand; `other` is what is right of the `+`.
 
-```python
-class BankAccount:
-    def __init__(self, balance):
-        self._balance = balance  # Private by convention
+- You can learn more in Python's documentation of [operator overloading](https://docs.python.org/3/reference/datamodel.html#special-method-names).
 
-    def deposit(self, amount):
-        if amount > 0:
-            self._balance += amount
+## Summing Up
 
-    def get_balance(self):
-        return self._balance
+Now, you've learned a whole new level of capability through object-oriented programming.
 
-account = BankAccount(100)
-account.deposit(50)
-print(account.get_balance())  # 150
-```
-
-## Common Pitfalls
-
-### ❌ Pitfall 1: Forgetting `self` Parameter
-```python
-# WRONG: Method without self
-class Dog:
-    def bark(self):
-        print("Woof!")
-
-dog = Dog()
-dog.bark()  # Works
-
-# But this is confusing:
-def not_a_method():  # Not in class
-    print("Not a method")
-```
-
-✅ **Correct:**
-```python
-class Dog:
-    def bark(self):  # Always include self
-        print("Woof!")
-```
-
-### ❌ Pitfall 2: Not Initializing Attributes in `__init__`
-```python
-# WRONG: Attribute doesn't exist until later
-class Person:
-    def set_name(self, name):
-        self.name = name
-
-p = Person()
-print(p.name)  # AttributeError!
-```
-
-✅ **Correct:**
-```python
-class Person:
-    def __init__(self, name):
-        self.name = name
-```
-
-### ❌ Pitfall 3: Using Class Variables Wrong
-```python
-# WRONG: Modifying class variable from instance
-class Counter:
-    count = 0
-
-    def increment(self):
-        self.count += 1  # Creates instance variable, not modifying class variable
-
-c1 = Counter()
-c1.increment()
-c2 = Counter()
-print(c2.count)  # 0, not 1!
-```
-
-✅ **Correct:**
-```python
-class Counter:
-    count = 0
-
-    def increment(self):
-        Counter.count += 1  # Modifies class variable
-
-c1 = Counter()
-c1.increment()
-c2 = Counter()
-print(c2.count)  # 1
-```
-
-### ❌ Pitfall 4: Mutable Default Arguments
-```python
-# WRONG: List is shared across instances
-class Inventory:
-    def __init__(self, items=[]):
-        self.items = items  # Same list for all instances!
-
-i1 = Inventory()
-i1.items.append("apple")
-i2 = Inventory()
-print(i2.items)  # ["apple"] — unexpected!
-```
-
-✅ **Correct:**
-```python
-class Inventory:
-    def __init__(self, items=None):
-        self.items = items if items else []
-```
-
-## Summary
-- **Classes** define blueprints for objects
-- **`__init__`** initializes objects
-- **`self`** refers to the object instance
-- **Dunder methods** like `__str__()` customize behavior
-- **Properties** provide controlled access to attributes
-- **Inheritance** allows code reuse
-- **Polymorphism** allows different classes to share method names
-- **Encapsulation** hides internal details
-
-## Practice Problems
-1. Create a Rectangle class with area() and perimeter() methods
-2. Create a Shape class and inherit Circle and Square from it
-3. Create an Employee class with salary tracking and raise() method
+- Object-oriented programming
+- Classes
+- `raise`
+- Class Methods
+- Static Methods
+- Inheritance
+- Operator Overloading

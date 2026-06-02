@@ -1,239 +1,181 @@
-# Lecture 3: Exceptions
+# Lecture 3
 
-## Overview
-In this lecture, we learn how to handle errors gracefully. Exceptions are events that occur during program execution that can disrupt normal flow. We'll learn how to catch, handle, and raise exceptions.
+> Source: [CS50P 2022 — Lecture 3](https://cs50.harvard.edu/python/2022/notes/3/#exceptions)
 
-## Key Concepts
+## Exceptions
 
-### 1. What Are Exceptions?
-An exception is an event that happens during program execution and breaks the normal flow.
+- Exceptions are things that go wrong within our coding.
+- In our text editor, type `code hello.py` and type the following (with the intentional error included):
 
 ```python
-# This causes a ZeroDivisionError
-result = 10 / 0
+print("hello, world)
 ```
 
-### 2. Common Exception Types
+  Notice that we intentionally left out a quotation mark. Running `python hello.py`, an error is outputted. The compiler states that it is a "syntax error." Syntax errors are those that require you to double-check that you typed in your code correctly.
 
-**ValueError** - When a value is of the wrong type:
+- You can learn more in Python's documentation of [Errors and Exceptions](https://docs.python.org/3/tutorial/errors.html).
+
+## Runtime Errors
+
+- Runtime errors refer to those created by unexpected behavior within your code. For example, perhaps you intended for a user to input a number, but they input a character instead.
+
 ```python
-age = int("hello")  # ValueError: invalid literal for int()
+x = int(input("What's x? "))
+print(f"x is {x}")
 ```
 
-**ZeroDivisionError** - When dividing by zero:
-```python
-result = 10 / 0  # ZeroDivisionError
-```
+- As programmers, we should be defensive to ensure that our users are entering what we expected. We might consider "corner cases" such as `-1`, `0`, or `cat`.
+- If we run this program and type in "cat", we'll suddenly see `ValueError: invalid literal for int() with base 10: 'cat'`.
+- An effective strategy to fix this potential error would be to create "error handling" to ensure the user behaves as we intend.
 
-**TypeError** - When an operation is applied to wrong type:
-```python
-"hello" + 5  # TypeError: can only concatenate str with str
-```
+## try
 
-**KeyError** - When accessing a non-existent dictionary key:
-```python
-person = {"name": "Alice"}
-print(person["age"])  # KeyError: 'age'
-```
-
-**IndexError** - When accessing an invalid list index:
-```python
-items = [1, 2, 3]
-print(items[5])  # IndexError: list index out of range
-```
-
-**FileNotFoundError** - When trying to open a non-existent file:
-```python
-with open("nonexistent.txt") as f:
-    data = f.read()  # FileNotFoundError
-```
-
-### 3. Try-Except Blocks
-Wrap code that might cause an exception in a try-except block.
+- In Python `try` and `except` are ways of testing out user input before something goes wrong:
 
 ```python
 try:
-    x = int(input("Enter a number: "))
-    result = 10 / x
-    print(result)
-except ZeroDivisionError:
-    print("Cannot divide by zero!")
+    x = int(input("What's x? "))
+    print(f"x is {x}")
 except ValueError:
-    print("That's not a valid integer!")
+    print("x is not an integer")
 ```
 
-### 4. Catching General Exceptions
-Catch any exception with a bare `except` clause (not recommended, but sometimes necessary):
+  Running this code, inputting `50` will be accepted. However, typing in `cat` will produce an error visible to the user.
+
+- For best practice, we should only `try` the fewest lines of code possible that we are concerned could fail:
 
 ```python
 try:
-    value = int(input("Number: "))
-except:
-    print("Something went wrong")
-```
-
-### 5. The `else` Clause
-Execute code if no exception occurred:
-
-```python
-try:
-    x = int(input("Number: "))
+    x = int(input("What's x? "))
 except ValueError:
-    print("Not a valid number")
+    print("x is not an integer")
+
+print(f"x is {x}")
+```
+
+  This now faces a new error! We face a `NameError` where `x is not defined`. If the assignment of `x` fails, there is no x to print on our final line of code.
+
+## else
+
+- It turns out that there is another way to implement `try` that could catch errors of this nature:
+
+```python
+try:
+    x = int(input("What's x? "))
+except ValueError:
+    print("x is not an integer")
 else:
-    print(f"You entered: {x}")
+    print(f"x is {x}")
 ```
 
-### 6. The `finally` Clause
-Execute code regardless of whether an exception occurred:
+  If no exception occurs, it will then run the block of code within `else`.
 
-```python
-try:
-    file = open("data.txt")
-    data = file.read()
-except FileNotFoundError:
-    print("File not found!")
-finally:
-    if 'file' in locals():
-        file.close()  # Always close the file
-```
-
-### 7. Raising Exceptions
-Manually raise an exception when something is wrong:
-
-```python
-age = int(input("Age: "))
-
-if age < 0:
-    raise ValueError("Age cannot be negative!")
-
-print(f"You are {age} years old")
-```
-
-### 8. Custom Exception Messages
-Include a message when raising an exception:
-
-```python
-try:
-    quantity = int(input("How many? "))
-    if quantity > 100:
-        raise ValueError("Quantity cannot exceed 100")
-except ValueError as e:
-    print(f"Error: {e}")
-```
-
-### 9. Exception Objects
-Capture the exception object to get detailed information:
-
-```python
-try:
-    result = 10 / 0
-except ZeroDivisionError as e:
-    print(f"Exception type: {type(e).__name__}")
-    print(f"Exception message: {e}")
-```
-
-### 10. Validating User Input with Loops
-Prompt repeatedly until valid input is received:
+- Consider how we can use a loop to prompt the user for `x` and, if they don't cooperate, prompt again:
 
 ```python
 while True:
     try:
-        age = int(input("Age: "))
-        if age < 0:
-            raise ValueError("Age must be positive")
-        break  # Input is valid, exit loop
-    except ValueError as e:
-        print(f"Invalid input: {e}. Please try again.")
-
-print(f"You are {age} years old")
-```
-
-## Common Pitfalls
-
-### ❌ Pitfall 1: Bare `except` Clause
-```python
-# WRONG: Catches everything including system exits
-try:
-    x = int(input("Number: "))
-except:
-    print("Error")
-```
-
-✅ **Correct:**
-```python
-try:
-    x = int(input("Number: "))
-except ValueError:
-    print("Not a valid number")
-```
-
-### ❌ Pitfall 2: Not Re-prompting After Exception
-```python
-# WRONG: Only asks once
-try:
-    x = int(input("Number: "))
-except ValueError:
-    print("Try again")
-```
-
-✅ **Correct:**
-```python
-while True:
-    try:
-        x = int(input("Number: "))
-        break
+        x = int(input("What's x? "))
     except ValueError:
-        print("Not a valid number. Try again.")
+        print("x is not an integer")
+    else:
+        break
+
+print(f"x is {x}")
 ```
 
-### ❌ Pitfall 3: Not Validating Values Within Range
+## Creating a Function to Get an Integer
+
+- Surely, there are many times that we would want to get an integer from our user:
+
 ```python
-# WRONG: Only checks type, not range
-try:
-    score = int(input("Score: "))
-except ValueError:
-    print("Invalid number")
-# What if score is -5 or 101?
+def main():
+    x = get_int()
+    print(f"x is {x}")
+
+
+def get_int():
+    while True:
+        try:
+            x = int(input("What's x? "))
+        except ValueError:
+            print("x is not an integer")
+        else:
+            break
+    return x
+
+
+main()
 ```
 
-✅ **Correct:**
+- Even still, we can improve this program. `return` will not only break you out of a loop, but it will also return a value:
+
 ```python
-try:
-    score = int(input("Score: "))
-    if not (0 <= score <= 100):
-        raise ValueError("Score must be between 0 and 100")
-except ValueError as e:
-    print(f"Invalid input: {e}")
+def main():
+    x = get_int()
+    print(f"x is {x}")
+
+
+def get_int():
+    while True:
+        try:
+            return int(input("What's x? "))
+        except ValueError:
+            print("x is not an integer")
+
+
+main()
 ```
 
-### ❌ Pitfall 4: Catching Exception But Not Using It
+## pass
+
+- We can make it such that our code does not warn our user, but simply re-asks them our prompting question:
+
 ```python
-# WRONG: Exception is created but not needed
-try:
-    result = 10 / x
-except ZeroDivisionError as e:
-    print("Division by zero!")  # Not using 'e'
+def main():
+    x = get_int()
+    print(f"x is {x}")
+
+
+def get_int():
+    while True:
+        try:
+            return int(input("What's x? "))
+        except ValueError:
+            pass
+
+
+main()
 ```
 
-✅ **Correct:**
+- One final refinement: we probably want to pass in a prompt that the user sees when asked for input:
+
 ```python
-try:
-    result = 10 / x
-except ZeroDivisionError as e:
-    print(f"Error: {e}")
+def main():
+    x = get_int("What's x? ")
+    print(f"x is {x}")
+
+
+def get_int(prompt):
+    while True:
+        try:
+            return int(input(prompt))
+        except ValueError:
+            pass
+
+
+main()
 ```
 
-## Summary
-- **Exceptions** disrupt normal program flow when errors occur
-- **try-except** blocks catch and handle exceptions
-- **else** clause runs if no exception occurred
-- **finally** clause runs regardless of exceptions
-- **raise** manually throws an exception
-- **while True with break** pattern handles invalid input gracefully
-- **Validate** both type and range of values
+- You can learn more in Python's documentation of [`pass`](https://docs.python.org/3/tutorial/controlflow.html#pass-statements).
 
-## Practice Problems
-1. Write a program that divides two numbers with proper exception handling
-2. Write a program that converts a temperature from Celsius to Fahrenheit, validating that the input is a valid number
-3. Write a program that reads a CSV file and handles FileNotFoundError gracefully
+## Summing Up
+
+Errors are inevitable in your code. However, you have the opportunity to use what was learned today to help prevent these errors. In this lecture, you learned about…
+
+- Exceptions
+- Value Errors
+- Runtime Errors
+- `try`
+- `else`
+- `pass`

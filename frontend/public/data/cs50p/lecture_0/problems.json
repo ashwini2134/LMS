@@ -1,123 +1,37 @@
 [
   {
-    "id": "hello",
-    "title": "Hello",
-    "description": "Implement a program that prompts the user for their name and prints a personalised greeting.\n\n**Expected Behavior:**\n```\nWhat's your name?\nBruno\nHello, Bruno!\n```\n\n**Constraints:**\n- Use the `input()` function to get user input\n- Use `print()` to display output\n- Your program should work for any name entered",
-    "check50_slug": "cs50/problems/2024/python/hello",
-    "difficulty": "easy",
-    "common_mistakes": [
-      "Forgetting to store the result of input() in a variable",
-      "Not using the + operator or f-strings to concatenate strings",
-      "Including extra spaces in the output that don't match the expected format",
-      "Forgetting quotation marks around the greeting string"
-    ]
-  },
-  {
-    "id": "einstein",
-    "title": "Einstein",
-    "description": "Implement a program that prompts the user for mass in kilograms and outputs the equivalent energy in joules using Einstein's mass-energy equivalence formula: E = mc²\n\n**Expected Behavior:**\n```\nMass (in kg): 1\n90000000000000000 joules\n```\n\n**Constraints:**\n- The speed of light (c) is 300,000,000 m/s (or 3 × 10⁸)\n- Use `input()` to get mass from the user\n- Convert the input string to a number\n- Use `print()` to display the energy result",
-    "check50_slug": "cs50/problems/2024/python/einstein",
-    "difficulty": "easy",
-    "common_mistakes": [
-      "Using ^ instead of ** for exponentiation",
-      "Forgetting to convert the input string to an int or float",
-      "Using the wrong value for the speed of light",
-      "Printing the result with decimal places when the expected output is an integer"
-    ]
+    "id": "indoor_voice",
+    "title": "Indoor Voice",
+    "description": "WRITING IN ALL CAPS IS LIKE YELLING. Best to use your \"indoor voice\" sometimes, writing entirely in lowercase.\n\nIn a file called `indoor.py`, implement a program in Python that prompts the user for input and then outputs that same input in lowercase. Punctuation and whitespace should be outputted unchanged.\n\n**How to Test:**\n```\nInput:  HELLO\nOutput: hello\n```\n```\nInput:  THIS IS CS50\nOutput: this is cs50\n```\n```\nInput:  50\nOutput: 50\n```",
+    "check50_slug": "cs50/problems/2022/python/indoor",
+    "difficulty": "easy"
   },
   {
     "id": "playback_speed",
     "title": "Playback Speed",
-    "description": "Implement a program that prompts the user for a playback speed and outputs the prompt with emoji substitutions.\n\n**Expected Behavior:**\n```\nHow fast, in percent, was the playback speed?\n75\n0.75x\n```\n\n**Constraints:**\n- Prompt the user: \"How fast, in percent, was the playback speed?\"\n- Convert the input to a float and divide by 100\n- Output the result followed by 'x'\n- Handle valid numerical input only",
-    "check50_slug": "cs50/problems/2024/python/playback",
-    "difficulty": "easy",
-    "common_mistakes": [
-      "Forgetting to convert the input to a number (int or float)",
-      "Forgetting to divide by 100 to convert percentage to decimal",
-      "Not including the 'x' suffix in the output",
-      "Using the wrong string formatting method"
-    ]
-  },
-  {
-    "id": "tip_calculator",
-    "title": "Tip Calculator",
-    "description": "Implement a program that calculates the tip and total for a restaurant bill.\n\n**Expected Behavior:**\n```\nCost of meal: 50.00\nTip percent: 15\nTip: $7.50\nTotal: $57.50\n```\n\n**Constraints:**\n- Prompt for the cost of the meal (as a float)\n- Prompt for the tip percentage (as an integer)\n- Calculate and display the tip amount\n- Calculate and display the total amount (meal + tip)\n- Format currency to 2 decimal places",
-    "check50_slug": "cs50/problems/2024/python/tip",
-    "difficulty": "easy",
-    "common_mistakes": [
-      "Forgetting to convert inputs to numbers",
-      "Calculating tip as a percentage incorrectly (e.g., tip = cost * tip_percent instead of cost * tip_percent / 100)",
-      "Not formatting currency output to exactly 2 decimal places",
-      "Forgetting the $ sign in the output"
-    ]
-  },
-  {
-    "id": "indoor_voice",
-    "title": "Indoor Voice",
-    "description": "Implement a program that converts text entered by the user to lowercase.\n\n**Expected Behavior:**\n```\nShout: HELLO\nhello\n```\n\n**Constraints:**\n- Prompt the user: \"Shout: \"\n- Convert the input to lowercase\n- Print the result",
-    "check50_slug": "cs50/problems/2024/python/indoor",
-    "difficulty": "easy",
-    "common_mistakes": [
-      "Using the wrong string method (e.g., lower instead of .lower())",
-      "Forgetting to call the method on the string",
-      "Attempting to print without converting to lowercase first"
-    ]
-  }
-]
-  },
-  {
-    "id": "indoor_voice",
-    "title": "Indoor Voice",
-    "description": "Given a string of text, output that same text in lowercase. Assume that the input will be a single line of text.\n\n**Example:**\n```\nInput:  HELLO, WORLD\nOutput: hello, world\n```",
-    "check50_slug": "cs50/problems/2024/python/indoor",
-    "difficulty": "Easy",
-    "common_mistakes": [
-      "Using print(input().lower()) without storing the variable",
-      "Forgetting that .lower() returns a new string and does not modify in place"
-    ]
-  },
-  {
-    "id": "playback_speed",
-    "title": "Playback Speed",
-    "description": "Suppose that a user types too quickly and uses ... instead of spaces between words. Write a program that replaces any ... in the input with spaces.\n\n**Example:**\n```\nInput:  This...is...CS50\nOutput: This is CS50\n```",
-    "check50_slug": "cs50/problems/2024/python/playback",
-    "difficulty": "Easy",
-    "common_mistakes": [
-      "Using replace() incorrectly — check argument order: replace(old, new)",
-      "Not handling multiple occurrences (str.replace handles all by default)"
-    ]
+    "description": "Some people have a habit of speaking rather quickly, and it'd be nice to slow them down, a la YouTube's 0.75 playback speed, or even by having them pause between words.\n\nIn a file called `playback.py`, implement a program in Python that prompts the user for input and then outputs that same input, replacing each space with `...` (i.e., three periods).\n\n**How to Test:**\n```\nInput:  This is CS50\nOutput: This...is...CS50\n```\n```\nInput:  This is our week on functions\nOutput: This...is...our...week...on...functions\n```",
+    "check50_slug": "cs50/problems/2022/python/playback",
+    "difficulty": "easy"
   },
   {
     "id": "making_faces",
     "title": "Making Faces",
-    "description": "Replace text emoticons :) and :( with their emoji equivalents 🙂 and 🙁.\n\n**Example:**\n```\nInput:  Hello, world :)\nOutput: Hello, world 🙂\n```",
-    "check50_slug": "cs50/problems/2024/python/faces",
-    "difficulty": "Easy",
-    "common_mistakes": [
-      "Only replacing one of the two emoticons",
-      "Using the wrong emoji character"
-    ]
+    "description": "Before there were emoji, there were emoticons, whereby text like `:)` was a happy face and text like `:(` was a sad face. Nowadays, programs tend to convert emoticons to emoji automatically!\n\nIn a file called `faces.py`, implement a function called `convert` that accepts a `str` as input and returns that same input with any `:)` converted to 🙂 (a slightly smiling face) and any `:(` converted to 🙁 (a slightly frowning face). All other text should be returned unchanged.\n\nThen, in that same file, implement a function called `main` that prompts the user for input, calls `convert` on that input, and prints the result. Be sure to call `main` at the bottom of your file.\n\n**How to Test:**\n```\nInput:  Hello :)\nOutput: Hello 🙂\n```\n```\nInput:  Goodbye :(\nOutput: Goodbye 🙁\n```",
+    "check50_slug": "cs50/problems/2022/python/faces",
+    "difficulty": "easy"
   },
   {
     "id": "einstein",
     "title": "Einstein",
-    "description": "Prompt the user for mass in kilograms (as an integer), then output the equivalent number of Joules using E = mc², where c = 300,000,000 m/s.\n\n**Example:**\n```\nm: 1\n1.0 Joule\n```\nNote: output exactly that many Joules with no trailing zeros for whole numbers.",
-    "check50_slug": "cs50/problems/2024/python/einstein",
-    "difficulty": "Easy",
-    "common_mistakes": [
-      "Using the wrong value for c",
-      "Not converting the input string to int before multiplication"
-    ]
+    "description": "You might have heard that E = mc², wherein E represents energy (measured in Joules), m represents mass (measured in kilograms), and c represents the speed of light (measured approximately as 300000000 meters per second). Essentially, the formula means that mass and energy are equivalent.\n\nIn a file called `einstein.py`, implement a program in Python that prompts the user for mass as an integer (in kilograms) and then outputs the equivalent number of Joules as an integer. Assume that the user will input an integer.\n\n**How to Test:**\n```\nInput:  1\nOutput: 90000000000000000\n```\n```\nInput:  14\nOutput: 1260000000000000000\n```",
+    "check50_slug": "cs50/problems/2022/python/einstein",
+    "difficulty": "easy"
   },
   {
     "id": "tip_calculator",
     "title": "Tip Calculator",
-    "description": "Complete the functions in the tip calculator program. Implement `dollars_to_float` (strips `$` prefix and converts to float) and `percent_to_float` (strips `%` suffix and converts to float).\n\n**Example:**\n```\nHow much was the meal? $50.00\nWhat percentage would you like to tip? 15%\nLeave $7.50\n```",
-    "check50_slug": "cs50/problems/2024/python/tip",
-    "difficulty": "Easy",
-    "common_mistakes": [
-      "Stripping the wrong character or using the wrong slice index",
-      "Forgetting to divide the percentage by 100 before multiplying"
-    ]
+    "description": "In the United States, it's customary to leave a tip for your server after dining in a restaurant, typically an amount equal to 15% or more of your meal's cost. We've written most of a tip calculator for you, but two functions are unimplemented.\n\nIn a file called `tip.py`, complete the implementations of `dollars_to_float` and `percent_to_float`:\n\n- `dollars_to_float` should accept a `str` as input (formatted as `$##.##`), remove the leading `$`, and return the amount as a `float`. For instance, given `$50.00`, it should return `50.0`.\n- `percent_to_float` should accept a `str` as input (formatted as `##%`), remove the trailing `%`, and return the percentage as a `float`. For instance, given `15%`, it should return `0.15`.\n\nAssume that the user will input values in the expected formats.\n\n**How to Test:**\n```\nHow much was the meal? $50.00\nWhat percentage would you like to tip? 15%\nLeave $7.50\n```\n```\nHow much was the meal? $100.00\nWhat percentage would you like to tip? 18%\nLeave $18.00\n```",
+    "check50_slug": "cs50/problems/2022/python/tip",
+    "difficulty": "easy"
   }
 ]

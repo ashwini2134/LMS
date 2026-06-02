@@ -1,312 +1,212 @@
-# Lecture 6: File I/O
+# Lecture 6
 
-## Overview
-In this lecture, we learn how to read from and write to files. File I/O (Input/Output) is essential for working with persistent data.
+> Source: [CS50P 2022 — Lecture 6](https://cs50.harvard.edu/python/2022/notes/6/#file-io)
 
-## Key Concepts
+## File I/O
 
-### 1. Opening and Reading Files
-Use the `open()` function to access files.
-
-**Read entire file:**
-```python
-with open("data.txt") as f:
-    data = f.read()
-    print(data)
-```
-
-**Read line by line:**
-```python
-with open("data.txt") as f:
-    for line in f:
-        print(line.rstrip())  # rstrip() removes trailing newline
-```
-
-**Read all lines into list:**
-```python
-with open("data.txt") as f:
-    lines = f.readlines()  # Includes newline characters
-    for line in lines:
-        print(line.rstrip())
-```
-
-### 2. The `with` Statement
-The `with` statement automatically closes files.
+- Up until now, everything we've programmed has stored information in memory. Once the program ends, all information gathered is lost.
+- File I/O is the ability of a program to take a file as input or create a file as output.
+- Recall that a `list` is a data structure that allows us to store multiple values into a single variable:
 
 ```python
-# Good practice - file is closed automatically
-with open("data.txt") as f:
-    data = f.read()
+names = []
 
-# Manual closing (not recommended)
-f = open("data.txt")
-data = f.read()
-f.close()  # Must remember to close
+for _ in range(3):
+    names.append(input("What's your name? "))
+
+for name in sorted(names):
+    print(f"hello, {name}")
 ```
 
-### 3. Writing to Files
+  Once this program is executed, all information is lost. File I/O allows your program to store this information such that it can be used later.
 
-**Write string:**
+## open
+
+- `open` is a functionality built into Python that allows you to open a file and utilize it in your program:
+
 ```python
-with open("output.txt", "w") as f:
-    f.write("Hello, World!\n")
-    f.write("Second line\n")
+name = input("What's your name? ")
+
+file = open("names.txt", "w")
+file.write(name)
+file.close()
 ```
 
-**Append to file:**
+  The `open` function opens a file called `names.txt` with writing enabled, as signified by the `w`.
+
+- Running this program multiple times will entirely rewrite the file each time. Ideally, we want to append. The `a` mode means "append":
+
 ```python
-with open("output.txt", "a") as f:
-    f.write("Appended line\n")
+name = input("What's your name? ")
+
+file = open("names.txt", "a")
+file.write(f"{name}\n")
+file.close()
 ```
 
-**Modes:**
-- `"r"` - Read (default)
-- `"w"` - Write (overwrites existing file)
-- `"a"` - Append (adds to end of file)
-- `"x"` - Create (fails if file exists)
+- It's quite easy to forget to close the file.
 
-### 4. Working with CSV Files
+## with
 
-**Read CSV:**
+- The keyword `with` allows you to automate the closing of a file:
+
+```python
+name = input("What's your name? ")
+
+with open("names.txt", "a") as file:
+    file.write(f"{name}\n")
+```
+
+- What if we want to read from a file? Use `r` mode:
+
+```python
+with open("names.txt", "r") as file:
+    lines = file.readlines()
+
+for line in lines:
+    print("hello,", line.rstrip())
+```
+
+  `readlines` reads all the lines of a file and stores them in a list. `rstrip` removes the extraneous line break at the end of each line.
+
+- This code could be simplified:
+
+```python
+with open("names.txt", "r") as file:
+    for line in file:
+        print("hello,", line.rstrip())
+```
+
+- This could be further improved to allow for sorting the names:
+
+```python
+names = []
+
+with open("names.txt") as file:
+    for line in file:
+        names.append(line.rstrip())
+
+for name in sorted(names):
+    print(f"hello, {name}")
+```
+
+## CSV
+
+- CSV stands for "comma separated values".
+- Let's create `students.csv` with content like `Hermione,Gryffindor` on each line, and read it:
+
+```python
+with open("students.csv") as file:
+    for line in file:
+        row = line.rstrip().split(",")
+        print(f"{row[0]} is in {row[1]}")
+```
+
+  `split` tells the interpreter where to find the end of each value.
+
+- The `split` function returns multiple values, so we can assign two variables at once:
+
+```python
+with open("students.csv") as file:
+    for line in file:
+        name, house = line.rstrip().split(",")
+        print(f"{name} is in {house}")
+```
+
+- We can sort a list of dictionaries by a key:
+
+```python
+students = []
+
+with open("students.csv") as file:
+    for line in file:
+        name, house = line.rstrip().split(",")
+        students.append({"name": name, "house": house})
+
+for student in sorted(students, key=lambda student: student["name"]):
+    print(f"{student['name']} is in {student['house']}")
+```
+
+  We use a `lambda` function, an anonymous function, to tell `sorted` which key to sort on.
+
+- Our code is a bit fragile. If a value itself contains a comma (e.g., `"Number Four, Privet Drive"`), splitting on `,` breaks. Python's built-in `csv` library comes with a `reader`:
+
 ```python
 import csv
 
-with open("data.csv") as f:
-    reader = csv.DictReader(f)
+students = []
+
+with open("students.csv") as file:
+    reader = csv.reader(file)
     for row in reader:
-        print(row["name"], row["age"])
+        students.append({"name": row[0], "home": row[1]})
+
+for student in sorted(students, key=lambda student: student["name"]):
+    print(f"{student['name']} is from {student['home']}")
 ```
 
-**Write CSV:**
+- It's better design to bake the column names into the CSV file (a header row) and use a `DictReader`:
+
 ```python
 import csv
 
-students = [
-    {"name": "Alice", "age": 20},
-    {"name": "Bob", "age": 21},
-]
+students = []
 
-with open("output.csv", "w", newline="") as f:
-    writer = csv.DictWriter(f, fieldnames=["name", "age"])
-    writer.writeheader()
-    writer.writerows(students)
+with open("students.csv") as file:
+    reader = csv.DictReader(file)
+    for row in reader:
+        students.append({"name": row["name"], "home": row["home"]})
+
+for student in sorted(students, key=lambda student: student["name"]):
+    print(f"{student['name']} is in {student['home']}")
 ```
 
-### 5. Working with JSON Files
-
-**Read JSON:**
-```python
-import json
-
-with open("data.json") as f:
-    data = json.load(f)
-    print(data["name"])
-```
-
-**Write JSON:**
-```python
-import json
-
-data = {
-    "name": "Alice",
-    "age": 20,
-    "courses": ["CS50", "Python"]
-}
-
-with open("output.json", "w") as f:
-    json.dump(data, f, indent=2)
-```
-
-### 6. Path Handling
-
-**Using pathlib (Modern approach):**
-```python
-from pathlib import Path
-
-# Create path object
-file_path = Path("data") / "file.txt"
-
-# Check if exists
-if file_path.exists():
-    print("File exists")
-
-# Get absolute path
-print(file_path.absolute())
-
-# Read file
-content = file_path.read_text()
-```
-
-**Using os (Older approach):**
-```python
-import os
-
-# Join paths
-path = os.path.join("data", "file.txt")
-
-# Check if exists
-if os.path.exists(path):
-    print("File exists")
-```
-
-### 7. File Operations
-
-**Get file size:**
-```python
-import os
-
-size = os.path.getsize("file.txt")  # Bytes
-```
-
-**List directory contents:**
-```python
-import os
-
-files = os.listdir(".")
-for file in files:
-    print(file)
-```
-
-**Create directories:**
-```python
-import os
-
-os.makedirs("new/nested/folder", exist_ok=True)
-```
-
-### 8. Handling File Errors
-
-**File not found:**
-```python
-try:
-    with open("nonexistent.txt") as f:
-        data = f.read()
-except FileNotFoundError:
-    print("File not found!")
-```
-
-**Permission denied:**
-```python
-try:
-    with open("protected.txt", "w") as f:
-        f.write("data")
-except PermissionError:
-    print("No permission to write!")
-```
-
-### 9. Processing Large Files
-Don't load entire file into memory for large files.
+- What if we want to write to a CSV file? Use `DictWriter`:
 
 ```python
-# Good: Processes line by line
-with open("large_file.txt") as f:
-    for line in f:
-        process(line.rstrip())
+import csv
 
-# Bad: Loads entire file
-with open("large_file.txt") as f:
-    data = f.read()  # May be too large for memory
+name = input("What's your name? ")
+home = input("Where's your home? ")
+
+with open("students.csv", "a") as file:
+    writer = csv.DictWriter(file, fieldnames=["name", "home"])
+    writer.writerow({"name": name, "home": home})
 ```
 
-### 10. Command-Line Arguments for Files
-Accept filename from user via command line.
+- You can learn more in Python's documentation of [CSV](https://docs.python.org/3/library/csv.html).
+
+## Binary Files and PIL
+
+- A binary file is simply a collection of ones and zeros. This type of file can store anything, including music and image data.
+- There is a popular Python library called `PIL` that works well with image files. Animated GIFs are a popular type of image file that has many image files within it that are played in sequence.
 
 ```python
 import sys
 
-if len(sys.argv) != 2:
-    print("Usage: python program.py filename")
-    sys.exit(1)
+from PIL import Image
 
-filename = sys.argv[1]
+images = []
 
-try:
-    with open(filename) as f:
-        data = f.read()
-except FileNotFoundError:
-    print(f"Could not find {filename}")
+for arg in sys.argv[1:]:
+    image = Image.open(arg)
+    images.append(image)
+
+images[0].save(
+    "costumes.gif", save_all=True, append_images=[images[1]], duration=200, loop=0
+)
 ```
 
-## Common Pitfalls
+  We import the `Image` functionality from `PIL`. The first `for` loop loops through the images provided as command-line arguments. The last lines save the first image and append a second image, creating an animated GIF.
 
-### ❌ Pitfall 1: Forgetting `newline=""` with CSV
-```python
-# WRONG: CSV may have blank lines on Windows
-with open("data.csv", "w") as f:
-    writer = csv.DictWriter(f, fieldnames=["name", "age"])
-```
+- You can learn more in Pillow's documentation of [PIL](https://pillow.readthedocs.io/).
 
-✅ **Correct:**
-```python
-with open("data.csv", "w", newline="") as f:
-    writer = csv.DictWriter(f, fieldnames=["name", "age"])
-```
+## Summing Up
 
-### ❌ Pitfall 2: Not Using `with` Statement
-```python
-# WRONG: File may not be closed if exception occurs
-f = open("data.txt")
-data = f.read()
-f.close()
-```
+Now, we have not only seen that we can write and read files textually—we can also read and write files using ones and zeros. In this lecture, you learned about…
 
-✅ **Correct:**
-```python
-with open("data.txt") as f:
-    data = f.read()  # File automatically closed
-```
-
-### ❌ Pitfall 3: Writing Strings When Bytes Expected
-```python
-# WRONG: Binary mode expects bytes
-with open("data.bin", "wb") as f:
-    f.write("text")  # TypeError
-```
-
-✅ **Correct:**
-```python
-with open("data.bin", "wb") as f:
-    f.write(b"text")  # Bytes
-```
-
-### ❌ Pitfall 4: Not Handling Newlines
-```python
-# WRONG: Keeps newline characters
-with open("data.txt") as f:
-    for line in f:
-        print(line)  # Extra blank line because of \n
-```
-
-✅ **Correct:**
-```python
-with open("data.txt") as f:
-    for line in f:
-        print(line.rstrip())  # Remove trailing whitespace
-```
-
-### ❌ Pitfall 5: Overwriting Data Unintentionally
-```python
-# WRONG: "w" mode overwrites entire file
-with open("data.txt", "w") as f:
-    f.write("new data")  # Old data is lost!
-```
-
-✅ **Correct:**
-```python
-with open("data.txt", "a") as f:
-    f.write("new data")  # Appends to end
-```
-
-## Summary
-- **`with` statement** automatically closes files
-- **`open()` modes:** r (read), w (write), a (append)
-- **CSV** files use csv module
-- **JSON** files use json module
-- **File paths** can use Path or os modules
-- **Large files** should be processed line-by-line
-- **Always handle** FileNotFoundError and PermissionError
-
-## Practice Problems
-1. Write a program that reads a text file and outputs statistics (word count, line count, character count)
-2. Write a program that reads a CSV and outputs summary statistics
-3. Write a program that monitors a file and prints new lines as they're added
+- File I/O
+- `open`
+- `with`
+- CSV
+- `PIL`

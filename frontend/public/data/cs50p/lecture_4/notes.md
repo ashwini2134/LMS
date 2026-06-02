@@ -1,273 +1,239 @@
-# Lecture 4: Libraries
+# Lecture 4
 
-## Overview
-In this lecture, we learn how to use external libraries and modules to extend Python's capabilities. Libraries provide pre-written code that we can import and use in our programs.
+> Source: [CS50P 2022 — Lecture 4](https://cs50.harvard.edu/python/2022/notes/4/#libraries)
 
-## Key Concepts
+## Libraries
 
-### 1. Importing Modules
-Python has built-in modules and third-party libraries we can import.
+- Generally, libraries are bits of code written by you or others that you can use in your program.
+- Python allows you to share functions or features with others as "modules".
+- If you copy and paste code from an old project, chances are you can create such a module or library that you could bring into your new project.
 
-**Import entire module:**
-```python
-import math
-print(math.sqrt(16))  # 4.0
-```
+## Random
 
-**Import specific function:**
-```python
-from math import sqrt
-print(sqrt(16))  # 4.0
-```
+- `random` is a library that comes with Python that you could import into your own project.
+- So, how do you load a module into your own program? You can use the word `import`.
 
-**Import with alias:**
-```python
-import math as m
-print(m.sqrt(16))  # 4.0
-```
-
-**Import everything (not recommended):**
-```python
-from math import *
-```
-
-### 2. Useful Built-in Modules
-
-**`random` module - Generate random numbers:**
 ```python
 import random
 
-print(random.randint(1, 10))  # Random int between 1-10
-print(random.choice([1, 2, 3]))  # Random choice from list
-print(random.shuffle([1, 2, 3]))  # Shuffle a list
+coin = random.choice(["heads", "tails"])
+print(coin)
 ```
 
-**`math` module - Mathematical functions:**
+- `from` allows us to be very specific about what we'd like to import:
+
 ```python
-import math
+from random import choice
 
-print(math.sqrt(16))  # Square root
-print(math.ceil(3.2))  # Round up
-print(math.floor(3.9))  # Round down
-print(math.pi)  # Pi constant
+coin = choice(["heads", "tails"])
+print(coin)
 ```
 
-**`datetime` module - Working with dates and times:**
+- Consider the function `random.randint(a, b)`. This function will generate a random number between `a` and `b`:
+
 ```python
-from datetime import datetime
+import random
 
-now = datetime.now()
-print(now.year)
-print(now.month)
-print(now.day)
-
-# Parse a date string
-date_str = "2024-01-15"
-date_obj = datetime.strptime(date_str, "%Y-%m-%d")
+number = random.randint(1, 10)
+print(number)
 ```
 
-### 3. Third-Party Libraries
-Libraries that aren't built-in but can be installed.
+- We can introduce `random.shuffle(x)` where it will shuffle a list into a random order:
 
-**Installing libraries with pip:**
-```bash
-pip install requests
-pip install emoji
-pip install pandas
-```
-
-**Using requests library:**
 ```python
-import requests
+import random
 
-response = requests.get("https://api.example.com/data")
-data = response.json()  # Parse JSON response
+cards = ["jack", "queen", "king"]
+random.shuffle(cards)
+for card in cards:
+    print(card)
 ```
 
-### 4. Working with JSON
-JSON (JavaScript Object Notation) is a common data format.
+- You can learn more in Python's documentation of [`random`](https://docs.python.org/3/library/random.html).
 
-**JSON file example:**
-```json
-{
-  "name": "Alice",
-  "age": 20,
-  "courses": ["CS50", "Python"]
-}
-```
+## Statistics
 
-**Parse JSON:**
+- Python comes with a built-in `statistics` library. `mean` is a function of this library that is quite useful:
+
 ```python
-import json
+import statistics
 
-# Read from file
-with open("data.json") as f:
-    data = json.load(f)
-    print(data["name"])
-
-# Parse JSON string
-json_str = '{"name": "Alice", "age": 20}'
-data = json.loads(json_str)
-
-# Convert to JSON string
-data = {"name": "Alice", "age": 20}
-json_str = json.dumps(data)
-
-# Write to file
-with open("output.json", "w") as f:
-    json.dump(data, f)
+print(statistics.mean([100, 90]))
 ```
 
-### 5. CSV Files
-CSV (Comma-Separated Values) files store tabular data.
+- You can learn more in Python's documentation of [`statistics`](https://docs.python.org/3/library/statistics.html).
 
-**Using csv module:**
-```python
-import csv
+## Command-Line Arguments
 
-# Read CSV
-with open("data.csv") as f:
-    reader = csv.DictReader(f)
-    for row in reader:
-        print(row["name"], row["age"])
+- What if we wanted to be able to take input from the command-line? For example, rather than typing `python average.py`, what if we wanted to type `python average.py 100 90`?
+- `sys` is a module that allows us to take arguments at the command line. `argv` is within the `sys` module:
 
-# Write CSV
-data = [
-    {"name": "Alice", "age": 20},
-    {"name": "Bob", "age": 25}
-]
-with open("output.csv", "w") as f:
-    writer = csv.DictWriter(f, fieldnames=["name", "age"])
-    writer.writeheader()
-    writer.writerows(data)
-```
-
-### 6. sys Module
-Access command-line arguments and program information.
-
-**`sys.argv` - Command-line arguments:**
 ```python
 import sys
 
-# program.py arg1 arg2
-for arg in sys.argv:
-    print(arg)
+print("hello, my name is", sys.argv[1])
 ```
 
-Output:
-```
-program.py
-arg1
-arg2
-```
+  If you type `python name.py David`, you will see `hello, my name is David`. `sys.argv[1]` is where `David` is being stored. What is held in `sys.argv[0]`? If you guessed `name.py`, you would be correct!
 
-### 7. os Module
-Interact with the operating system and file system.
+- What if the user does not type in the name at the command line? An error `list index out of range` will be presented. Here's how we can protect our program:
 
 ```python
-import os
+import sys
 
-# Check if file exists
-if os.path.exists("data.txt"):
-    print("File exists")
-
-# List directory contents
-files = os.listdir(".")
-for file in files:
-    print(file)
-
-# Get current directory
-print(os.getcwd())
-
-# Create directory
-os.makedirs("new_folder", exist_ok=True)
+try:
+    print("hello, my name is", sys.argv[1])
+except IndexError:
+    print("Too few arguments")
 ```
 
-### 8. Requests Library
-Make HTTP requests to web APIs.
+- Our program can be improved:
+
+```python
+import sys
+
+if len(sys.argv) < 2:
+    print("Too few arguments")
+elif len(sys.argv) > 2:
+    print("Too many arguments")
+else:
+    print("hello, my name is", sys.argv[1])
+```
+
+- There is something very nice about keeping our error checking separate from the remainder of our code:
+
+```python
+import sys
+
+if len(sys.argv) < 2:
+    sys.exit("Too few arguments")
+elif len(sys.argv) > 2:
+    sys.exit("Too many arguments")
+
+print("hello, my name is", sys.argv[1])
+```
+
+  `sys.exit` provides a means by which the program can exit if an error arises.
+
+- You can learn more in Python's documentation of [`sys`](https://docs.python.org/3/library/sys.html).
+
+## slice
+
+- `slice` allows us to take a `list` and tell the interpreter where we want the start of the `list` and the end of the `list`:
+
+```python
+import sys
+
+if len(sys.argv) < 2:
+    sys.exit("Too few arguments")
+
+for arg in sys.argv[1:]:
+    print("hello, my name is", arg)
+```
+
+  Rather than starting the list at `0`, we use square brackets to tell the interpreter to start at `1` and go to the end using the `1:` argument.
+
+## Packages
+
+- One of the reasons Python is so popular is that there are numerous powerful third-party libraries. We call these third-party libraries, implemented as a folder, "packages".
+- PyPI is a repository or directory of all available third-party packages.
+- Python has a package manager called `pip` that allows you to install packages quickly. For example: `pip install cowsay`.
+
+```python
+import cowsay
+import sys
+
+if len(sys.argv) == 2:
+    cowsay.cow("hello, " + sys.argv[1])
+```
+
+- You can find other third-party packages at [PyPI](https://pypi.org/).
+
+## APIs
+
+- APIs or "application program interfaces" allow you to connect to the code of others.
+- `requests` is a package that allows your program to behave as a web browser would. In your terminal, type `pip install requests`.
+- It turns out that Apple iTunes has its own API. The format returned is called JSON, a text-based format used to exchange data between applications.
 
 ```python
 import requests
+import sys
 
-# Make GET request
-response = requests.get("https://api.github.com/users/github")
-data = response.json()
-print(data["login"])
+if len(sys.argv) != 2:
+    sys.exit()
 
-# Check status
-if response.status_code == 200:
-    print("Success!")
-else:
-    print(f"Error: {response.status_code}")
+response = requests.get("https://itunes.apple.com/search?entity=song&limit=1&term=" + sys.argv[1])
+print(response.json())
 ```
 
-## Common Pitfalls
+- Python has a built-in JSON library that can help us interpret the data received:
 
-### ❌ Pitfall 1: Forgetting to Install Package
 ```python
-import pandas  # ModuleNotFoundError if not installed
+import json
+import requests
+import sys
+
+if len(sys.argv) != 2:
+    sys.exit()
+
+response = requests.get("https://itunes.apple.com/search?entity=song&limit=1&term=" + sys.argv[1])
+print(json.dumps(response.json(), indent=2))
 ```
 
-✅ **Correct:**
-```bash
-pip install pandas
-```
+- How could we output just the track name?
 
-### ❌ Pitfall 2: Incorrect Import Syntax
 ```python
-# WRONG: This doesn't work
-import math.sqrt
-result = sqrt(16)
+import json
+import requests
+import sys
+
+if len(sys.argv) != 2:
+    sys.exit()
+
+response = requests.get("https://itunes.apple.com/search?entity=song&limit=50&term=" + sys.argv[1])
+
+o = response.json()
+for result in o["results"]:
+    print(result["trackName"])
 ```
 
-✅ **Correct:**
+- You can learn more about `requests` through the [library's documentation](https://docs.python-requests.org/), and about JSON in Python's documentation of [JSON](https://docs.python.org/3/library/json.html).
+
+## Making Your Own Libraries
+
+- You have the ability as a Python programmer to create your own library! In your terminal window, type `code sayings.py`:
+
 ```python
-from math import sqrt
-result = sqrt(16)
-# OR
-import math
-result = math.sqrt(16)
+def hello(name):
+    print(f"hello, {name}")
+
+
+def goodbye(name):
+    print(f"goodbye, {name}")
 ```
 
-### ❌ Pitfall 3: JSON Parse Errors
+- Let's see how we could implement code utilizing this package. In the terminal window, type `code say.py`:
+
 ```python
-# WRONG: Forgetting to open the file
-data = json.load("data.json")  # Error!
+import sys
+
+from sayings import goodbye
+
+if len(sys.argv) == 2:
+    goodbye(sys.argv[1])
 ```
 
-✅ **Correct:**
-```python
-with open("data.json") as f:
-    data = json.load(f)
-```
+  This code imports the abilities of `goodbye` from the `sayings` package.
 
-### ❌ Pitfall 4: Not Handling API Errors
-```python
-# WRONG: Assumes API always succeeds
-response = requests.get(url)
-data = response.json()  # May crash if status != 200
-```
+## Summing Up
 
-✅ **Correct:**
-```python
-try:
-    response = requests.get(url)
-    response.raise_for_status()  # Raise error if status != 200
-    data = response.json()
-except requests.exceptions.RequestException as e:
-    print(f"API Error: {e}")
-```
+Libraries extend the abilities of Python. Some libraries are included by default with Python and simply need to be imported. Others are third-party packages that need to be installed using `pip`. You can make your own packages for use by yourself or others! In this lecture, you learned about…
 
-## Summary
-- **Modules** are files containing Python code that can be imported
-- **`import`** brings modules into your program
-- **Third-party libraries** are installed via pip
-- **JSON** is a common format for storing and exchanging data
-- **CSV** files store tabular data
-- **requests** library makes HTTP requests
-- **sys** and **os** modules interact with the system
-
-## Practice Problems
-1. Write a program that fetches weather data from a public API and displays the current temperature
-2. Write a program that reads a CSV file and converts it to JSON
-3. Write a program that generates random numbers and calculates their average
+- Libraries
+- Random
+- Statistics
+- Command-Line Arguments
+- Slice
+- Packages
+- APIs
+- Making Your Own Libraries
