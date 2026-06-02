@@ -1,1 +1,4 @@
-# Write your Python program below
+# TODO: implement.
+def solve():
+    """TODO: implement per specification.md."""
+    pass

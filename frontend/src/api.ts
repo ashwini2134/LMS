@@ -224,21 +224,106 @@ export const api = {
     await new Promise((r) => setTimeout(r, 600));
     
     let reply = "";
+    const pId = String(problemId).toLowerCase();
     
-    // Simple logic to detect common Python mistakes and suggest targeted questions
+    // Script-style problems where `print` is fully expected and lacks a required `return` function
+    const scriptStyleProblems = [
+      "indoor", "indoor_voice",
+      "playback", "playback_speed",
+      "deep_thought",
+      "home_federal", "home_federal_savings_bank",
+      "file_extensions",
+      "einstein",
+      "tip_calculator",
+      "square",
+      "sum",
+      "even_odd",
+      "simple_calculator",
+      "hello_world"
+    ];
+    
+    const requiresReturn = !scriptStyleProblems.includes(pId);
+    
     if (_studentCode) {
-      if (_studentCode.includes("== True") || _studentCode.includes("== False")) {
-        reply = "I noticed you're using `== True` in your condition. In Python, boolean expressions already evaluate to True or False. Can you simplify the condition and see if it's still correct?";
-      } else if (_studentCode.includes("def convert(text):") && _studentCode.includes("print(")) {
-        reply = "The convert function currently prints the transformed text. The specification asks the function to return a value. How could you modify the function so the caller decides when to print?";
-      } else if (_studentCode.includes("print(") && !_studentCode.includes("return")) {
-        reply = "Your function is printing a value, but does the problem expect the function to return a value instead? What happens if another function tries to use the result?";
-      } else if (/\bdef\s+\w+\s*\(/.test(_studentCode) && !_studentCode.includes("return")) {
-        reply = "I can see you calculate the result, but what value does the function send back to the caller? Check whether a return statement is needed.";
-      } else if (/\bdef \w+\(.*\)(?!:)/.test(_studentCode)) {
-        reply = "Take a close look at your function definition. Are you missing a colon at the end?";
-      } else if (/\bif \w+ = /.test(_studentCode)) {
-        reply = "I see a single equals sign (`=`) inside an `if` statement. What's the difference between assignment and comparison in Python?";
+      // 1) Pre-processing & Validation
+      const codeWithoutComments = _studentCode.replace(/#.*$/gm, "");
+      const normalized = codeWithoutComments.replace(/\s/g, "");
+      const normalizedLower = normalized.toLowerCase();
+
+      if (normalized.length === 0) {
+        reply = "It looks like your editor is empty. Where do you think you should start?";
+      } else {
+        // 2) Problem-specific rules
+        if (["indoor", "indoor_voice"].includes(pId)) {
+          if (!normalizedLower.includes(".lower()")) {
+            reply = "What string method converts text to lowercase?";
+          } else if (normalizedLower.includes(".upper()")) {
+            reply = "You are converting the text, but is it to the case requested?";
+          } else if (!normalizedLower.includes("input(")) {
+            reply = "How do you get text from the user in Python?";
+          }
+        } 
+        else if (["playback", "playback_speed"].includes(pId)) {
+          if (!normalizedLower.includes(".replace(")) {
+            reply = "How could you transform every space character into three periods?";
+          } else if (!/\.replace\(["']\s["']\s*,\s*["']\.\.\.["']\)/.test(codeWithoutComments)) {
+            reply = "Are you replacing the space character with exactly three periods?";
+          }
+        }
+        else if (["faces", "making_faces"].includes(pId)) {
+          if (!/def\s+convert\s*\(/.test(codeWithoutComments)) {
+            reply = "The specification asks for a specific function. What is its name?";
+          } else if (!codeWithoutComments.includes("🙂") && !codeWithoutComments.includes("🙁")) {
+            reply = "How can you swap the text smileys for emojis? Are you missing the emoji replacements?";
+          } else if (codeWithoutComments.includes("def convert") && codeWithoutComments.includes("print(") && !codeWithoutComments.includes("return")) {
+            reply = "The specification asks convert() to return a value. What should the function send back to the caller?";
+          }
+        }
+        else if (["deep_thought"].includes(pId)) {
+          if (!normalizedLower.includes("42") || !normalizedLower.includes("forty-two") || !normalizedLower.includes("fortytwo")) {
+            reply = "Does your code account for variations in spelling or spacing for the number 42?";
+          } else if (!codeWithoutComments.includes("==") && !/\bmatch\b/.test(codeWithoutComments) && !/\bin\b/.test(codeWithoutComments)) {
+            reply = "How can you check if the user's input matches the Great Answer?";
+          } else if (!normalizedLower.includes(".lower()") && !normalizedLower.includes(".strip()")) {
+            reply = "What if the user types 'FORTY TWO'? How can you normalize their input?";
+          }
+        }
+        else if (["home_federal", "home_federal_savings_bank"].includes(pId)) {
+          if (!normalizedLower.includes("hello")) {
+            reply = "How do you handle a greeting that starts with 'hello'?";
+          } else if (!normalizedLower.includes("h") || (!normalizedLower.includes(".startswith") && !codeWithoutComments.includes("[0]"))) {
+            reply = "What if the greeting starts with 'h' but isn't 'hello'?";
+          } else if (!normalizedLower.includes("0") || !normalizedLower.includes("20") || !normalizedLower.includes("100")) {
+            reply = "Does your code output the correct monetary penalties ($0, $20, $100)?";
+          }
+        }
+        else if (["file_extensions"].includes(pId)) {
+          if (!normalizedLower.includes(".endswith(") && !normalizedLower.includes(".split(") && !normalizedLower.includes(".rsplit(")) {
+            reply = "How can you extract the suffix of the filename string?";
+          } else if (!normalizedLower.includes("gif") || !normalizedLower.includes("jpeg") || !normalizedLower.includes("pdf")) {
+            reply = "Have you covered all the required media types (gif, jpg, jpeg, png, pdf, txt, zip)?";
+          }
+        }
+
+        // 3) Generic syntax/logic rules
+        if (!reply) {
+          const lines = codeWithoutComments.split("\n").map(l => l.trim());
+          const missingColon = lines.some(l => (l.startsWith("def ") || l.startsWith("if ") || l.startsWith("for ") || l.startsWith("while ") || l.startsWith("elif ") || l.startsWith("else")) && !l.endsWith(":") && l.length > 0);
+          
+          if (_studentCode.includes("== True") || _studentCode.includes("== False")) {
+            reply = "Do you need to explicitly check equality against a boolean, or does the expression already evaluate to one?";
+          } else if (/return.*\n\s+(?:print|return)/.test(codeWithoutComments)) {
+            reply = "Look at what happens after your return statement. Will that code ever execute?";
+          } else if (missingColon) {
+            reply = "Are you missing a specific punctuation mark at the end of your conditional, loop, or function definition?";
+          } else if (/\bif \w+ = /.test(_studentCode)) {
+            reply = "Are you assigning a value or comparing two values? Check your equals signs.";
+          } else if (requiresReturn && /\bdef\s+\w+\s*\(/.test(_studentCode) && _studentCode.includes("print(") && !_studentCode.includes("return")) {
+            reply = "Your function is printing a value, but does the problem expect the function to return a value instead? What happens if another function tries to use the result?";
+          } else if (requiresReturn && /\bdef\s+\w+\s*\(/.test(_studentCode) && !_studentCode.includes("return")) {
+            reply = "I can see you calculate the result, but what value does the function send back to the caller? Check whether a return statement is needed.";
+          }
+        }
       }
     }
 
