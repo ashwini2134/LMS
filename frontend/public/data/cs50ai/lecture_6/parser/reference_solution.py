@@ -1,3 +1,6 @@
+# REFERENCE SOLUTION - DO NOT SHIP TO STUDENTS
+# The student fills in NONTERMINALS and implements preprocess and np_chunk;
+# TERMINALS, grammar/parser wiring, and main are distribution code.
 import nltk
 
 NONTERMINALS = """

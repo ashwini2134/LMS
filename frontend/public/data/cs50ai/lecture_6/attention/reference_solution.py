@@ -1,3 +1,9 @@
+# REFERENCE SOLUTION - DO NOT SHIP TO STUDENTS
+# Only get_mask_token_index, get_color_for_attention_score, and
+# visualize_attentions are implemented by the student; main and
+# generate_diagram are distribution code.
+
+
 def get_mask_token_index(mask_token_id, inputs):
     for index, token_id in enumerate(inputs["input_ids"][0]):
         if token_id == mask_token_id:

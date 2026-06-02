@@ -1,38 +1,16 @@
 [
   {
-    "id": "quiz",
-    "title": "Quiz 6",
-    "description": "Test your understanding of natural language processing, parsing, meaning representation, and information extraction.",
-    "check50_slug": "cs50/quizzes/2024/ai/6",
-    "difficulty": "Medium",
-    "common_mistakes": [
-      "Confusing syntax with semantics",
-      "Not understanding word embeddings and their properties",
-      "Incorrect n-gram probability calculations"
-    ]
-  },
-  {
     "id": "parser",
     "title": "Parser",
-    "description": "Write an AI to parse English sentences into noun phrases and verb phrases.",
-    "check50_slug": "cs50/problems/2024/ai/parser",
-    "difficulty": "Hard",
-    "common_mistakes": [
-      "Not handling ambiguous sentences correctly",
-      "Incorrect preposition attachment",
-      "Missing terminal symbols in grammar rules"
-    ]
+    "description": "Write an AI to parse sentences and extract noun phrases, using a context-free grammar formalism.\n\nIn `parser.py`, complete the `NONTERMINALS` grammar rules and the `preprocess` and `np_chunk` functions:\n\n- The `NONTERMINALS` rules (combined with the provided `TERMINALS`) should parse all the sentences in `sentences/`. The first rule must begin with `S ->`, and you should use the nonterminal `NP` for noun phrases.\n- `preprocess(sentence)` returns a lowercased list of the sentence's words (tokenized with `nltk.word_tokenize`), excluding any word with no alphabetic character.\n- `np_chunk(tree)` returns a list of all noun-phrase-chunk subtrees: subtrees labeled `NP` that don't themselves contain another `NP`.\n\n(Uses nltk.)\n\n**Example:**\n```\n$ python parser.py\nSentence: Holmes sat.\n        S\n   _____|___\n  NP        VP\n  |         |\n  N         V\n  |         |\nholmes     sat\n\nNoun Phrase Chunks\nholmes\n```",
+    "check50_slug": "ai50/projects/2024/x/parser",
+    "difficulty": "hard"
   },
   {
     "id": "attention",
     "title": "Attention",
-    "description": "Implement attention mechanisms for natural language processing tasks.",
-    "check50_slug": "cs50/problems/2024/ai/attention",
-    "difficulty": "Hard",
-    "common_mistakes": [
-      "Incorrect attention weight calculations",
-      "Shape mismatch in tensors",
-      "Improper masking in attention layers"
-    ]
+    "description": "Write an AI to predict a masked word in a text sequence using BERT (a transformer-based masked language model), and visualize the attention scores of each of BERT's 144 attention heads.\n\nIn `mask.py`, complete `get_mask_token_index`, `get_color_for_attention_score`, and `visualize_attentions`:\n\n- `get_mask_token_index(mask_token_id, inputs)` returns the 0-indexed position of the mask token, or None if absent.\n- `get_color_for_attention_score(attention_score)` returns an `(r, g, b)` gray tuple scaling linearly from black (0) to white (1).\n- `visualize_attentions(tokens, attentions)` calls `generate_diagram` for every layer/head (1-indexed).\n\nThen analyze the generated diagrams in `analysis.md`.\n\n(Uses tensorflow + Hugging Face transformers + Pillow.)\n\n**Example:**\n```\n$ python mask.py\nText: We turned down a narrow lane and passed through a small [MASK].\nWe turned down a narrow lane and passed through a small field.\nWe turned down a narrow lane and passed through a small clearing.\nWe turned down a narrow lane and passed through a small park.\n```",
+    "check50_slug": "ai50/projects/2024/x/attention",
+    "difficulty": "hard"
   }
 ]
