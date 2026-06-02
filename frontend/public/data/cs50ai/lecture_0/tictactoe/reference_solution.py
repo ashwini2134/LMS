@@ -1,3 +1,4 @@
+# REFERENCE SOLUTION - DO NOT SHIP TO STUDENTS
 """
 Tic Tac Toe Player
 """
@@ -42,10 +43,10 @@ def result(board, action):
 
 def winner(board):
     lines = []
-    lines.extend(board)
-    lines.extend([[board[r][c] for r in range(3)] for c in range(3)])
-    lines.append([board[i][i] for i in range(3)])
-    lines.append([board[i][2 - i] for i in range(3)])
+    lines.extend(board)                                  # rows
+    lines.extend([[board[r][c] for r in range(3)] for c in range(3)])  # cols
+    lines.append([board[i][i] for i in range(3)])        # main diagonal
+    lines.append([board[i][2 - i] for i in range(3)])    # anti-diagonal
     for line in lines:
         if line[0] is not EMPTY and line[0] == line[1] == line[2]:
             return line[0]
