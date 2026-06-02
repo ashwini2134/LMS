@@ -3,7 +3,7 @@
 //  All data comes from /public/data/ JSON files.
 //  Auth & submissions are persisted in localStorage.
 // ─────────────────────────────────────────────────────────────────────────────
-
+import { getMentorHint, MentorContext } from './mentor';
 // ── Types (public API unchanged so pages need zero edits) ─────────────────────
 export type Course = { id: number; slug: string; title: string; description: string };
 export type ProblemSummary = { id: number; slug: string; title: string; week_label: string; sort_order: number };
@@ -219,125 +219,41 @@ export const api = {
     return detail;
   },
 
-  // ── Mentor chat (localStorage-based Socratic hints, no LLM call) ──────────
+  // ── Mentor chat (Problem-aware Socratic hints, powered by mentor.ts) ──────────
   chat: async (problemId: number | string, message: string, _studentCode: string | null): Promise<{ reply: string }> => {
     await new Promise((r) => setTimeout(r, 600));
     
-    let reply = "";
-    const pId = String(problemId).toLowerCase();
+    // Get problem details to extract course and lecture
+    const problemDetail = _problemDetailCache.get(Number(problemId));
+    const courseSlug = problemDetail?.course_slug ?? 'cs50p';
     
-    // Script-style problems where `print` is fully expected and lacks a required `return` function
-    const scriptStyleProblems = [
-      "indoor", "indoor_voice",
-      "playback", "playback_speed",
-      "deep_thought",
-      "home_federal", "home_federal_savings_bank",
-      "file_extensions",
-      "einstein",
-      "tip_calculator",
-      "square",
-      "sum",
-      "even_odd",
-      "simple_calculator",
-      "hello_world"
-    ];
-    
-    const requiresReturn = !scriptStyleProblems.includes(pId);
-    
-    if (_studentCode) {
-      // 1) Pre-processing & Validation
-      const codeWithoutComments = _studentCode.replace(/#.*$/gm, "");
-      const normalized = codeWithoutComments.replace(/\s/g, "");
-      const normalizedLower = normalized.toLowerCase();
-
-      if (normalized.length === 0) {
-        reply = "It looks like your editor is empty. Where do you think you should start?";
-      } else {
-        // 2) Problem-specific rules
-        if (["indoor", "indoor_voice"].includes(pId)) {
-          if (!normalizedLower.includes(".lower()")) {
-            reply = "What string method converts text to lowercase?";
-          } else if (normalizedLower.includes(".upper()")) {
-            reply = "You are converting the text, but is it to the case requested?";
-          } else if (!normalizedLower.includes("input(")) {
-            reply = "How do you get text from the user in Python?";
-          }
-        } 
-        else if (["playback", "playback_speed"].includes(pId)) {
-          if (!normalizedLower.includes(".replace(")) {
-            reply = "How could you transform every space character into three periods?";
-          } else if (!/\.replace\(["']\s["']\s*,\s*["']\.\.\.["']\)/.test(codeWithoutComments)) {
-            reply = "Are you replacing the space character with exactly three periods?";
-          }
-        }
-        else if (["faces", "making_faces"].includes(pId)) {
-          if (!/def\s+convert\s*\(/.test(codeWithoutComments)) {
-            reply = "The specification asks for a specific function. What is its name?";
-          } else if (!codeWithoutComments.includes("🙂") && !codeWithoutComments.includes("🙁")) {
-            reply = "How can you swap the text smileys for emojis? Are you missing the emoji replacements?";
-          } else if (codeWithoutComments.includes("def convert") && codeWithoutComments.includes("print(") && !codeWithoutComments.includes("return")) {
-            reply = "The specification asks convert() to return a value. What should the function send back to the caller?";
-          }
-        }
-        else if (["deep_thought"].includes(pId)) {
-          if (!normalizedLower.includes("42") || !normalizedLower.includes("forty-two") || !normalizedLower.includes("fortytwo")) {
-            reply = "Does your code account for variations in spelling or spacing for the number 42?";
-          } else if (!codeWithoutComments.includes("==") && !/\bmatch\b/.test(codeWithoutComments) && !/\bin\b/.test(codeWithoutComments)) {
-            reply = "How can you check if the user's input matches the Great Answer?";
-          } else if (!normalizedLower.includes(".lower()") && !normalizedLower.includes(".strip()")) {
-            reply = "What if the user types 'FORTY TWO'? How can you normalize their input?";
-          }
-        }
-        else if (["home_federal", "home_federal_savings_bank"].includes(pId)) {
-          if (!normalizedLower.includes("hello")) {
-            reply = "How do you handle a greeting that starts with 'hello'?";
-          } else if (!normalizedLower.includes("h") || (!normalizedLower.includes(".startswith") && !codeWithoutComments.includes("[0]"))) {
-            reply = "What if the greeting starts with 'h' but isn't 'hello'?";
-          } else if (!normalizedLower.includes("0") || !normalizedLower.includes("20") || !normalizedLower.includes("100")) {
-            reply = "Does your code output the correct monetary penalties ($0, $20, $100)?";
-          }
-        }
-        else if (["file_extensions"].includes(pId)) {
-          if (!normalizedLower.includes(".endswith(") && !normalizedLower.includes(".split(") && !normalizedLower.includes(".rsplit(")) {
-            reply = "How can you extract the suffix of the filename string?";
-          } else if (!normalizedLower.includes("gif") || !normalizedLower.includes("jpeg") || !normalizedLower.includes("pdf")) {
-            reply = "Have you covered all the required media types (gif, jpg, jpeg, png, pdf, txt, zip)?";
-          }
-        }
-
-        // 3) Generic syntax/logic rules
-        if (!reply) {
-          const lines = codeWithoutComments.split("\n").map(l => l.trim());
-          const missingColon = lines.some(l => (l.startsWith("def ") || l.startsWith("if ") || l.startsWith("for ") || l.startsWith("while ") || l.startsWith("elif ") || l.startsWith("else")) && !l.endsWith(":") && l.length > 0);
-          
-          if (_studentCode.includes("== True") || _studentCode.includes("== False")) {
-            reply = "Do you need to explicitly check equality against a boolean, or does the expression already evaluate to one?";
-          } else if (/return.*\n\s+(?:print|return)/.test(codeWithoutComments)) {
-            reply = "Look at what happens after your return statement. Will that code ever execute?";
-          } else if (missingColon) {
-            reply = "Are you missing a specific punctuation mark at the end of your conditional, loop, or function definition?";
-          } else if (/\bif \w+ = /.test(_studentCode)) {
-            reply = "Are you assigning a value or comparing two values? Check your equals signs.";
-          } else if (requiresReturn && /\bdef\s+\w+\s*\(/.test(_studentCode) && _studentCode.includes("print(") && !_studentCode.includes("return")) {
-            reply = "Your function is printing a value, but does the problem expect the function to return a value instead? What happens if another function tries to use the result?";
-          } else if (requiresReturn && /\bdef\s+\w+\s*\(/.test(_studentCode) && !_studentCode.includes("return")) {
-            reply = "I can see you calculate the result, but what value does the function send back to the caller? Check whether a return statement is needed.";
-          }
-        }
-      }
+    // Extract lecture number from problem (stored in common_mistakes or derived from slug)
+    // For now, use a simple heuristic: problems are numbered sequentially
+    let lectureNum = 0;
+    if (problemDetail) {
+      // Count how many problems come before this one in the same course
+      const courseProblems = _problemDetailCache.size > 0 
+        ? Array.from(_problemDetailCache.values()).filter(p => p.course_slug === courseSlug)
+        : [];
+      const problemIndex = courseProblems.findIndex(p => p.id === Number(problemId));
+      lectureNum = Math.floor(problemIndex / 5); // Rough estimate: 5 problems per lecture
     }
 
-    if (!reply) {
-      const hints = [
-        "What does your code do step by step? Walk me through it.",
-        "What is the expected output for the sample input? Does your code produce that?",
-        "Have you checked the edge cases — what happens with unexpected input?",
-        "Try reading the problem description again. What is it specifically asking for?",
-        "Can you simplify your approach? What is the minimum code needed to pass?",
-        "What Python built-ins might help here? Check the docs for `str`, `int`, `list`.",
-        "Good thinking! Now verify your logic handles every constraint in the problem.",
-      ];
-      reply = hints[Math.floor(Math.random() * hints.length)];
+    // Get mentor hint
+    const hintResponse = getMentorHint({
+      courseSlug,
+      lectureNum,
+      problemSlug: problemDetail?.slug ?? String(problemId),
+      studentCode: _studentCode ?? "",
+      message,
+    });
+
+    // Format response
+    let reply = hintResponse.hint;
+    
+    // Add special handling for positive feedback
+    if (hintResponse.type === 'positive' && hintResponse.isCorrect) {
+      // Keep the positive message as-is
     }
 
     const existing = getChatHistory(problemId);
