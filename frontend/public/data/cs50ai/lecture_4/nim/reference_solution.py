@@ -1,3 +1,6 @@
+# REFERENCE SOLUTION - DO NOT SHIP TO STUDENTS
+# Only the four NimAI methods below are implemented by the student; the Nim
+# class and train/play functions are distribution code.
 import random
 
 

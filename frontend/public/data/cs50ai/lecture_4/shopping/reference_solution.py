@@ -1,3 +1,5 @@
+# REFERENCE SOLUTION - DO NOT SHIP TO STUDENTS
+# Only load_data, train_model, and evaluate are implemented by the student.
 import csv
 
 from sklearn.neighbors import KNeighborsClassifier
