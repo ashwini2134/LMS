@@ -1,3 +1,8 @@
+# REFERENCE SOLUTION - DO NOT SHIP TO STUDENTS
+# Only the eight functions below are implemented by the student inside
+# generate.py's CrosswordCreator; crossword.py and the I/O helpers are
+# distribution code.
+
 def enforce_node_consistency(self):
     for var in self.crossword.variables:
         for word in set(self.domains[var]):
