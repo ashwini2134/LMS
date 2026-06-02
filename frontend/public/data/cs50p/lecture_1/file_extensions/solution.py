@@ -1,16 +1,19 @@
-filename = input("File name: ").strip().lower()
-types = {
-    ".gif": "image/gif",
-    ".jpg": "image/jpeg",
-    ".jpeg": "image/jpeg",
-    ".png": "image/png",
-    ".pdf": "application/pdf",
-    ".txt": "text/plain",
-    ".zip": "application/zip",
-}
-for ext, media_type in types.items():
-    if filename.endswith(ext):
-        print(media_type)
-        break
-else:
-    print("application/octet-stream")
+﻿def main():
+    filename = input("File name: ").strip().lower()
+    if filename.endswith(".gif"):
+        print("image/gif")
+    elif filename.endswith(".jpg") or filename.endswith(".jpeg"):
+        print("image/jpeg")
+    elif filename.endswith(".png"):
+        print("image/png")
+    elif filename.endswith(".pdf"):
+        print("application/pdf")
+    elif filename.endswith(".txt"):
+        print("text/plain")
+    elif filename.endswith(".zip"):
+        print("application/zip")
+    else:
+        print("application/octet-stream")
+
+if __name__ == "__main__":
+    main()

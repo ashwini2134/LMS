@@ -1,2 +1,6 @@
-text = input("Input: ")
-print(text.replace(" ", "..."))
+def main():
+    text = input()
+    print(text.replace("...", " "))
+
+if __name__ == "__main__":
+    main()
