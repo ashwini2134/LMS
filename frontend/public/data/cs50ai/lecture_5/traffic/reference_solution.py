@@ -1,3 +1,7 @@
+# REFERENCE SOLUTION - DO NOT SHIP TO STUDENTS
+# Only load_data and get_model are implemented by the student; main and the
+# global constants (EPOCHS, IMG_WIDTH, IMG_HEIGHT, NUM_CATEGORIES, TEST_SIZE)
+# are distribution code.
 import os
 
 import cv2
