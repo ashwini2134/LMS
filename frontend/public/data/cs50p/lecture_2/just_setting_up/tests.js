@@ -1,26 +1,21 @@
 export function runTests(code) {
-  const codeWithoutComments = code.replace(/#.*$/gm, "");
-  const normalized = codeWithoutComments.replace(/\s/g, "");
+  const cleanCode = code
+    .split("\n")
+    .map((line) => line.replace(/#.*$/, ""))
+    .join("\n");
+  const normalized = cleanCode.toLowerCase().replace(/\s/g, "");
 
   if (normalized.length === 0) {
-    return { passed: false, message: "? Code cannot be empty or just comments." };
+    return { passed: false, message: "❌ Code cannot be empty or comments only." };
   }
-
-  if (!normalized.includes("for") && !normalized.includes("while") && !normalized.includes(".replace(")) {
-    return { passed: false, message: "? Expected code to iterate through characters or systematically replace them." };
+  if (!normalized.includes("input(")) {
+    return { passed: false, message: "❌ Expected code to read input with input()." };
   }
-
-  const hasLowerVowels = ['a','e','i','o','u'].every(v => normalized.includes(v));
-  const hasUpperVowels = ['A','E','I','O','U'].every(v => normalized.includes(v));
-  const convertsCase = codeWithoutComments.toLowerCase().includes(".lower()") || codeWithoutComments.toLowerCase().includes(".upper()");
-
-  if (!(hasLowerVowels && hasUpperVowels) && !(convertsCase && hasLowerVowels)) {
-    return { passed: false, message: "? Expected code to handle both lowercase and uppercase vowels." };
+  if (!normalized.includes("aeiou")) {
+    return { passed: false, message: "❌ Expected code to reference the vowels (a, e, i, o, u)." };
   }
-
-  if (!normalized.includes("notin") && !normalized.includes(".replace") && !normalized.includes("continue") && !normalized.includes("!=")) {
-    return { passed: false, message: "? Expected logic to filter out or skip vowels." };
+  if (!normalized.includes("print(")) {
+    return { passed: false, message: "❌ Expected code to print the result with print()." };
   }
-
-  return { passed: true, message: "? All test cases passed!" };
+  return { passed: true, message: "✅ All test cases passed!" };
 }

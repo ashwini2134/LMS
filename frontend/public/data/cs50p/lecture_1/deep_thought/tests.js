@@ -1,26 +1,27 @@
 export function runTests(code) {
-  const codeWithoutComments = code.replace(/#.*$/gm, "");
-  const normalized = codeWithoutComments.toLowerCase().replace(/\s/g, "");
+  const cleanCode = code
+    .split("\n")
+    .map((line) => line.replace(/#.*$/, ""))
+    .join("\n");
+  const normalized = cleanCode.toLowerCase().replace(/\s/g, "");
 
   if (normalized.length === 0) {
-    return { passed: false, message: "? Code cannot be empty or just comments." };
+    return { passed: false, message: "❌ Code cannot be empty or comments only." };
   }
-
-  if (!normalized.includes("42") || !normalized.includes("forty-two") || !normalized.includes("fortytwo")) {
-    return { passed: false, message: "? Expected checks for '42', 'forty-two', and 'forty two'." };
+  if (!normalized.includes("input(")) {
+    return { passed: false, message: "❌ Expected code to read input with input()." };
   }
-
-  const hasComparison = codeWithoutComments.includes("==") || /\bmatch\b/.test(codeWithoutComments) || /\bin\b/.test(codeWithoutComments);
-  if (!hasComparison) {
-     return { passed: false, message: "? Expected comparison logic (==, match, in)." };
+  if (!normalized.includes("42")) {
+    return { passed: false, message: "❌ Expected code to check for '42'." };
   }
-
-  const numPrints = (codeWithoutComments.match(/\bprint\b/g) || []).length;
-  if (numPrints < 2 && !codeWithoutComments.includes("def ")) {
-     if (codeWithoutComments.toLowerCase().includes("yes") && !codeWithoutComments.toLowerCase().includes("no")) {
-         return { passed: false, message: "? Logic error: Constant output 'Yes' without branching logic is not allowed." };
-     }
+  if (!normalized.includes("forty-two") || !normalized.includes("fortytwo")) {
+    return { passed: false, message: "❌ Expected code to check for 'forty-two' and 'forty two'." };
   }
-
-  return { passed: true, message: "? All test cases passed!" };
+  if (!normalized.includes('"yes"') && !normalized.includes("'yes'")) {
+    return { passed: false, message: "❌ Expected code to print 'Yes' for a correct answer." };
+  }
+  if (!normalized.includes('"no"') && !normalized.includes("'no'")) {
+    return { passed: false, message: "❌ Expected code to print 'No' otherwise." };
+  }
+  return { passed: true, message: "✅ All test cases passed!" };
 }

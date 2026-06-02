@@ -1,32 +1,24 @@
 export function runTests(code) {
-  const codeWithoutComments = code.replace(/#.*$/gm, "");
-  const normalized = codeWithoutComments.toLowerCase().replace(/\s/g, "");
+  const cleanCode = code
+    .split("\n")
+    .map((line) => line.replace(/#.*$/, ""))
+    .join("\n");
+  const normalized = cleanCode.toLowerCase().replace(/\s/g, "");
 
   if (normalized.length === 0) {
-    return { passed: false, message: "? Code cannot be empty or just comments." };
+    return { passed: false, message: "❌ Code cannot be empty or comments only." };
   }
-
-  const reqExts = ["gif", "jpg", "jpeg", "png", "pdf", "txt", "zip"];
-  for (let i = 0; i < reqExts.length; i++) {
-      if (!normalized.includes(reqExts[i])) {
-          return { passed: false, message: "? Expected logic for extension: " + reqExts[i] };
-      }
+  if (!normalized.includes("input(")) {
+    return { passed: false, message: "❌ Expected code to read input with input()." };
   }
-
-  if (!normalized.includes(".endswith(") && !normalized.includes(".split(") && !normalized.includes(".rsplit(")) {
-      return { passed: false, message: "? Expected file extension extraction logic (e.g. .endswith or .split)." };
+  if (!normalized.includes("image/jpeg") || !normalized.includes("application/pdf")) {
+    return { passed: false, message: "❌ Expected the correct media types (e.g. image/jpeg, application/pdf)." };
   }
-
-  const mediaTypes = ["image/gif", "image/jpeg", "image/png", "application/pdf", "text/plain", "application/zip", "application/octet-stream"];
-  let count = 0;
-  for (let i = 0; i < mediaTypes.length; i++) {
-      if (normalized.includes(mediaTypes[i].replace(/\s/g, ""))) {
-          count++;
-      }
+  if (!normalized.includes("application/octet-stream")) {
+    return { passed: false, message: "❌ Expected application/octet-stream as the default." };
   }
-  if (count < 4) {
-      return { passed: false, message: "? Expected mapping to multiple media types, not a constant." };
+  if (!normalized.includes("endswith(") && !normalized.includes(".lower(")) {
+    return { passed: false, message: "❌ Expected case-insensitive suffix checking (e.g. .endswith())." };
   }
-
-  return { passed: true, message: "? All test cases passed!" };
+  return { passed: true, message: "✅ All test cases passed!" };
 }

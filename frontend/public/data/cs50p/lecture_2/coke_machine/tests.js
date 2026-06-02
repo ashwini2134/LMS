@@ -1,31 +1,27 @@
 export function runTests(code) {
-  const codeWithoutComments = code.replace(/#.*$/gm, "");
-  const normalized = codeWithoutComments.replace(/\s/g, "");
+  const cleanCode = code
+    .split("\n")
+    .map((line) => line.replace(/#.*$/, ""))
+    .join("\n");
+  const normalized = cleanCode.toLowerCase().replace(/\s/g, "");
 
   if (normalized.length === 0) {
-    return { passed: false, message: "? Code cannot be empty or just comments." };
+    return { passed: false, message: "❌ Code cannot be empty or comments only." };
   }
-
   if (!normalized.includes("while")) {
-    return { passed: false, message: "? Expected code to use a 'while' loop." };
+    return { passed: false, message: "❌ Expected code to use a while loop to keep prompting for coins." };
   }
-  
+  if (!normalized.includes("amountdue:")) {
+    return { passed: false, message: "❌ Expected code to print 'Amount Due:' each time." };
+  }
+  if (!normalized.includes("insertcoin:")) {
+    return { passed: false, message: "❌ Expected code to prompt 'Insert Coin: '." };
+  }
+  if (!normalized.includes("changeowed:")) {
+    return { passed: false, message: "❌ Expected code to print 'Change Owed:' at the end." };
+  }
   if (!normalized.includes("25") || !normalized.includes("10") || !normalized.includes("5")) {
-    return { passed: false, message: "? Expected code to check for accepted coin values: 25, 10, 5." };
+    return { passed: false, message: "❌ Expected code to accept 25, 10, and 5 cent coins." };
   }
-
-  if (!normalized.includes("-") && !normalized.includes("-=") && !normalized.includes("+") && !normalized.includes("+=")) {
-    return { passed: false, message: "? Expected arithmetic updates to track amount due or inserted." };
-  }
-
-  const inputMatches = codeWithoutComments.match(/\binput\s*\(/g);
-  if (!inputMatches || inputMatches.length === 0) {
-     return { passed: false, message: "? Expected code to use input() to accept coins." };
-  }
-  
-  if (!normalized.includes(">") && !normalized.includes("<") && !normalized.includes("==") && !normalized.includes("!=")) {
-      return { passed: false, message: "? Expected conditional logic to check if amount is fully paid." };
-  }
-
-  return { passed: true, message: "? All test cases passed!" };
+  return { passed: true, message: "✅ All test cases passed!" };
 }
