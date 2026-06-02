@@ -1,3 +1,6 @@
+# REFERENCE SOLUTION - DO NOT SHIP TO STUDENTS
+# Only transition_model, sample_pagerank, and iterate_pagerank are implemented
+# by the student; crawl/main are distribution code.
 import random
 
 
@@ -7,6 +10,7 @@ def transition_model(corpus, page, damping_factor):
     links = corpus[page]
 
     if not links:
+        # No outgoing links: choose uniformly among all pages.
         return {name: 1 / num_pages for name in corpus}
 
     for name in corpus:

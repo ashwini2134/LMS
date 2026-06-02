@@ -1,3 +1,6 @@
+# REFERENCE SOLUTION - DO NOT SHIP TO STUDENTS
+# Only joint_probability, update, and normalize are implemented by the student;
+# PROBS, main, load_data, powerset are distribution code.
 PROBS = {
     "gene": {2: 0.01, 1: 0.03, 0: 0.96},
     "trait": {
@@ -10,6 +13,7 @@ PROBS = {
 
 
 def _pass_probability(parent, one_gene, two_genes):
+    """Probability that `parent` passes a copy of the gene to a child."""
     if parent in two_genes:
         return 1 - PROBS["mutation"]
     if parent in one_gene:
