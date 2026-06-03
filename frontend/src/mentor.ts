@@ -30,6 +30,7 @@ export interface MentorContext {
   problemSlug: string; // 'indoor_voice', 'making_faces', etc.
   studentCode: string; // Raw student submission
   message: string;     // User's chat message (can be empty)
+  historyCount?: number; // Number of messages in conversation
 }
 
 export interface CodeAnalysis {
@@ -1258,6 +1259,79 @@ function hintLecture8(slug: string, analysis: CodeAnalysis, _code: string): Hint
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
+// PROGRESSIVE HINT TRANSLATOR
+// ──────────────────────────────────────────────────────────────────────────────
+
+function makeHintProgressive(response: HintResponse, context: MentorContext): HintResponse {
+  if (response.type !== 'guidance' && response.type !== 'correction') {
+    return response;
+  }
+
+  const level = Math.floor((context.historyCount ?? 0) / 2);
+  if (level <= 0) {
+    return response; // Return Socratic/conceptual hint on first try
+  }
+
+  let progressiveHint = response.hint;
+  const slug = context.problemSlug.toLowerCase();
+
+  // Problem-specific progressive enhancements
+  if (slug.includes("indoor_voice")) {
+    if (response.hint.toLowerCase().includes("lowercase") || response.hint.toLowerCase().includes("method")) {
+      if (level === 1) {
+        progressiveHint += "\n\n💡 *Progressive Hint:* You can use the `.lower()` string method. For example, if you have a variable `text`, `text.lower()` will return the lowercase version of it.";
+      } else {
+        progressiveHint += "\n\n💡 *Progressive Hint:* Try writing: `user_input = input().lower()` to read the user's input and immediately convert it to lowercase.";
+      }
+    }
+  } else if (slug.includes("playback_speed")) {
+    if (response.hint.toLowerCase().includes("periods") || response.hint.toLowerCase().includes("transform")) {
+      if (level === 1) {
+        progressiveHint += "\n\n💡 *Progressive Hint:* The `.replace(old, new)` method replaces occurrences of a substring. E.g., `text.replace(' ', '...')`.";
+      } else {
+        progressiveHint += "\n\n💡 *Progressive Hint:* Try using: `print(input().replace(' ', '...'))`. This reads the text, replaces all single spaces with three periods, and prints it.";
+      }
+    }
+  } else if (slug.includes("making_faces")) {
+    if (response.hint.toLowerCase().includes("convert")) {
+      if (level === 1) {
+        progressiveHint += "\n\n💡 *Progressive Hint:* A helper function is defined using `def convert(text):` and should return the modified text using `.replace()`.";
+      } else {
+        progressiveHint += "\n\n💡 *Progressive Hint:* Here is a template:\n```python\ndef convert(text):\n    return text.replace('🙂', '🙂').replace('🙁', '🙁') # replacing emoticons with emojis\n```";
+      }
+    }
+  } else if (slug.includes("numb3rs")) {
+    if (response.hint.toLowerCase().includes("regular expression") || response.hint.toLowerCase().includes("validate")) {
+      if (level === 1) {
+        progressiveHint += "\n\n💡 *Progressive Hint:* An IP address has 4 numbers (0-255) separated by dots. Check out matching `^([0-9]{1,3})\\.([0-9]{1,3})\\...` and then validating each is <= 255.";
+      } else {
+        progressiveHint += "\n\n💡 *Progressive Hint:* Try writing a regex pattern to extract the four groups: `re.search(r'^([0-9]+)\\.([0-9]+)\\.([0-9]+)\\.([0-9]+)$', ip)` and verify all four integers are in the range 0 to 255.";
+      }
+    }
+  } else if (slug.includes("bitcoin")) {
+    if (response.hint.toLowerCase().includes("api")) {
+      if (level === 1) {
+        progressiveHint += "\n\n💡 *Progressive Hint:* Use `requests.get('https://api.coindesk.com/v1/bpi/currentprice.json')` to fetch the data.";
+      } else {
+        progressiveHint += "\n\n💡 *Progressive Hint:* After getting the response, call `.json()` on it, and access nested keys: `response.json()['bpi']['USD']['rate_float']`.";
+      }
+    }
+  } else {
+    // Generic progressive additions for other problems
+    if (level === 1) {
+      progressiveHint += "\n\n💡 *Step-by-step:* Let's think about the structure. Have you written out pseudocode or outlined what variables you need?";
+    } else {
+      progressiveHint += "\n\n💡 *Logic Helper:* Here is the logical breakdown:\n1. Read the input.\n2. Apply the expected operations/conditions.\n3. Return or print the result according to specification.";
+    }
+  }
+
+  return {
+    ...response,
+    hint: progressiveHint,
+  };
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
 // MAIN MENTOR LOGIC
 // ──────────────────────────────────────────────────────────────────────────────
 
@@ -1268,34 +1342,34 @@ export function getMentorHint(context: MentorContext): HintResponse {
 
   // 1. Apply global rules first (these catch fundamental issues)
   const globalHint = checkGlobalRules(analysis, slug, code);
-  if (globalHint) return globalHint;
+  if (globalHint) return makeHintProgressive(globalHint, context);
 
   // 2. Apply lecture-specific rules
   
   if (context.lectureNum === 0) {
     const hint = hintLecture0(slug, analysis, code);
-    if (hint) return hint;
+    if (hint) return makeHintProgressive(hint, context);
   } else if (context.lectureNum === 1) {
     const hint = hintLecture1(slug, analysis, code);
-    if (hint) return hint;
+    if (hint) return makeHintProgressive(hint, context);
   } else if (context.lectureNum === 2) {
     const hint = hintLecture2(slug, analysis, code);
-    if (hint) return hint;
+    if (hint) return makeHintProgressive(hint, context);
   } else if (context.lectureNum === 3) {
     const hint = hintLecture3(slug, analysis, code);
-    if (hint) return hint;
+    if (hint) return makeHintProgressive(hint, context);
   } else if (context.lectureNum === 4) {
     const hint = hintLecture4(slug, analysis, code);
-    if (hint) return hint;
+    if (hint) return makeHintProgressive(hint, context);
   } else if (context.lectureNum === 6) {
     const hint = hintLecture6(slug, analysis, code);
-    if (hint) return hint;
+    if (hint) return makeHintProgressive(hint, context);
   } else if (context.lectureNum === 7) {
     const hint = hintLecture7(slug, analysis, code);
-    if (hint) return hint;
+    if (hint) return makeHintProgressive(hint, context);
   } else if (context.lectureNum === 8) {
     const hint = hintLecture8(slug, analysis, code);
-    if (hint) return hint;
+    if (hint) return makeHintProgressive(hint, context);
   }
 
   // 3. If no specific hint applies, check for positive feedback on apparently correct solutions
