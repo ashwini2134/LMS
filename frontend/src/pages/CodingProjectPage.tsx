@@ -4,7 +4,9 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import { api, type ChatMsg, saveCompletedProject, getProjectMetadata } from "../api";
+import { api, type ChatMsg, saveCompletedProject, getProjectMetadata, type FailureAnalysisResult, type CodeReviewResult } from "../api";
+import { runPythonMock, type DebugStep } from "../interpreter";
+
 
 export default function CodingProjectPage() {
   const { slug, number, projectId } = useParams<{ slug: string; number: string; projectId: string }>();
@@ -53,6 +55,19 @@ export default function CodingProjectPage() {
   const [chatInput, setChatInput] = useState("");
   const [isChatLoading, setIsChatLoading] = useState(false);
 
+  // Enhanced AI Mentor states
+  const [mentorSubTab, setMentorSubTab] = useState<"chat" | "review" | "hints" | "debug">("chat");
+  const [failureAnalysis, setFailureAnalysis] = useState<FailureAnalysisResult | null>(null);
+  const [codeReview, setCodeReview] = useState<CodeReviewResult | null>(null);
+  const [isReviewing, setIsReviewing] = useState(false);
+  const [unlockedHintLevel, setUnlockedHintLevel] = useState<number>(0);
+
+  // Visual Debugger states
+  const [debugSteps, setDebugSteps] = useState<DebugStep[]>([]);
+  const [currentDebugIndex, setCurrentDebugIndex] = useState<number>(0);
+
+
+
   // Fetch adjacent problems in current Week
   useEffect(() => {
     if (slug && number) {
@@ -89,6 +104,14 @@ export default function CodingProjectPage() {
   useEffect(() => {
     async function loadFiles() {
       try {
+        setFailureAnalysis(null);
+        setCodeReview(null);
+        setUnlockedHintLevel(0);
+        setMentorSubTab("chat");
+        setDebugSteps([]);
+        setCurrentDebugIndex(0);
+        
+        
         const base = import.meta.env.BASE_URL;
 
         // Fetch required question markdown
@@ -237,8 +260,13 @@ export default function CodingProjectPage() {
       setOutput("Running with custom input...\n");
       setActiveTab("output");
       await new Promise((r) => setTimeout(r, 450));
-      const res = runMockCustomCode(code, customInput);
-      setOutput(res);
+      const steps = runPythonMock(code, customInput);
+      const lastStep = steps[steps.length - 1];
+      if (lastStep?.error) {
+        setOutput(lastStep.outputs.join("\n") + "\n\n❌ Execution Error:\n" + lastStep.error);
+      } else {
+        setOutput(lastStep ? lastStep.outputs.join("\n") : "Program ran successfully (no output).");
+      }
       setStatus(""); // Reset autograder success/error for custom test
       return;
     }
@@ -256,9 +284,16 @@ export default function CodingProjectPage() {
           saveCompletedProject(slug, projectId, true);
         }
         setOutput(result.message || "✅ All test cases passed!");
+        setFailureAnalysis(null);
       } else {
         setStatus("error");
         setOutput(result.message || "❌ Test cases failed.");
+        if (projectId) {
+          const fa = api.getFailureAnalysis(code, projectId);
+          setFailureAnalysis(fa);
+          setActiveTab("mentor");
+          setMentorSubTab("chat");
+        }
       }
     } catch (e: any) {
       console.error(e);
@@ -292,9 +327,16 @@ export default function CodingProjectPage() {
           saveCompletedProject(slug, projectId, true);
         }
         setOutput("✅ Submission Successful!\n\nAll hidden test cases passed.");
+        setFailureAnalysis(null);
       } else {
         setStatus("error");
         setOutput(`❌ Submission Failed.\n\n${result.message || "Please review your logic."}`);
+        if (projectId) {
+          const fa = api.getFailureAnalysis(code, projectId);
+          setFailureAnalysis(fa);
+          setActiveTab("mentor");
+          setMentorSubTab("chat");
+        }
       }
     } catch (e: any) {
       console.error(e);
@@ -812,52 +854,428 @@ export default function CodingProjectPage() {
 
             {/* Tab 3: AI Mentor Chat Panel */}
             {activeTab === "mentor" && (
-              <div className="flex flex-col h-full bg-[#0b0f14]">
-                <div className="flex-1 overflow-y-auto p-4 space-y-3.5">
-                  {chatMessages.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center h-full text-center p-4">
-                      <span className="text-2xl mb-1.5">🤖</span>
-                      <p className="text-slate-400 text-xs font-semibold">I'm your progressive Socratic Mentor!</p>
-                      <p className="text-slate-500 text-[10px] max-w-xs mt-1">If you get stuck, send a message. I'll provide progressive hints (concepts first, then logic, then example code) without spoiling the solution.</p>
-                    </div>
-                  ) : (
-                    chatMessages.map((msg, i) => (
-                      <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                        <div className={`max-w-[80%] p-2.5 rounded-xl text-xs prose-sm prose-invert ${
-                          msg.role === 'user'
-                            ? 'bg-blue-600/90 text-white rounded-br-none'
-                            : 'bg-slate-800/80 border border-slate-750 text-slate-200 rounded-bl-none'
-                        }`}>
-                          <ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.content}</ReactMarkdown>
+              <div className="flex flex-col h-full bg-[#0b0f14] overflow-hidden">
+                {/* Sub-tabs header for AI Mentor */}
+                <div className="flex-shrink-0 flex items-center justify-between px-4 bg-[#10141b]/80 border-b border-slate-850 h-9">
+                  <div className="flex gap-2 h-full items-end">
+                    {(["chat", "review", "hints", "debug"] as const).map((tab) => (
+                      <button
+                        key={tab}
+                        onClick={() => setMentorSubTab(tab)}
+                        className={`px-3 py-1 text-[10px] font-bold border-b-2 transition-colors flex items-center gap-1 h-full ${
+                          mentorSubTab === tab
+                            ? "border-b-blue-500 text-blue-400"
+                            : "border-b-transparent text-slate-400 hover:text-slate-200"
+                        }`}
+                      >
+                        {tab === "chat" ? "💬 Chat" : tab === "review" ? "🔍 Code Review" : tab === "hints" ? "💡 Hints" : "🐞 Visual Debugger"}
+                      </button>
+                    ))}
+                  </div>
+                  {/* Dynamic Alert Banner for submission failures */}
+                  {failureAnalysis && (
+                    <span className="text-[9px] bg-red-500/10 border border-red-500/30 text-red-400 px-2 py-0.5 rounded font-bold animate-pulse">
+                      ✗ Last Run Failed
+                    </span>
+                  )}
+                </div>
+
+                {/* Sub-tab content */}
+                <div className="flex-1 overflow-y-auto p-4">
+                  {/* 1. FAILURE ANALYSIS SHOWN AT TOP OF ANY SUB-TAB IF EXISTS */}
+                  {failureAnalysis && (
+                    <div className="mb-4 bg-red-950/20 border border-red-500/20 rounded-xl p-3.5 shadow-lg">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-red-400 font-bold text-xs">✗ Submission Failure Analysis</span>
+                        <span className="text-[9px] bg-red-500/10 border border-red-500/20 px-1.5 py-0.2 rounded font-bold text-red-400">Error</span>
+                      </div>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+                        <div className="bg-[#090d12] border border-slate-850 p-2.5 rounded-lg">
+                          <div className="text-[10px] text-slate-400 font-semibold mb-1">Expected Output:</div>
+                          <pre className="font-mono text-[10px] text-green-400 whitespace-pre-wrap">{failureAnalysis.expected}</pre>
+                        </div>
+                        <div className="bg-[#090d12] border border-slate-850 p-2.5 rounded-lg">
+                          <div className="text-[10px] text-slate-400 font-semibold mb-1">Student Output:</div>
+                          <pre className="font-mono text-[10px] text-red-400 whitespace-pre-wrap">{failureAnalysis.student}</pre>
                         </div>
                       </div>
-                    ))
-                  )}
-                  {isChatLoading && (
-                    <div className="flex justify-start">
-                      <div className="bg-slate-800/60 border border-slate-750 p-2.5 rounded-xl rounded-bl-none text-slate-400 text-xs animate-pulse">
-                        Thinking...
+
+                      <div className="bg-[#0c1015]/80 border border-slate-800/80 p-2.5 rounded-lg text-xs leading-relaxed text-slate-200">
+                        <span className="font-bold text-slate-350 block mb-0.5">Why It Failed:</span>
+                        {failureAnalysis.whyFailed}
                       </div>
+                    </div>
+                  )}
+
+                  {/* SUB-TAB 1: AI TUTOR CHAT */}
+                  {mentorSubTab === "chat" && (
+                    <div className="space-y-3.5 pb-4">
+                      {chatMessages.length === 0 ? (
+                        <div className="flex flex-col items-center justify-center py-6 text-center p-4">
+                          <span className="text-3xl mb-2">🤖</span>
+                          <p className="text-slate-300 text-xs font-bold">I'm your progressive Socratic Mentor!</p>
+                          <p className="text-slate-400 text-[10px] max-w-xs mt-1 leading-relaxed">
+                            Ask me any question about the problem. I'll guide you step-by-step without giving away the direct solution.
+                          </p>
+                        </div>
+                      ) : (
+                        chatMessages.map((msg, i) => (
+                          <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                            <div className={`max-w-[85%] p-3 rounded-xl text-xs shadow-sm prose-sm prose-invert ${
+                              msg.role === 'user'
+                                ? 'bg-blue-600 text-white rounded-br-none'
+                                : 'bg-[#10141b] border border-slate-800/80 text-slate-200 rounded-bl-none'
+                            }`}>
+                              <ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.content}</ReactMarkdown>
+                            </div>
+                          </div>
+                        ))
+                      )}
+                      {isChatLoading && (
+                        <div className="flex justify-start">
+                          <div className="bg-[#10141b]/60 border border-slate-800/60 p-3 rounded-xl rounded-bl-none text-slate-400 text-xs animate-pulse">
+                            Thinking...
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* SUB-TAB 2: CODE REVIEW */}
+                  {mentorSubTab === "review" && (
+                    <div className="space-y-4 pb-4">
+                      <div className="bg-[#10141b] border border-slate-800/80 rounded-xl p-4 flex flex-col md:flex-row items-center justify-between gap-4">
+                        <div>
+                          <h4 className="font-bold text-xs text-slate-200">Review My Code</h4>
+                          <p className="text-slate-400 text-[10px] mt-0.5 max-w-sm leading-relaxed">
+                            Analyze your code for logical errors, common style/syntax pitfalls, and correctness checks before submitting.
+                          </p>
+                        </div>
+                        <button
+                          onClick={async () => {
+                            setIsReviewing(true);
+                            await new Promise(r => setTimeout(r, 600));
+                            if (projectId) {
+                              const result = api.reviewStudentCode(code, projectId);
+                              setCodeReview(result);
+                            }
+                            setIsReviewing(false);
+                          }}
+                          disabled={isReviewing}
+                          className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white text-xs font-bold px-4 py-2 rounded-xl shadow-md transition-all whitespace-nowrap"
+                        >
+                          {isReviewing ? "Analyzing..." : "🔍 Review My Code"}
+                        </button>
+                      </div>
+
+                      {codeReview && (
+                        <div className="space-y-3">
+                          <h5 className="text-[11px] uppercase tracking-wider text-slate-400 font-bold">Analysis Checklist</h5>
+                          
+                          {/* Checklist items */}
+                          <div className="grid grid-cols-1 gap-2">
+                            {codeReview.checks.map((check: any, idx: number) => (
+                              <div key={idx} className={`p-2.5 rounded-lg border text-xs flex items-center justify-between gap-3 ${
+                                check.status === "correct"
+                                  ? "bg-green-950/10 border-green-500/20 text-green-300"
+                                  : check.status === "warning"
+                                  ? "bg-yellow-950/10 border-yellow-500/20 text-yellow-300"
+                                  : "bg-red-950/10 border-red-500/20 text-red-300"
+                              }`}>
+                                <span className="font-medium">{check.message}</span>
+                                <span className={`px-2 py-0.5 rounded text-[9px] font-bold uppercase ${
+                                  check.status === "correct"
+                                    ? "bg-green-500/10 border border-green-500/20 text-green-400"
+                                    : check.status === "warning"
+                                    ? "bg-yellow-500/10 border border-yellow-500/20 text-yellow-400"
+                                    : "bg-red-500/10 border border-red-500/20 text-red-400"
+                                }`}>
+                                  {check.status === "correct" ? "✓ Correct" : check.status === "warning" ? "⚠ Warning" : "✗ Error"}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+
+                          {/* Issues/Suggestions Card */}
+                          <div className="bg-[#10141b] border border-slate-800/80 rounded-xl p-4">
+                            <h5 className="text-xs font-bold text-slate-200 mb-2">Code Mentor Feedback</h5>
+                            {codeReview.issues.length === 0 ? (
+                              <div className="text-green-400 text-xs font-medium flex items-center gap-1.5">
+                                <span>✓</span> No logical issues or common errors found! Your code structure is clean.
+                              </div>
+                            ) : (
+                              <ul className="space-y-2 list-none p-0 m-0">
+                                {codeReview.issues.map((issue: string, idx: number) => (
+                                  <li key={idx} className="text-xs text-slate-350 flex items-start gap-2">
+                                    <span className="text-amber-500 mt-0.5">⚠️</span>
+                                    <span>{issue}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* SUB-TAB 3: PROGRESSIVE HINTS */}
+                  {mentorSubTab === "hints" && (
+                    <div className="space-y-4 pb-4">
+                      <div className="bg-[#10141b] border border-slate-800/80 rounded-xl p-4">
+                        <h4 className="font-bold text-xs text-slate-250 mb-1">Progressive Hint System</h4>
+                        <p className="text-slate-400 text-[10px] leading-relaxed">
+                          Request hints stage-by-stage. We'll start with the concept, then guide your direction, and finally show a minimal code pattern without giving away the answer.
+                        </p>
+                      </div>
+
+                      {(() => {
+                        const hintData = projectId ? api.getProgressiveHints(projectId) : null;
+                        if (!hintData) return null;
+
+                        return (
+                          <div className="space-y-3">
+                            {/* Hint 1: Concept */}
+                            <div className="border border-slate-800/85 rounded-xl overflow-hidden bg-[#0c1015]/40">
+                              <div className="px-4 py-2.5 bg-slate-900/60 border-b border-slate-800/60 flex items-center justify-between gap-3">
+                                <span className="font-bold text-xs text-slate-200">Hint 1 (Concept)</span>
+                                <span className="text-[9px] bg-blue-500/10 border border-blue-500/20 px-1.5 py-0.2 rounded font-bold text-blue-400">Concept</span>
+                              </div>
+                              <div className="p-4 text-xs text-slate-300 leading-relaxed">
+                                {hintData.hint1}
+                              </div>
+                            </div>
+
+                            {/* Hint 2: Direction */}
+                            <div className="border border-slate-800/85 rounded-xl overflow-hidden bg-[#0c1015]/40">
+                              {unlockedHintLevel >= 1 ? (
+                                <>
+                                  <div className="px-4 py-2.5 bg-slate-900/60 border-b border-slate-800/60 flex items-center justify-between gap-3">
+                                    <span className="font-bold text-xs text-slate-200">Hint 2 (Direction)</span>
+                                    <span className="text-[9px] bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.2 rounded font-bold text-amber-400">Direction</span>
+                                  </div>
+                                  <div className="p-4 text-xs text-slate-300 leading-relaxed">
+                                    {hintData.hint2}
+                                  </div>
+                                </>
+                              ) : (
+                                <div className="p-4 flex items-center justify-between gap-4 bg-slate-950/20">
+                                  <span className="text-[11px] text-slate-500 italic">Hint 2 is locked. Review Hint 1 first.</span>
+                                  <button
+                                    onClick={() => setUnlockedHintLevel(1)}
+                                    className="bg-slate-800 hover:bg-slate-750 text-slate-200 text-[10px] font-bold px-3 py-1 rounded-lg border border-slate-700 transition-all cursor-pointer"
+                                  >
+                                    🔓 Unlock Hint 2
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Hint 3: Code Pattern */}
+                            <div className="border border-slate-800/85 rounded-xl overflow-hidden bg-[#0c1015]/40">
+                              {unlockedHintLevel >= 2 ? (
+                                <>
+                                  <div className="px-4 py-2.5 bg-slate-900/60 border-b border-slate-800/60 flex items-center justify-between gap-3">
+                                    <span className="font-bold text-xs text-slate-200">Hint 3 (Example Pattern)</span>
+                                    <span className="text-[9px] bg-green-500/10 border border-green-500/20 px-1.5 py-0.2 rounded font-bold text-green-400">Pattern</span>
+                                  </div>
+                                  <div className="p-4 text-xs text-slate-300 leading-relaxed prose-sm prose-invert">
+                                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{hintData.hint3}</ReactMarkdown>
+                                  </div>
+                                </>
+                              ) : (
+                                <div className="p-4 flex items-center justify-between gap-4 bg-slate-950/20">
+                                  <span className="text-[11px] text-slate-500 italic">Hint 3 is locked. Review Hint 2 first.</span>
+                                  <button
+                                    onClick={() => setUnlockedHintLevel(2)}
+                                    disabled={unlockedHintLevel < 1}
+                                    className="bg-slate-800 hover:bg-slate-750 disabled:opacity-50 text-slate-200 text-[10px] font-bold px-3 py-1 rounded-lg border border-slate-700 transition-all cursor-pointer"
+                                  >
+                                    🔓 Unlock Hint 3
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })()}
+                    </div>
+                  )}
+
+                  {/* SUB-TAB 4: VISUAL DEBUGGER */}
+                  {mentorSubTab === "debug" && (
+                    <div className="space-y-4 pb-4">
+                      {debugSteps.length === 0 ? (
+                        <div className="flex flex-col items-center justify-center py-6 text-center p-4">
+                          <span className="text-3xl mb-2">🐞</span>
+                          <p className="text-slate-300 text-xs font-bold">Interactive Visual Debugger</p>
+                          <p className="text-slate-400 text-[10px] max-w-xs mt-1 leading-relaxed">
+                            Step through your Python code line-by-line to watch variable assignments, conditionals, and outputs execute in real time.
+                          </p>
+                          <button
+                            onClick={() => {
+                              const steps = runPythonMock(code, customInput || "");
+                              setDebugSteps(steps);
+                              setCurrentDebugIndex(0);
+                            }}
+                            className="mt-4 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 py-2 rounded-xl shadow-md transition-all cursor-pointer"
+                          >
+                            ⚙️ Initialize Debugger
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="space-y-4">
+                          {/* Controls bar */}
+                          <div className="bg-[#10141b] border border-slate-800/80 rounded-xl p-3 flex items-center justify-between gap-3">
+                            <div className="flex items-center gap-1">
+                              <button
+                                onClick={() => setCurrentDebugIndex(0)}
+                                disabled={currentDebugIndex === 0}
+                                className="px-2.5 py-1 bg-slate-800 hover:bg-slate-750 disabled:opacity-40 border border-slate-700 rounded-lg text-[10px] font-bold text-slate-300 transition-colors cursor-pointer"
+                              >
+                                ⏮ Start
+                              </button>
+                              <button
+                                onClick={() => setCurrentDebugIndex(prev => Math.max(0, prev - 1))}
+                                disabled={currentDebugIndex === 0}
+                                className="px-2.5 py-1 bg-slate-800 hover:bg-slate-750 disabled:opacity-40 border border-slate-700 rounded-lg text-[10px] font-bold text-slate-300 transition-colors cursor-pointer"
+                              >
+                                ◀ Prev
+                              </button>
+                              <span className="text-[10px] font-semibold text-slate-400 px-2">
+                                Step {currentDebugIndex + 1} of {debugSteps.length}
+                              </span>
+                              <button
+                                onClick={() => setCurrentDebugIndex(prev => Math.min(debugSteps.length - 1, prev + 1))}
+                                disabled={currentDebugIndex === debugSteps.length - 1}
+                                className="px-2.5 py-1 bg-slate-800 hover:bg-slate-750 disabled:opacity-40 border border-slate-700 rounded-lg text-[10px] font-bold text-slate-300 transition-colors cursor-pointer"
+                              >
+                                Next ▶
+                              </button>
+                              <button
+                                onClick={() => setCurrentDebugIndex(debugSteps.length - 1)}
+                                disabled={currentDebugIndex === debugSteps.length - 1}
+                                className="px-2.5 py-1 bg-slate-800 hover:bg-slate-750 disabled:opacity-40 border border-slate-700 rounded-lg text-[10px] font-bold text-slate-300 transition-colors cursor-pointer"
+                              >
+                                End ⏭
+                              </button>
+                            </div>
+                            <button
+                              onClick={() => {
+                                const steps = runPythonMock(code, customInput || "");
+                                setDebugSteps(steps);
+                                setCurrentDebugIndex(0);
+                              }}
+                              className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-bold rounded-lg transition-colors cursor-pointer"
+                            >
+                              🔄 Restart / Reload Code
+                            </button>
+                          </div>
+
+                          {/* Grid layout for trace execution info */}
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {/* Column 1: Executing Code Line */}
+                            <div className="bg-[#10141b] border border-slate-800/80 rounded-xl p-3.5 flex flex-col h-[180px]">
+                              <h5 className="text-[10px] uppercase tracking-wider text-slate-400 font-bold mb-2">Trace Execution</h5>
+                              <div className="flex-1 overflow-y-auto bg-[#090d12] border border-slate-850 p-2 rounded-lg space-y-1 font-mono text-[11px] leading-relaxed">
+                                {(() => {
+                                  const currentStep = debugSteps[currentDebugIndex];
+                                  const startIdx = Math.max(0, currentStep.lineIndex - 3);
+                                  const endIdx = Math.min(code.split("\n").length - 1, currentStep.lineIndex + 3);
+                                  const codeLines = code.split("\n");
+
+                                  return codeLines.map((lineText, idx) => {
+                                    if (idx < startIdx || idx > endIdx) return null;
+                                    const isExecuting = idx === currentStep.lineIndex;
+                                    return (
+                                      <div
+                                        key={idx}
+                                        className={`flex items-start gap-2.5 py-0.5 px-2 rounded ${
+                                          isExecuting
+                                            ? "bg-yellow-500/10 border-l-2 border-yellow-500 text-yellow-300 font-bold"
+                                            : "text-slate-500 opacity-60"
+                                        }`}
+                                      >
+                                        <span className="w-5 text-right select-none text-[10px] font-mono opacity-40">{idx + 1}</span>
+                                        <span className="whitespace-pre-wrap">{lineText}</span>
+                                      </div>
+                                    );
+                                  });
+                                })()}
+                              </div>
+                            </div>
+
+                            {/* Column 2: Variables Inspector */}
+                            <div className="bg-[#10141b] border border-slate-800/80 rounded-xl p-3.5 flex flex-col h-[180px]">
+                              <h5 className="text-[10px] uppercase tracking-wider text-slate-400 font-bold mb-2">Variables Inspector</h5>
+                              <div className="flex-1 overflow-y-auto bg-[#090d12] border border-slate-850 p-2 rounded-lg">
+                                {Object.keys(debugSteps[currentDebugIndex].variables).length === 0 ? (
+                                  <div className="h-full flex items-center justify-center text-slate-500 text-[10px] italic">
+                                    No variables defined yet at this step.
+                                  </div>
+                                ) : (
+                                  <table className="w-full text-left text-[11px]">
+                                    <thead>
+                                      <tr className="border-b border-slate-800 text-slate-500 text-[10px]">
+                                        <th className="pb-1 font-semibold">Variable</th>
+                                        <th className="pb-1 font-semibold">Value</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                      {Object.entries(debugSteps[currentDebugIndex].variables).map(([name, val]) => (
+                                        <tr key={name} className="border-b border-slate-900/60">
+                                          <td className="py-1.5 font-mono font-bold text-blue-400">{name}</td>
+                                          <td className="py-1.5 font-mono text-slate-300 whitespace-pre-wrap">{val}</td>
+                                        </tr>
+                                      ))}
+                                    </tbody>
+                                  </table>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Debug Terminal Output */}
+                          <div className="bg-[#10141b] border border-slate-800/80 rounded-xl p-3.5">
+                            <h5 className="text-[10px] uppercase tracking-wider text-slate-400 font-bold mb-2">Debug Console Output</h5>
+                            <div className="bg-[#090d12] border border-slate-850 p-3 rounded-lg font-mono text-[11px] text-slate-350 min-h-[50px] max-h-[80px] overflow-y-auto whitespace-pre-wrap">
+                              {debugSteps[currentDebugIndex].outputs.length === 0
+                                ? "[Console stdout is empty]"
+                                : debugSteps[currentDebugIndex].outputs.join("\n")}
+                            </div>
+                            {debugSteps[currentDebugIndex].error && (
+                              <div className="mt-2 text-red-400 text-[10px] font-semibold bg-red-950/20 border border-red-900/40 p-2 rounded-lg">
+                                ❌ Error at step: {debugSteps[currentDebugIndex].error}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
-                <form onSubmit={handleChatSubmit} className="flex gap-2 p-2 border-t border-slate-800/80 bg-[#090d12]">
-                  <input
-                    type="text"
-                    value={chatInput}
-                    onChange={e => setChatInput(e.target.value)}
-                    placeholder="Ask for hints..."
-                    className="flex-1 bg-slate-900 border border-slate-700/60 rounded-xl px-3 py-1.5 text-xs text-slate-200 outline-none focus:border-blue-500"
-                    disabled={isChatLoading}
-                  />
-                  <button
-                    type="submit"
-                    disabled={isChatLoading || !chatInput.trim()}
-                    className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition-colors"
-                  >
-                    Send
-                  </button>
-                </form>
+
+                {/* Sub-form input shown only for Chat sub-tab */}
+                {mentorSubTab === "chat" && (
+                  <form onSubmit={handleChatSubmit} className="flex-shrink-0 flex gap-2 p-2 border-t border-slate-800/80 bg-[#090d12] h-12">
+                    <input
+                      type="text"
+                      value={chatInput}
+                      onChange={e => setChatInput(e.target.value)}
+                      placeholder="Ask for hints..."
+                      className="flex-1 bg-slate-900 border border-slate-700/60 rounded-xl px-3 py-1.5 text-xs text-slate-200 outline-none focus:border-blue-500"
+                      disabled={isChatLoading}
+                    />
+                    <button
+                      type="submit"
+                      disabled={isChatLoading || !chatInput.trim()}
+                      className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition-colors"
+                    >
+                      Send
+                    </button>
+                  </form>
+                )}
               </div>
             )}
 

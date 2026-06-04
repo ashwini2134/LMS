@@ -3,7 +3,8 @@
 //  All data comes from /public/data/ JSON files.
 //  Auth & submissions are persisted in localStorage.
 // ─────────────────────────────────────────────────────────────────────────────
-import { getMentorHint } from './mentor';
+import { getMentorHint, getFailureAnalysis, getProgressiveHints, reviewStudentCode } from './mentor';
+export type { FailureAnalysisResult, ProgressiveHints, CodeReviewCheck, CodeReviewResult } from './mentor';
 // ── Types (public API unchanged so pages need zero edits) ─────────────────────
 export type Course = { id: number; slug: string; title: string; description: string };
 export type ProblemSummary = { id: number; slug: string; title: string; week_label: string; sort_order: number };
@@ -268,6 +269,18 @@ export const api = {
 
   chatHistory: async (problemId: number | string): Promise<ChatMsg[]> => {
     return getChatHistory(problemId);
+  },
+
+  getFailureAnalysis: (code: string, problemSlug: string): FailureAnalysisResult => {
+    return getFailureAnalysis(code, problemSlug);
+  },
+
+  getProgressiveHints: (problemSlug: string): ProgressiveHints => {
+    return getProgressiveHints(problemSlug);
+  },
+
+  reviewStudentCode: (code: string, problemSlug: string): CodeReviewResult => {
+    return reviewStudentCode(code, problemSlug);
   },
 };
 
