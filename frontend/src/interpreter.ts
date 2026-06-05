@@ -103,7 +103,6 @@ export function runPythonMock(code: string, rawInput: string): DebugStep[] {
   let currentFunctionName = "";
   let currentFunctionParams: string[] = [];
   let currentFunctionBody: string[] = [];
-  let funcStartLine = -1;
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
@@ -111,7 +110,6 @@ export function runPythonMock(code: string, rawInput: string): DebugStep[] {
 
     if (trimmed.startsWith("def ")) {
       insideFunction = true;
-      funcStartLine = i;
       const match = trimmed.match(/def\s+(\w+)\s*\(([^)]*)\)/);
       if (match) {
         currentFunctionName = match[1];
@@ -128,19 +126,18 @@ export function runPythonMock(code: string, rawInput: string): DebugStep[] {
         currentFunctionBody.push(line);
       } else {
         // Function ended, compile it
-        compileFunction(currentFunctionName, currentFunctionParams, currentFunctionBody, funcs, evalExpr);
+        compileFunction(currentFunctionName, currentFunctionParams, currentFunctionBody, funcs);
         insideFunction = false;
       }
     }
   }
   // Catch function if it ends at EOF
   if (insideFunction) {
-    compileFunction(currentFunctionName, currentFunctionParams, currentFunctionBody, funcs, evalExpr);
+    compileFunction(currentFunctionName, currentFunctionParams, currentFunctionBody, funcs);
   }
 
   // Second pass: step-by-step execution tracer
   let i = 0;
-  let skippedLinesCount = 0;
 
   // Track execution block indentation for conditionals
   let conditionalStack: { satisfied: boolean; indentLevel: number }[] = [];
@@ -226,7 +223,6 @@ export function runPythonMock(code: string, rawInput: string): DebugStep[] {
       let val;
       if (printInner.startsWith("f'") || printInner.startsWith("f\"") || printInner.startsWith("f`")) {
         // f-string parsing: f"hello {name}"
-        let quote = printInner.charAt(1);
         let content = printInner.slice(2, -1);
         val = content.replace(/\{([^}]+)\}/g, (_, innerExpr) => {
           const res = evalExpr(innerExpr);
@@ -286,7 +282,7 @@ export function runPythonMock(code: string, rawInput: string): DebugStep[] {
   return steps;
 }
 
-function compileFunction(name: string, params: string[], bodyLines: string[], funcs: Record<string, Function>, evalExpr: Function) {
+function compileFunction(name: string, params: string[], bodyLines: string[], funcs: Record<string, Function>) {
   // Translate body lines to JS function body
   const jsLines: string[] = [];
   for (const line of bodyLines) {

@@ -201,48 +201,7 @@ export default function CodingProjectPage() {
     }
   }
 
-  // Mock standard inputs runner
-  function runMockCustomCode(codeStr: string, customInputStr: string) {
-    const lines = codeStr.split("\n");
-    const outputs: string[] = [];
-    const variables: Record<string, string> = {};
-    const inputLines = customInputStr.split("\n");
-    let inputIdx = 0;
-    
-    for (const line of lines) {
-      const trimmed = line.trim();
-      
-      // Match variable = input("Prompt") or input()
-      const inputMatch = trimmed.match(/^(\w+)\s*=\s*input\((.*)\)$/);
-      if (inputMatch) {
-        const varName = inputMatch[1];
-        const val = inputLines[inputIdx++] || "";
-        variables[varName] = val;
-        continue;
-      }
-      
-      // Match print statements
-      const printMatch = trimmed.match(/^print\((.*)\)$/);
-      if (printMatch) {
-        let expr = printMatch[1].trim();
-        // Remove trailing commas/brackets
-        if (expr.startsWith("f'") || expr.startsWith('f"')) {
-          let strVal = expr.slice(2, -1);
-          strVal = strVal.replace(/\{(\w+)\}/g, (_, name) => variables[name] || "");
-          outputs.push(strVal);
-        } else if (expr.startsWith("'") || expr.startsWith('"')) {
-          outputs.push(expr.slice(1, -1));
-        } else {
-          outputs.push(variables[expr] || expr);
-        }
-      }
-    }
-    
-    if (outputs.length === 0) {
-      return "Program ran successfully.\n\n[Console Output Is Empty]\nExit code: 0";
-    }
-    return outputs.join("\n");
-  }
+
 
   // Run Code
   async function handleRun() {

@@ -3,7 +3,7 @@
 //  All data comes from /public/data/ JSON files.
 //  Auth & submissions are persisted in localStorage.
 // ─────────────────────────────────────────────────────────────────────────────
-import { getMentorHint, getFailureAnalysis, getProgressiveHints, reviewStudentCode } from './mentor';
+import { getMentorHint, getFailureAnalysis, getProgressiveHints, reviewStudentCode, type FailureAnalysisResult, type ProgressiveHints, type CodeReviewResult } from './mentor';
 export type { FailureAnalysisResult, ProgressiveHints, CodeReviewCheck, CodeReviewResult } from './mentor';
 // ── Types (public API unchanged so pages need zero edits) ─────────────────────
 export type Course = { id: number; slug: string; title: string; description: string };
