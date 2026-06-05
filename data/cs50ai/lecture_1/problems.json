@@ -1,0 +1,16 @@
+[
+  {
+    "id": "knights",
+    "title": "Knights",
+    "description": "Write a program to solve \"Knights and Knaves\" logic puzzles. A knight always tells the truth; a knave always lies. Given a set of statements spoken by each character, determine for each character whether they are a knight or a knave.\n\nIn `puzzle.py`, add knowledge to the knowledge bases `knowledge0`, `knowledge1`, `knowledge2`, and `knowledge3` (using the `Symbol`, `And`, `Or`, `Not`, `Implication`, and `Biconditional` classes from the provided `logic.py`) so that the `model_check` algorithm can solve each of the four puzzles. You should not modify `logic.py`.\n\nNote: you must get Knights 100% correct to pass (an exception to the usual 70% threshold).",
+    "check50_slug": "ai50/projects/2024/x/knights",
+    "difficulty": "medium"
+  },
+  {
+    "id": "minesweeper",
+    "title": "Minesweeper",
+    "description": "Write an AI to play Minesweeper. Each logical sentence is represented as a set of `cells` and a `count` of how many of those cells are mines. The AI gathers knowledge as safe cells are revealed and infers which cells are safe or mines.\n\nIn `minesweeper.py`, complete the `Sentence` methods (`known_mines`, `known_safes`, `mark_mine`, `mark_safe`) and the `MinesweeperAI` methods (`add_knowledge`, `make_safe_move`, `make_random_move`). `add_knowledge` should mark the cell safe, add a new sentence for its undetermined neighbors, mark any newly known safes/mines, and infer new sentences via the subset rule (`set2 - set1 = count2 - count1`).",
+    "check50_slug": "ai50/projects/2024/x/minesweeper",
+    "difficulty": "hard"
+  }
+]

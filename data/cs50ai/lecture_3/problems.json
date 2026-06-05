@@ -1,0 +1,9 @@
+[
+  {
+    "id": "crossword",
+    "title": "Crossword",
+    "description": "Write an AI to generate crossword puzzles, modeled as a constraint satisfaction problem. Each sequence of squares is a variable whose value is a word; unary constraints come from word length and binary constraints come from overlaps between variables.\n\nIn `generate.py`, complete `enforce_node_consistency`, `revise`, `ac3`, `assignment_complete`, `consistent`, `order_domain_values`, `select_unassigned_variable`, and `backtrack`:\n\n- `enforce_node_consistency` removes any word whose length doesn't match the variable's length.\n- `revise(x, y)` makes `x` arc consistent with `y` (returns True if the domain changed).\n- `ac3(arcs=None)` enforces arc consistency; returns False if any domain empties.\n- `consistent` checks distinctness, lengths, and overlap agreement.\n- `order_domain_values` orders values by the least-constraining-values heuristic.\n- `select_unassigned_variable` uses MRV, breaking ties by degree.\n- `backtrack` performs backtracking search and returns a complete assignment or None.\n\nYou should not modify `crossword.py`.\n\n**Example:**\n```\n$ python generate.py data/structure1.txt data/words1.txt output.png\n██████████████\n███████M████R█\n█INTELLIGENCE█\n...\n```",
+    "check50_slug": "ai50/projects/2024/x/crossword",
+    "difficulty": "hard"
+  }
+]

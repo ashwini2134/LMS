@@ -1,0 +1,16 @@
+[
+  {
+    "id": "degrees",
+    "title": "Degrees",
+    "description": "Write a program that determines how many \"degrees of separation\" apart two actors are, based on the Six Degrees of Kevin Bacon game. We frame this as a search problem: states are people, actions are movies that connect one actor to another. Using breadth-first search, find the shortest path from one actor to another.\n\nComplete the `shortest_path` function in `degrees.py` so that it returns the shortest list of `(movie_id, person_id)` pairs connecting the `source` to the `target`, or `None` if no path exists. You may use the provided `Node`, `StackFrontier`, and `QueueFrontier` in `util.py`, and the `neighbors_for_person` helper.\n\n**Example:**\n```\n$ python degrees.py large\nName: Emma Watson\nName: Jennifer Lawrence\n3 degrees of separation.\n1: Emma Watson and Brendan Gleeson starred in Harry Potter and the Order of the Phoenix\n2: Brendan Gleeson and Michael Fassbender starred in Trespass Against Us\n3: Michael Fassbender and Jennifer Lawrence starred in X-Men: First Class\n```",
+    "check50_slug": "ai50/projects/2024/x/degrees",
+    "difficulty": "medium"
+  },
+  {
+    "id": "tictactoe",
+    "title": "Tic-Tac-Toe",
+    "description": "Using Minimax, implement an AI to play Tic-Tac-Toe optimally. Complete the implementations of `player`, `actions`, `result`, `winner`, `terminal`, `utility`, and `minimax` in `tictactoe.py`:\n\n- `player(board)` returns whose turn it is (X or O); X moves first.\n- `actions(board)` returns the set of available `(i, j)` moves.\n- `result(board, action)` returns a new board (without modifying the original) after the move; raise an exception for invalid actions.\n- `winner(board)` returns X, O, or None.\n- `terminal(board)` returns True if the game is over.\n- `utility(board)` returns 1 if X has won, -1 if O has won, 0 otherwise.\n- `minimax(board)` returns the optimal `(i, j)` move, or None if the board is terminal.\n\nSince Tic-Tac-Toe is a tie given optimal play, you should never be able to beat the AI.",
+    "check50_slug": "ai50/projects/2024/x/tictactoe",
+    "difficulty": "hard"
+  }
+]
