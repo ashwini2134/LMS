@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "./auth";
 import { api, type Course } from "./api";
 
@@ -40,6 +40,8 @@ export default function Shell() {
   const { user, logout } = useAuth();
   const [courses, setCourses] = useState<Course[]>([]);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const location = useLocation();
+  const isWorkspace = location.pathname.includes("/project/") && !location.pathname.endsWith("/project");
 
   useEffect(() => {
     api.courses().then(setCourses).catch(() => {});
@@ -167,8 +169,8 @@ export default function Shell() {
         )}
 
         {/* Main Content */}
-        <main className="flex-1 overflow-auto">
-          <div className="max-w-7xl mx-auto">
+        <main className={`flex-1 ${isWorkspace ? "overflow-hidden" : "overflow-auto"}`}>
+          <div className={isWorkspace ? "w-full h-full" : "max-w-7xl mx-auto"}>
             <Outlet />
           </div>
         </main>
