@@ -41,7 +41,7 @@ export default function LessonSidebar({
   };
 
   return (
-    <aside className="w-[220px] flex-shrink-0 border-r border-slate-700/20 flex flex-col hidden lg:flex">
+    <aside className="w-[220px] flex-shrink-0 border-r border-slate-700/20 flex-col overflow-y-auto hidden md:flex">
       <div className="flex-1 overflow-y-auto p-4 space-y-3">
         {/* Progress */}
         <ProgressWidget progress={progress} totalSections={navItems.length} />

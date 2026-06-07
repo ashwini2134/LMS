@@ -1,21 +1,9 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { api, type Lecture } from "../api";
+import { api, type Lecture, getCompletedProjects } from "../api";
+import { getCourseProgress } from "../hooks/useProgress";
 
 type LectureStatus = "completed" | "in-progress" | "locked";
-
-const ACHIEVEMENTS = [
-  { id: 1, icon: "★", title: "First Steps", description: "Completed your first lecture", date: "Jan 15, 2026", gradient: "from-yellow-400 to-orange-500" },
-  { id: 2, icon: "♛", title: "Quiz Master", description: "Passed 2 quizzes in a row", date: "Jan 20, 2026", gradient: "from-purple-400 to-pink-500" },
-  { id: 3, icon: "◆", title: "Consistent Learner", description: "7-day learning streak", date: "Feb 01, 2026", gradient: "from-red-400 to-orange-500" },
-  { id: 4, icon: "●", title: "Halfway There", description: "50% course completion", date: "Feb 10, 2026", gradient: "from-blue-400 to-cyan-500" },
-];
-
-const LECTURE_STATUSES: Record<number, LectureStatus> = {
-  0: "completed",
-  1: "completed",
-  2: "in-progress",
-};
 
 const LECTURE_DURATIONS: Record<number, string> = {
   0: "45 min", 1: "52 min", 2: "48 min", 3: "38 min",
@@ -48,8 +36,24 @@ export default function CoursePage() {
 
   const courseTitle = slug === "cs50p" ? "CS50 Python" : slug === "cs50ai" ? "CS50 AI" : slug?.toUpperCase() ?? "";
   const lectureCount = lectures?.length ?? 0;
-  const completedCount = lectures?.filter((l) => LECTURE_STATUSES[l.number] === "completed").length ?? 0;
+
+  // ── Lesson-system progress integration ──────────────────────────────────────
+  const courseProgress = getCourseProgress(slug ?? "");
+  const completedProjects = getCompletedProjects();
+
+  const getLectureStatus = (lecture: Lecture): LectureStatus => {
+    const p = courseProgress[lecture.number];
+    if (p?.lectureCompleted) return "completed";
+    if (p?.quizCompleted || (p?.sections && Object.keys(p.sections).length > 0)) return "in-progress";
+    if (lecture.number <= 2) return "in-progress";
+    return "locked";
+  };
+
+  const completedCount = lectures?.filter((l) => getLectureStatus(l) === "completed").length ?? 0;
   const progressPercent = Math.round((completedCount / Math.max(lectureCount, 1)) * 100);
+
+  const quizzesPassed = lectures?.filter((l) => courseProgress[l.number]?.quizCompleted).length ?? 0;
+  const projectsSubmitted = Object.keys(completedProjects).filter((k) => k.startsWith(`${slug}/`)).length;
 
   useEffect(() => {
     if (!slug) return;
@@ -142,8 +146,8 @@ export default function CoursePage() {
                 <div className="space-y-2 w-full">
                   {[
                     { label: "Lectures Completed", value: `${completedCount} / ${lectureCount}` },
-                    { label: "Quizzes Passed", value: "2 / 5" },
-                    { label: "Projects Submitted", value: "1 / 3" },
+                    { label: "Quizzes Passed", value: `${quizzesPassed} / ${lectureCount}` },
+                    { label: "Projects Submitted", value: `${projectsSubmitted}` },
                   ].map((stat) => (
                     <div key={stat.label} className="flex items-center gap-2.5 text-xs">
                       <svg className="w-3.5 h-3.5 text-blue-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -182,7 +186,7 @@ export default function CoursePage() {
             ) : (
               <div className="space-y-2">
                 {lectures.map((lecture) => {
-                  const status = LECTURE_STATUSES[lecture.number] || "locked";
+                  const status = getLectureStatus(lecture);
                   const isLocked = status === "locked";
                   const duration = LECTURE_DURATIONS[lecture.number] || "30 min";
 
@@ -252,13 +256,18 @@ export default function CoursePage() {
               Recent Achievement
             </h3>
             <div className="space-y-4">
-              {ACHIEVEMENTS.map((a) => (
-                <div key={a.id} className="flex gap-3 p-3 rounded-xl bg-slate-800/30 border border-slate-700/20 hover:border-slate-700/40 transition-all duration-200">
+              {[
+                { icon: "★", title: "First Steps", desc: "Complete your first lecture", done: completedCount >= 1, gradient: "from-yellow-400 to-orange-500" },
+                { icon: "♛", title: "Quiz Master", desc: quizzesPassed >= 1 ? `Passed ${quizzesPassed} quiz${quizzesPassed > 1 ? 'zes' : ''}` : "Pass your first quiz", done: quizzesPassed >= 1, gradient: "from-purple-400 to-pink-500" },
+                { icon: "◆", title: "Project Solver", desc: projectsSubmitted >= 1 ? `Solved ${projectsSubmitted} project${projectsSubmitted > 1 ? 's' : ''}` : "Solve your first project", done: projectsSubmitted >= 1, gradient: "from-red-400 to-orange-500" },
+                { icon: "●", title: "Halfway There", desc: completedCount >= Math.ceil(lectureCount / 2) ? `${completedCount}/${lectureCount} complete` : `Complete ${Math.ceil(lectureCount / 2)} lectures`, done: completedCount >= Math.ceil(lectureCount / 2), gradient: "from-blue-400 to-cyan-500" },
+              ].map((a) => (
+                <div key={a.title} className={`flex gap-3 p-3 rounded-xl border transition-all duration-200 ${a.done ? 'bg-slate-800/30 border-slate-700/20' : 'bg-slate-800/10 border-slate-700/10 opacity-50'}`}>
                   <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${a.gradient} flex items-center justify-center text-lg flex-shrink-0 shadow-lg`}>{a.icon}</div>
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-semibold text-slate-200 truncate">{a.title}</p>
-                    <p className="text-xs text-slate-400 mt-0.5 line-clamp-2">{a.description}</p>
-                    <p className="text-[10px] text-slate-500 mt-1">{a.date}</p>
+                    <p className="text-xs text-slate-400 mt-0.5 line-clamp-2">{a.desc}</p>
+                    {a.done && <p className="text-[10px] text-green-400 mt-1">✓ Unlocked</p>}
                   </div>
                 </div>
               ))}
