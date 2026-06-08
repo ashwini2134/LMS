@@ -9,6 +9,10 @@ const CoursePage = lazy(
   () => import("./pages/CoursePage")
 );
 
+const CoursesPage = lazy(
+  () => import("./pages/CoursesPage")
+);
+
 const Dashboard = lazy(
   () => import("./pages/Dashboard")
 );
@@ -39,6 +43,10 @@ const Shell = lazy(
 
 const CodingProjectPage = lazy(
   () => import("./pages/CodingProjectPage")
+);
+
+const LeaderboardPage = lazy(
+  () => import("./pages/LeaderboardPage")
 );
 
 // Loading Spinner
@@ -149,6 +157,13 @@ export default function App() {
             element={<Dashboard />}
           />
 
+          {/* Courses catalog */}
+
+          <Route
+            path="courses"
+            element={<CoursesPage />}
+          />
+
           {/* Course */}
 
           <Route
@@ -182,6 +197,13 @@ export default function App() {
           <Route
             path="course/:slug/lecture/:number/project/:projectId"
             element={<CodingProjectPage />}
+          />
+
+          {/* Leaderboard */}
+
+          <Route
+            path="leaderboard"
+            element={<LeaderboardPage />}
           />
 
         </Route>

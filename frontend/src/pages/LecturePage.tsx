@@ -1,420 +1,436 @@
-import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-import rehypeRaw from "rehype-raw";
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { api } from '../api';
+import { useLessonData } from '../hooks/useLessonData';
+import { useProgress, getCourseProgress, isLectureUnlocked } from '../hooks/useProgress';
+import {
+  LessonSection,
+  QuizEngine,
+  ProblemCard,
+  SummaryCard,
+} from '../components/lesson';
+import type { CodingProblem } from '../types/lesson';
+import { ArrowLeft, ArrowRight, CheckCircle, Lock } from 'lucide-react';
 
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
+// ── Helpers ──────────────────────────────────────────────────────────────────
 
-import { api, type Lecture, type ProblemSummary, getCompletedProjects, getCompletedQuizzes, getProjectMetadata } from "../api";
-import { Card, Spinner } from "../components";
+type Page =
+  | { type: 'section'; index: number }
+  | { type: 'quiz' }
+  | { type: 'problems' }
+  | { type: 'summary' };
 
-export default function LecturePage() {
-  const { slug, number } = useParams<{
-    slug: string;
-    number: string;
-  }>();
+function pageId(page: Page, sections: Array<{ id: string }>): string {
+  if (page.type === 'section') return sections[page.index].id;
+  return page.type;
+}
 
-  const [lecture, setLecture] = useState<Lecture | null>(null);
-  const [problems, setProblems] = useState<ProblemSummary[] | null>(null);
-  const [allLectures, setAllLectures] = useState<Lecture[]>([]);
-  const [err, setErr] = useState<string | null>(null);
+function pageLabel(page: Page, sections: Array<{ label: string }>): string {
+  if (page.type === 'section') return sections[page.index].label;
+  if (page.type === 'quiz') return 'Quiz';
+  if (page.type === 'problems') return 'Problems';
+  return 'Summary';
+}
 
-  useEffect(() => {
-    if (!slug || !number) return;
+type PageStatus = 'completed' | 'current' | 'upcoming';
 
-    const fetchLectureAndProblems = async () => {
-      try {
-        const lecturesList = await api.courseLectures(slug);
-        setAllLectures(lecturesList);
-        const lectureNumber = Number(number);
-
-        const found = lecturesList.find((l) => l.number === lectureNumber);
-
-        if (found) {
-          setLecture(found);
-          setErr(null);
-        } else {
-          setLecture(null);
-          setErr("Lecture not found");
-        }
-
-        const allProblems = await api.courseProblems(slug);
-
-        setProblems(
-          allProblems.filter(
-            (p) => p.week_label === `Week ${lectureNumber}`
-          )
-        );
-      } catch (e: any) {
-        setLecture(null);
-        setErr(e.message);
-      }
-    };
-
-    fetchLectureAndProblems();
-  }, [slug, number]);
-
-  if (err) {
-    return (
-      <div className="w-full h-full flex flex-col bg-slate-900">
-        <div className="px-4 md:px-8 py-8">
-          <div className="bg-red-900/20 border border-red-700/50 rounded-lg text-red-300 p-4">
-            {err}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (!lecture) {
-    return (
-      <div className="w-full h-full flex items-center justify-center bg-slate-900">
-        <div className="flex flex-col items-center gap-3">
-          <Spinner size="lg" className="text-blue-500" />
-          <p className="text-slate-400">Loading lecture…</p>
-        </div>
-      </div>
-    );
-  }
-
-  const completedProjects = getCompletedProjects();
-  const completedQuizzes = getCompletedQuizzes();
-
-  const quizKey = `${slug}_${lecture.number}`;
-  const quizScore = completedQuizzes[quizKey];
-  const isQuizCompleted = quizScore !== undefined;
-
-  const totalProblems = problems ? problems.length : 0;
-  const completedProbCount = problems ? problems.filter(p => completedProjects[`${slug}/${p.slug}`]).length : 0;
-  const projectPercent = totalProblems > 0 ? Math.round((completedProbCount / totalProblems) * 100) : 0;
-
-  // Lecture progress calculation (Quiz = 1 task, Projects = totalProblems tasks)
-  const totalTasks = totalProblems + 1;
-  const completedTasks = completedProbCount + (isQuizCompleted ? 1 : 0);
-  const totalPercent = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
-  const isAllCompleted = completedTasks === totalTasks;
-
-  // Determine next recommended task
-  let nextRecommended: {
-    type: "quiz" | "project";
-    id: string;
-    title: string;
-    estimatedTime: string;
-    xp: number;
-    url: string;
-  } | null = null;
-
-  if (!isQuizCompleted) {
-    nextRecommended = {
-      type: "quiz",
-      id: "quiz",
-      title: `Quiz ${lecture.number}`,
-      estimatedTime: "10 min",
-      xp: 25,
-      url: `/course/${slug}/lecture/${lecture.number}/quiz`
-    };
-  } else if (!isAllCompleted) {
-    const nextProj = problems ? problems.find(p => !completedProjects[`${slug}/${p.slug}`]) : null;
-    if (nextProj) {
-      const meta = getProjectMetadata(nextProj.slug);
-      nextRecommended = {
-        type: "project",
-        id: nextProj.slug,
-        title: nextProj.title,
-        estimatedTime: meta.estimatedTime,
-        xp: meta.xp,
-        url: `/course/${slug}/lecture/${lecture.number}/project/${nextProj.slug}`
-      };
-    }
-  }
-
-  const hasNextLecture = allLectures.some(l => l.number === lecture.number + 1);
+function LockedLectureView({ slug, lectureNumber, courseTitle }: { slug: string; lectureNumber: number; courseTitle: string }) {
+  const navigate = useNavigate();
+  const prevLecture = lectureNumber > 0 ? lectureNumber - 1 : null;
 
   return (
-    <div className="w-full min-h-screen flex flex-col bg-[#0b0f19] text-slate-100">
-      {/* Hero Section Banner */}
-      <div className="border-b border-slate-800 bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950/30 px-6 py-10 md:py-12">
-        <div className="max-w-4xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-8">
-          <div className="space-y-3.5">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
-              Lecture {lecture.number} notes
-            </span>
-            <h1 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight">
-              {lecture.title}
-            </h1>
-            
-            {/* Week Overall progress bar */}
-            <div className="pt-2 max-w-xs space-y-2">
-              <div className="flex justify-between text-xs font-semibold">
-                <span className="text-slate-400">Week Progress</span>
-                <span className="text-slate-200">{completedTasks} / {totalTasks} Tasks ({totalPercent}%)</span>
-              </div>
-              <div className="w-full h-2 bg-slate-850 rounded-full overflow-hidden border border-slate-800">
-                <div
-                  className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full transition-all duration-550"
-                  style={{ width: `${totalPercent}%` }}
-                ></div>
-              </div>
-            </div>
-          </div>
+    <div className="w-full h-full flex items-center justify-center bg-[#0b0f19]">
+      <div className="text-center max-w-md p-8">
+        <div className="w-20 h-20 rounded-2xl bg-slate-800/60 border border-slate-700/40 flex items-center justify-center mx-auto mb-6">
+          <Lock size={40} className="text-slate-500" />
+        </div>
+        <h2 className="text-2xl font-bold text-white mb-3">Lecture Locked</h2>
+        <p className="text-slate-400 text-sm mb-6">
+          Complete the previous lecture first to unlock this one.
+          You need to view the theory, submit the quiz, and complete the hands-on task.
+        </p>
+        <div className="space-y-3">
+          {prevLecture !== null && (
+            <button
+              onClick={() => navigate(`/course/${slug}/lecture/${prevLecture}`)}
+              className="inline-flex items-center gap-2 text-sm font-medium text-white px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 transition-all"
+            >
+              <ArrowLeft size={16} />
+              Go to Lecture {prevLecture}
+            </button>
+          )}
+          <br />
+          <button
+            onClick={() => navigate(`/course/${slug}`)}
+            className="mt-2 text-xs text-blue-400 hover:text-blue-300"
+          >
+            Back to Course
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
-          {/* Quick Resume Card on Right of Hero */}
-          <div className="w-full md:w-80 flex-shrink-0">
-            {isAllCompleted ? (
-              <div className="bg-slate-900/80 border border-slate-800 backdrop-blur p-5 rounded-2xl shadow-xl space-y-4">
-                <div className="space-y-1">
-                  <h3 className="font-bold text-sm text-green-400 flex items-center gap-1.5">
-                    <span>🎉</span> Week Completed!
-                  </h3>
-                  <p className="text-xs text-slate-400 leading-normal">
-                    Outstanding job! You have completed all assignments and quizzes for this week.
-                  </p>
-                </div>
-                <div className="flex gap-2">
-                  <Link
-                    to={`/course/${slug}/lecture/${lecture.number}/project`}
-                    className="flex-1 text-center py-2.5 bg-slate-800 hover:bg-slate-750 text-slate-200 border border-slate-700 rounded-xl text-xs font-semibold transition-colors"
-                  >
-                    Review Solutions
-                  </Link>
-                  {hasNextLecture ? (
-                    <Link
-                      to={`/course/${slug}/lecture/${lecture.number + 1}`}
-                      className="flex-1 text-center py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold transition-colors"
-                    >
-                      Next Week
-                    </Link>
-                  ) : (
-                    <Link
-                      to="/"
-                      className="flex-1 text-center py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold transition-colors"
-                    >
-                      Dashboard
-                    </Link>
-                  )}
-                </div>
-              </div>
-            ) : (
-              nextRecommended && (
-                <div className="bg-slate-900/80 border border-slate-800 backdrop-blur p-5 rounded-2xl shadow-xl space-y-4">
-                  <div className="space-y-1.5">
-                    <span className="text-[10px] uppercase tracking-wider font-bold text-indigo-400">
-                      Continue Learning
-                    </span>
-                    <h3 className="font-extrabold text-sm text-white line-clamp-1 leading-tight">
-                      Next: {nextRecommended.title}
-                    </h3>
-                    <div className="flex items-center gap-3 text-[11px] text-slate-400">
-                      <span>🕒 {nextRecommended.estimatedTime}</span>
-                      <span>💎 {nextRecommended.xp} XP</span>
-                    </div>
-                  </div>
-                  <Link
-                    to={nextRecommended.url}
-                    className="w-full text-center py-2.5 bg-blue-600 hover:bg-blue-750 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-md shadow-blue-900/15"
-                  >
-                    <span>Resume Workspace</span>
-                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </Link>
-                </div>
-              )
-            )}
-          </div>
+// ── Fallback legacy renderer (notes.md) ──────────────────────────────────────
+
+function LegacyLecturePage({ slug, lectureNumber }: { slug: string; lectureNumber: number }) {
+  const navigate = useNavigate();
+  const [content, setContent] = useState('');
+  const courseTitle = slug === 'cs50p' ? 'CS50 Python' : slug === 'cs50ai' ? 'CS50 AI' : slug.toUpperCase();
+
+  useEffect(() => {
+    const base = import.meta.env.BASE_URL ?? '/';
+    const url = base.replace(/\/$/, '') + `/data/${slug}/lecture_${lectureNumber}/notes.md`;
+    fetch(url).then(r => r.ok ? r.text() : '').then(setContent).catch(() => {});
+  }, [slug, lectureNumber]);
+
+  return (
+    <div className="w-full">
+      <div className="flex items-center justify-between border-b border-slate-700/20 px-6 py-3 bg-slate-900/40">
+        <nav className="flex items-center gap-2 text-xs text-slate-400">
+          <button onClick={() => navigate('/')} className="text-blue-400 hover:text-blue-300">Dashboard</button>
+          <span className="text-slate-600">/</span>
+          <button onClick={() => navigate(`/course/${slug}`)} className="text-blue-400 hover:text-blue-300">{courseTitle}</button>
+          <span className="text-slate-600">/</span>
+          <span className="text-white">Lecture {lectureNumber}</span>
+        </nav>
+      </div>
+      <div className="p-6 max-w-3xl mx-auto">
+        <pre className="text-sm text-slate-300 leading-relaxed whitespace-pre-wrap font-sans">{content || 'Loading lecture content…'}</pre>
+      </div>
+    </div>
+  );
+}
+
+// ── Main data-driven LecturePage ──────────────────────────────────────────────
+
+export default function LecturePage() {
+  const { slug, number } = useParams<{ slug: string; number: string }>();
+  const navigate = useNavigate();
+  const lectureNumber = Number(number ?? 0);
+
+  const { lessonData, loading, error } = useLessonData(slug, lectureNumber);
+  const {
+    progress,
+    markSectionVisited,
+    markPracticeAttempted,
+    markPracticeCompleted,
+    markQuizCompleted,
+    markProblemCompleted,
+    markHandsOnTaskCompleted,
+    markLectureCompleted,
+  } = useProgress(slug, lectureNumber);
+
+  const [currentPageIdx, setCurrentPageIdx] = useState(0);
+  const [allLectures, setAllLectures] = useState<Array<{ number: number; title: string }>>([]);
+
+  // Load lecture list for prev/next lecture navigation
+  useEffect(() => {
+    if (!slug) return;
+    api.courseLectures(slug).then(lectures => {
+      setAllLectures(lectures.map(l => ({ number: l.number, title: l.title })));
+    }).catch(() => {});
+  }, [slug]);
+
+  // Derive unlock status from stored progress (no state needed — avoids loops)
+  const unlocked = useMemo(() => {
+    if (!slug) return null;
+    if (lectureNumber === 0) return true;
+    const cp = getCourseProgress(slug);
+    return isLectureUnlocked(lectureNumber, cp);
+  }, [slug, lectureNumber]);
+
+  // Build ordered page list
+  const pages: Page[] = useMemo(() => {
+    if (!lessonData) return [];
+    const quiz = lessonData.quiz ?? [];
+    const problems: CodingProblem[] = lessonData.problems ?? [];
+    const summary = lessonData.summary;
+
+    const result: Page[] = lessonData.sections.map((_, i) => ({ type: 'section', index: i }));
+    if (quiz.length > 0) result.push({ type: 'quiz' });
+    if (problems.length > 0) result.push({ type: 'problems' });
+    if (summary) result.push({ type: 'summary' });
+    return result;
+  }, [lessonData]);
+
+  // Keep currentPageIdx in bounds
+  useEffect(() => {
+    if (currentPageIdx >= pages.length) {
+      setCurrentPageIdx(Math.max(0, pages.length - 1));
+    }
+  }, [pages.length, currentPageIdx]);
+
+  // Mark sections visited on navigation — guard against Strict Mode double-fire
+  const visitedRef = useRef<Set<number>>(new Set());
+  useEffect(() => {
+    const page = pages[currentPageIdx];
+    if (!page || !lessonData) return;
+    // Already visited this page index this mount — skip to prevent loops
+    if (visitedRef.current.has(currentPageIdx)) return;
+    visitedRef.current.add(currentPageIdx);
+    if (page.type === 'section') {
+      markSectionVisited(lessonData.sections[page.index].id);
+    } else {
+      markSectionVisited(page.type);
+    }
+  }, [currentPageIdx, pages, lessonData, markSectionVisited]);
+
+  // Compute status for each page item
+  const pageStatuses: PageStatus[] = useMemo(() => {
+    return pages.map((page, idx) => {
+      if (idx < currentPageIdx) return 'completed';
+      if (idx === currentPageIdx) return 'current';
+      return 'upcoming';
+    });
+  }, [pages, currentPageIdx]);
+
+  if (!slug) return null;
+
+  // Show locked view
+  if (unlocked === false) {
+    const courseTitle = slug === 'cs50p' ? 'CS50 Python' : slug === 'cs50ai' ? 'CS50 AI' : slug.toUpperCase();
+    return <LockedLectureView slug={slug} lectureNumber={lectureNumber} courseTitle={courseTitle} />;
+  }
+
+  // Fallback to legacy renderer if no lesson.json
+  if (!loading && (error === 'no-lesson-json' || (!lessonData && error))) {
+    return <LegacyLecturePage slug={slug} lectureNumber={lectureNumber} />;
+  }
+
+  if (loading || unlocked === null) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <svg className="h-7 w-7 animate-spin text-blue-500" fill="none" viewBox="0 0 24 24">
+          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+        </svg>
+      </div>
+    );
+  }
+
+  if (!lessonData) return null;
+
+  const prevLecture = allLectures.find(l => l.number === lectureNumber - 1);
+  const nextLecture = allLectures.find(l => l.number === lectureNumber + 1);
+  const courseTitle = slug === 'cs50p' ? 'CS50 Python' : slug === 'cs50ai' ? 'CS50 AI' : slug.toUpperCase();
+  const quiz = lessonData.quiz ?? [];
+  const problems: CodingProblem[] = lessonData.problems ?? [];
+  const summary = lessonData.summary;
+
+  const currentPage = pages[currentPageIdx];
+  const isFirstPage = currentPageIdx === 0;
+  const isLastPage = currentPageIdx === pages.length - 1;
+
+  const goNext = () => {
+    if (!isLastPage) setCurrentPageIdx(c => c + 1);
+  };
+  const goPrev = () => {
+    if (!isFirstPage) setCurrentPageIdx(c => c - 1);
+  };
+
+  return (
+    <div className="w-full flex flex-col" style={{ height: 'calc(100vh - 64px)' }}>
+      {/* ── Top Bar ── */}
+      <div className="flex-shrink-0 flex items-center justify-between border-b border-slate-700/20 px-6 py-3 bg-slate-900/40 backdrop-blur-sm">
+        <nav className="flex items-center gap-2 text-xs text-slate-400">
+          <button onClick={() => navigate('/')} className="text-blue-400 hover:text-blue-300 transition-colors">Dashboard</button>
+          <span className="text-slate-600">/</span>
+          <button onClick={() => navigate(`/course/${slug}`)} className="text-blue-400 hover:text-blue-300 transition-colors">{courseTitle}</button>
+          <span className="text-slate-600">/</span>
+          <span className="text-white font-medium">{lessonData.title}</span>
+        </nav>
+        <div className="flex items-center gap-3 text-xs text-slate-400">
+          <span>{currentPageIdx + 1} / {pages.length}</span>
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="flex-1 overflow-auto px-6 py-8">
-        <div className="mx-auto w-full max-w-4xl">
-          {/* Quiz + Project Cards */}
-          <div className="mb-12">
-            <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-              <span>📝</span> Related Assignments
-            </h2>
+      {/* ── Body: nav panel + content ── */}
+      <div className="flex flex-1 overflow-hidden">
+        {/* Left nav panel */}
+        <aside className="hidden md:flex flex-shrink-0 w-56 flex-col border-r border-slate-700/30 bg-slate-900/60 overflow-y-auto">
+          <div className="p-3 space-y-0.5">
+            {pages.map((page, idx) => {
+              const status = pageStatuses[idx];
+              const id = pageId(page, lessonData.sections);
+              const label = pageLabel(page, lessonData.sections);
 
-            <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
-              {/* Quiz Card */}
-              <Link
-                to={`/course/${slug}/lecture/${lecture.number}/quiz`}
-                className="group"
-              >
-                <Card className="p-5 h-full flex items-center justify-between gap-4 hover:shadow-lg hover:border-slate-700 hover:-translate-y-0.5 duration-300 bg-slate-900/50 border border-slate-800 rounded-2xl">
-                  <div className="flex items-center gap-4 min-w-0">
-                    <div className="flex-shrink-0 p-2.5 bg-blue-600/10 border border-blue-500/20 rounded-xl group-hover:bg-blue-600/20 group-hover:text-blue-300 text-blue-400 transition-colors">
-                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                      </svg>
-                    </div>
-
-                    <div className="min-w-0">
-                      <p className="text-sm font-bold text-slate-100 group-hover:text-blue-400 transition-colors">
-                        Quiz {lecture.number}
-                      </p>
-                      <p className="text-[11px] text-slate-450 mt-1">
-                        10 min • 25 XP
-                      </p>
-                    </div>
-                  </div>
-                  <div>
-                    {isQuizCompleted ? (
-                      <span className="text-xs bg-green-500/10 border border-green-500/20 text-green-400 font-bold px-2.5 py-1 rounded-full flex items-center gap-1">
-                        <span>✔</span> Passed
-                      </span>
-                    ) : (
-                      <span className="text-xs bg-slate-800 border border-slate-750 text-slate-400 font-semibold px-2.5 py-1 rounded-full">
-                        Not started
-                      </span>
+              return (
+                <button
+                  key={id}
+                  onClick={() => setCurrentPageIdx(idx)}
+                  className={`w-full flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-medium transition-all duration-200 text-left ${
+                    status === 'current'
+                      ? 'bg-blue-600/15 text-blue-300 border border-blue-500/25'
+                      : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border border-transparent'
+                  }`}
+                >
+                  {/* Status indicator */}
+                  <span className="w-4 h-4 flex items-center justify-center flex-shrink-0">
+                    {status === 'completed' && (
+                      <CheckCircle size={14} className="text-green-400" />
                     )}
-                  </div>
-                </Card>
-              </Link>
+                    {status === 'current' && (
+                      <span className="w-2 h-2 rounded-full bg-blue-400" />
+                    )}
+                    {status === 'upcoming' && (
+                      <span className="w-2 h-2 rounded-full bg-slate-600" />
+                    )}
+                  </span>
+                  <span className="truncate">{label}</span>
+                </button>
+              );
+            })}
+          </div>
+          {/* Completion status */}
+          <div className="mt-auto p-3 border-t border-slate-700/30">
+            <div className="text-[10px] text-slate-500 space-y-1">
+              <div className="flex justify-between">
+                <span>Quiz</span>
+                <span className={progress.quizCompleted ? 'text-green-400' : 'text-slate-600'}>
+                  {progress.quizCompleted ? '✓' : '—'}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span>Task</span>
+                <span className={progress.handsOnTaskCompleted ? 'text-green-400' : 'text-slate-600'}>
+                  {progress.handsOnTaskCompleted ? '✓' : '—'}
+                </span>
+              </div>
+            </div>
+          </div>
+        </aside>
 
-              {/* Project Card */}
-              <Link
-                to={`/course/${slug}/lecture/${lecture.number}/project`}
-                className="group"
-              >
-                <Card className="p-5 h-full flex flex-col justify-between gap-4 hover:shadow-lg hover:border-slate-700 hover:-translate-y-0.5 duration-300 bg-slate-900/50 border border-slate-800 rounded-2xl">
-                  <div className="w-full flex items-center justify-between gap-4">
-                    <div className="flex items-center gap-4 min-w-0">
-                      <div className="flex-shrink-0 p-2.5 bg-green-600/10 border border-green-500/20 rounded-xl group-hover:bg-green-600/20 group-hover:text-green-300 text-green-400 transition-colors">
-                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-                        </svg>
-                      </div>
+        {/* Right: lecture content */}
+        <main className="flex-1 overflow-y-auto">
+          <div className="p-6 max-w-4xl mx-auto">
+            {/* ── Current page ── */}
+            {currentPage?.type === 'section' && (
+              <LessonSection
+                section={lessonData.sections[currentPage.index]}
+                index={currentPage.index}
+                onPracticeAttempt={() => markPracticeAttempted(lessonData.sections[currentPage.index].id)}
+                onPracticeComplete={() => markPracticeCompleted(lessonData.sections[currentPage.index].id)}
+              />
+            )}
 
-                      <div className="min-w-0">
-                        <p className="text-sm font-bold text-slate-100 group-hover:text-green-400 transition-colors">
-                          Projects list
-                        </p>
-                        <p className="text-[11px] text-slate-455 mt-1">
-                          {totalProblems} coding assignments
-                        </p>
-                      </div>
-                    </div>
-                    <div>
-                      {totalProblems > 0 && completedProbCount === totalProblems ? (
-                        <span className="text-xs bg-green-500/10 border border-green-500/20 text-green-400 font-bold px-2.5 py-1 rounded-full flex items-center gap-1">
-                          <span>✔</span> Complete
-                        </span>
-                      ) : totalProblems > 0 && completedProbCount > 0 ? (
-                        <span className="text-xs bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 font-semibold px-2.5 py-1 rounded-full">
-                          In Progress
-                        </span>
-                      ) : (
-                        <span className="text-xs bg-slate-800 border border-slate-750 text-slate-400 font-semibold px-2.5 py-1 rounded-full">
-                          Not started
-                        </span>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Coding progress bar */}
-                  {totalProblems > 0 && (
-                    <div className="space-y-2 mt-1">
-                      <div className="flex justify-between text-[10px] font-semibold text-slate-400">
-                        <span>Coding Assignments</span>
-                        <span>{completedProbCount} of {totalProblems} solved ({projectPercent}%)</span>
-                      </div>
-                      <div className="w-full h-1 bg-slate-850 rounded-full overflow-hidden border border-slate-800">
-                        <div
-                          className="h-full bg-green-500 rounded-full transition-all"
-                          style={{ width: `${projectPercent}%` }}
-                        ></div>
-                      </div>
+            {currentPage?.type === 'quiz' && (
+              <section id="section-quiz">
+                <div className="space-y-5">
+                  <h2 className="text-xl font-bold text-white flex items-center gap-3">
+                    <span className="w-8 h-8 rounded-xl bg-blue-600/20 flex items-center justify-center text-sm font-bold text-blue-400">
+                      {lessonData.sections.length + 1}
+                    </span>
+                    Quiz
+                  </h2>
+                  {progress.quizCompleted && (
+                    <div className="flex items-center gap-2 text-sm text-green-400 bg-green-900/20 border border-green-700/30 rounded-xl px-4 py-2">
+                      <CheckCircle size={16} />
+                      Quiz completed — Score: {progress.quizScore}/{quiz.length}
                     </div>
                   )}
-                </Card>
-              </Link>
-            </div>
-          </div>
+                  <QuizEngine
+                    questions={quiz}
+                    onComplete={(score, total) => {
+                      markQuizCompleted(score);
+                      if (score / total >= 0.7) markSectionVisited('quiz');
+                    }}
+                  />
+                </div>
+              </section>
+            )}
 
-          {/* Lecture Notes */}
-          <div className="mt-12">
-            <h2 className="text-2xl font-bold text-slate-200 mb-8 border-b border-slate-700 pb-4">
-              Lecture Notes
-            </h2>
-
-            <div className="markdown-content prose prose-invert prose-blue max-w-none overflow-hidden">
-              <ReactMarkdown
-                remarkPlugins={[remarkGfm]}
-                rehypePlugins={[rehypeRaw]}
-                components={{
-                  h1: ({ node, ...props }) => (
-                    <h1
-                      className="text-3xl font-bold text-slate-100 mt-8 mb-4"
-                      {...props}
-                    />
-                  ),
-
-                  h2: ({ node, ...props }) => (
-                    <h2
-                      className="text-2xl font-bold text-slate-200 mt-8 mb-4"
-                      {...props}
-                    />
-                  ),
-
-                  h3: ({ node, ...props }) => (
-                    <h3
-                      className="text-xl font-bold text-slate-300 mt-6 mb-3"
-                      {...props}
-                    />
-                  ),
-
-                  img: ({ src, ...props }) => {
-                    const baseUrl =
-                      import.meta.env.BASE_URL?.replace(/\/$/, "") ?? "";
-
-                    const resolvedSrc =
-                      src &&
-                      src.startsWith("/") &&
-                      !/^https?:\/\//.test(src)
-                        ? `${baseUrl}${src}`
-                        : src;
-
-                    return (
-                      <img
-                        src={resolvedSrc}
-                        {...props}
-                        className="my-6 rounded-lg w-full max-w-full mx-auto border border-slate-700"
+            {currentPage?.type === 'problems' && (
+              <section id="section-problems">
+                <div className="space-y-4">
+                  <h2 className="text-xl font-bold text-white flex items-center gap-3">
+                    <span className="w-8 h-8 rounded-xl bg-orange-600/20 flex items-center justify-center text-sm font-bold text-orange-400">
+                      {lessonData.sections.length + (quiz.length > 0 ? 2 : 1)}
+                    </span>
+                    Problems to Solve
+                  </h2>
+                  <p className="text-sm text-slate-400">
+                    Apply what you've learned by solving these coding challenges.
+                    {progress.problemsCompleted.length > 0 && (
+                      <span className="ml-2 text-orange-400 font-medium">
+                        {progress.problemsCompleted.length}/{problems.length} solved
+                      </span>
+                    )}
+                  </p>
+                  <div className="space-y-3">
+                    {problems.map((problem, i) => (
+                      <ProblemCard
+                        key={problem.id}
+                        problem={problem}
+                        index={i}
+                        completed={progress.problemsCompleted.includes(problem.id)}
+                        onComplete={(id) => {
+                          markProblemCompleted(id);
+                          markSectionVisited('problems');
+                          markHandsOnTaskCompleted();
+                        }}
                       />
-                    );
-                  },
+                    ))}
+                  </div>
+                  <div className="pt-2">
+                    <button
+                      onClick={() => navigate(`/course/${slug}/lecture/${lectureNumber}/project`)}
+                      className="inline-flex items-center gap-2 text-sm font-medium text-orange-400 hover:text-orange-300 px-4 py-2 rounded-xl bg-orange-500/10 hover:bg-orange-500/15 border border-orange-500/20 transition-all"
+                    >
+                      Open Full Problem Set
+                    </button>
+                  </div>
+                </div>
+              </section>
+            )}
 
-                  code({ className, children, ...props }) {
-                    const match = /language-(\w+)/.exec(className || "");
-                    const { node, ...rest } = props as any;
+            {currentPage?.type === 'summary' && (
+              <section id="section-summary">
+                <SummaryCard
+                  summary={summary!}
+                  lectureTitle={lessonData.title}
+                  nextLectureTitle={nextLecture?.title}
+                  onNext={() => {
+                    markLectureCompleted();
+                    if (nextLecture) navigate(`/course/${slug}/lecture/${nextLecture.number}`);
+                  }}
+                />
+              </section>
+            )}
 
-                    return match ? (
-                      <SyntaxHighlighter
-                        style={oneDark}
-                        language={match[1]}
-                        PreTag="div"
-                        className="rounded-lg my-6 border border-slate-700"
-                        {...rest}
-                      >
-                        {String(children).replace(/\n$/, "")}
-                      </SyntaxHighlighter>
-                    ) : (
-                      <code
-                        className="bg-slate-800 px-2 py-1 rounded text-green-400 border border-slate-700 text-sm"
-                        {...rest}
-                      >
-                        {children}
-                      </code>
-                    );
-                  },
-                }}
-              >
-                {lecture.content}
-              </ReactMarkdown>
+            {/* ── Navigation — Previous / Next ── */}
+            <div className="flex items-center justify-between mt-10 pt-6 border-t border-slate-700/20">
+              <div>
+                {!isFirstPage && (
+                  <button
+                    onClick={goPrev}
+                    className="inline-flex items-center gap-2 text-sm font-medium text-slate-300 hover:text-white px-4 py-2.5 rounded-xl bg-slate-800/50 hover:bg-slate-800/80 border border-slate-700/40 transition-all"
+                  >
+                    <ArrowLeft size={16} />
+                    Previous
+                  </button>
+                )}
+              </div>
+              <div className="text-xs text-slate-500">
+                {currentPageIdx + 1} / {pages.length}
+              </div>
+              <div>
+                {!isLastPage && (
+                  <button
+                    onClick={goNext}
+                    className="inline-flex items-center gap-2 text-sm font-semibold text-white px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 transition-all"
+                  >
+                    Next
+                    <ArrowRight size={16} />
+                  </button>
+                )}
+              </div>
             </div>
+
+            <div className="h-8" />
           </div>
-        </div>
+        </main>
       </div>
     </div>
   );

@@ -1,0 +1,110 @@
+{
+  "id": "cs50ai-lecture-0",
+  "courseSlug": "cs50ai",
+  "number": 0,
+  "title": "Search",
+  "overview": "Artificial intelligence begins with search — finding a sequence of actions that leads from an initial state to a goal. From maze-solving to chess engines, search algorithms are at the heart of many AI systems.",
+  "estimatedMinutes": 55,
+  "sections": [
+    {
+      "id": "overview",
+      "label": "Overview",
+      "blocks": [
+        {
+          "type": "explanation",
+          "accentColor": "blue",
+          "title": "In This Lecture You Will Learn",
+          "body": "Search is one of the foundational problems in AI. You'll learn how agents navigate from a start state to a goal state.",
+          "bullets": [
+            "What a search problem is and how to model it",
+            "Uninformed search: BFS and DFS",
+            "Informed search: Greedy best-first and A*",
+            "Heuristic functions and admissibility",
+            "Adversarial search: minimax for games"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "agents",
+      "label": "Agents & States",
+      "blocks": [
+        {
+          "type": "explanation",
+          "accentColor": "blue",
+          "title": "Agents and Environments",
+          "body": "An **agent** is anything that perceives its environment through sensors and acts on it through actuators. In search, an agent needs to find a sequence of actions to reach a goal.",
+          "bullets": [
+            "State: a configuration of the environment",
+            "Initial state: where the agent starts",
+            "Goal state: where the agent wants to be",
+            "Actions: what the agent can do in each state",
+            "Path cost: how expensive a solution is"
+          ]
+        },
+        {
+          "type": "analogy",
+          "title": "Think of it as a Maze",
+          "emoji": "🗺️",
+          "text": "Imagine navigating a maze. Your current position is your state. The maze walls define which actions are valid. You want to find a path from the entrance (initial state) to the exit (goal state)."
+        }
+      ]
+    },
+    {
+      "id": "bfs-dfs",
+      "label": "BFS & DFS",
+      "blocks": [
+        {
+          "type": "explanation",
+          "accentColor": "purple",
+          "title": "Uninformed Search",
+          "body": "Uninformed search algorithms explore without any knowledge of the goal's location. They systematically explore states until the goal is found.",
+          "bullets": [
+            "BFS (Breadth-First Search) — explores level by level, uses a queue, finds shortest path",
+            "DFS (Depth-First Search) — explores one branch fully, uses a stack, memory efficient"
+          ]
+        },
+        {
+          "type": "code_example",
+          "title": "BFS Pseudocode",
+          "language": "python",
+          "code": "from collections import deque\n\ndef bfs(start, goal, neighbors):\n    frontier = deque([start])\n    explored = set()\n    \n    while frontier:\n        node = frontier.popleft()  # FIFO\n        if node == goal:\n            return True\n        explored.add(node)\n        for neighbor in neighbors(node):\n            if neighbor not in explored:\n                frontier.append(neighbor)\n    return False"
+        }
+      ]
+    },
+    {
+      "id": "astar",
+      "label": "A* Search",
+      "blocks": [
+        {
+          "type": "explanation",
+          "accentColor": "green",
+          "title": "Informed Search: A*",
+          "body": "A* combines the cost to reach the current state `g(n)` with an estimated cost to the goal `h(n)`. It always finds the optimal solution when the heuristic is admissible.",
+          "bullets": [
+            "f(n) = g(n) + h(n) — total estimated cost",
+            "g(n) — actual cost from start to n",
+            "h(n) — heuristic: estimated cost from n to goal",
+            "Admissible heuristic: never overestimates"
+          ]
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "keyTakeaways": [
+      { "emoji": "🤖", "text": "Agents use search to navigate from start to goal states" },
+      { "emoji": "🌊", "text": "BFS finds the shortest path, DFS uses less memory" },
+      { "emoji": "⭐", "text": "A* is optimal when using an admissible heuristic" },
+      { "emoji": "♟️", "text": "Minimax finds optimal play in two-player games" }
+    ],
+    "whatYouLearned": [
+      "How to model a problem as a search problem",
+      "The difference between BFS and DFS",
+      "How heuristics improve search efficiency",
+      "How A* combines cost and heuristic",
+      "How minimax works in adversarial games"
+    ],
+    "nextUp": "Knowledge"
+  }
+}

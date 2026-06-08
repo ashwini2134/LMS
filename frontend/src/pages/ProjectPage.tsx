@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { Zap, Search } from 'lucide-react';
 import { getCompletedProjects, getProjectMetadata } from "../api";
 import { ProjectCard } from "../components";
 
@@ -111,7 +112,7 @@ export default function ProjectPage() {
           <div className="bg-slate-900/60 border border-slate-800/80 p-6 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="space-y-1">
               <h2 className="text-lg font-bold text-white flex items-center gap-2">
-                <span>⚡</span> Coding Assignment Progress
+                <Zap size={20} className="text-yellow-400" /> Coding Assignment Progress
               </h2>
               <p className="text-slate-400 text-xs">
                 Solve all problems in this week to earn {totalCount * 100} maximum XP points.
@@ -179,7 +180,7 @@ export default function ProjectPage() {
         {/* Empty State / Cards Grid */}
         {filteredProjects.length === 0 ? (
           <div className="text-center py-16 bg-slate-900/20 border border-slate-850 rounded-2xl space-y-3">
-            <span className="text-4xl block">🔍</span>
+            <Search size={48} className="text-slate-500 mx-auto" />
             <h3 className="text-lg font-bold text-white">No projects match filters</h3>
             <p className="text-slate-400 text-xs max-w-sm mx-auto">
               Try adjusting your search query, difficulty filters, or progress status filters.

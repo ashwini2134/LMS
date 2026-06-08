@@ -35,21 +35,18 @@ export function ProjectCard({
   const statusConfigs = {
     completed: {
       label: "Completed",
-      icon: "🟢",
       class: "bg-green-500/10 border-green-500/20 text-green-400 font-semibold",
       buttonText: "Review Workspace",
       buttonClass: "bg-slate-800 hover:bg-slate-750 border border-slate-700 text-slate-200",
     },
     in_progress: {
       label: "In Progress",
-      icon: "🟡",
       class: "bg-amber-500/10 border-amber-500/20 text-amber-400 font-semibold",
       buttonText: "Resume Project",
       buttonClass: "bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-md shadow-blue-900/15",
     },
     not_started: {
       label: "Not Started",
-      icon: "⚪",
       class: "bg-slate-800/40 border-slate-750 text-slate-400 font-medium",
       buttonText: "Start Project",
       buttonClass: "bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200",
@@ -63,12 +60,11 @@ export function ProjectCard({
       <div>
         {/* Card Header: Status & XP */}
         <div className="flex justify-between items-center mb-4">
-          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs border ${statusConfig.class}`}>
-            <span className="text-[10px]">{statusConfig.icon}</span>
-            {statusConfig.label}
-          </span>
+            <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs border ${statusConfig.class}`}>
+              {statusConfig.label}
+            </span>
           <span className="text-xs font-semibold text-slate-400 bg-slate-850 border border-slate-800 px-2 py-1 rounded-lg">
-            💎 {metadata.xp} XP
+            {metadata.xp} XP
           </span>
         </div>
 
@@ -83,7 +79,7 @@ export function ProjectCard({
             {metadata.difficulty}
           </span>
           <span className="text-slate-400 font-medium flex items-center gap-1">
-            🕒 {metadata.estimatedTime}
+            Time: {metadata.estimatedTime}
           </span>
         </div>
 

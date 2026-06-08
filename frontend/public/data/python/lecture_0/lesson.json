@@ -1,0 +1,253 @@
+{
+  "id": "python-lecture-0",
+  "courseSlug": "python",
+  "number": 0,
+  "title": "What is Python?",
+  "overview": "Python is one of the most popular and beginner-friendly programming languages. In this first lecture you will learn what programming is, why Python is the perfect language to start with, and how to run your very first Python program.",
+  "estimatedMinutes": 45,
+  "sections": [
+    {
+      "id": "what-is-programming",
+      "label": "What is Programming?",
+      "blocks": [
+        {
+          "type": "explanation",
+          "accentColor": "blue",
+          "title": "What Does It Mean to Program?",
+          "body": "**Programming** is the art of giving instructions to a computer so it can perform tasks automatically. Instead of clicking buttons in an app, you write the instructions yourself. The computer follows them step by step, exactly as written.",
+          "bullets": [
+            "Computers are very fast but also very literal — they do exactly what you tell them",
+            "Programming lets you automate repetitive tasks",
+            "Programs are written in a **programming language** like Python, which both humans and computers can understand",
+            "Every program is just a sequence of instructions stored in a text file"
+          ]
+        },
+        {
+          "type": "analogy",
+          "title": "Think of a Program as a Cooking Recipe",
+          "emoji": "",
+          "text": "A recipe lists ingredients and steps: chop onions, boil water, cook for 10 minutes. A program does the same thing — it lists steps like 'store this value,' 'add these two numbers,' 'print the result.' The computer follows the recipe just like you follow cooking instructions."
+        },
+        {
+          "type": "explanation",
+          "accentColor": "blue",
+          "title": "Programming Languages",
+          "body": "There are hundreds of programming languages, each designed for different purposes. Python is special because it is designed to be easy to read and write.",
+          "bullets": [
+            "Python's syntax (the rules for writing code) is similar to English",
+            "You can write simple programs with just a few lines of code",
+            "Python hides complex details so you can focus on solving problems"
+          ]
+        },
+        {
+          "type": "code_example",
+          "title": "Your First Program — Hello World",
+          "language": "python",
+          "code": "print(\"Hello, World!\")",
+          "expectedOutput": "Hello, World!"
+        },
+        {
+          "type": "code_example",
+          "title": "Printing Multiple Lines",
+          "language": "python",
+          "code": "print(\"Welcome to Python!\")\nprint(\"I am learning to code.\")\nprint(\"This is fun!\")",
+          "expectedOutput": "Welcome to Python!\nI am learning to code.\nThis is fun!"
+        },
+        {
+          "type": "reflection",
+          "question": "What do you think happens if you put numbers inside print() instead of text? For example: print(42)",
+          "answer": "It works! Numbers don't need quotes. Python will print exactly the number you give it. Try it: print(42) prints 42."
+        },
+        {
+          "type": "practice",
+          "title": "Print Your Name",
+          "instructions": "Write a program that prints your name on the first line and your college name on the second line.",
+          "starterCode": "# Print your name\nprint(\"\")\n# Print your college",
+          "solution": "print(\"Lakshanya\")\nprint(\"SRM University\")",
+          "hint": "Use print(\"YourName\") for the first line and print(\"YourCollege\") for the second. Put quotes around text.",
+          "expectedOutput": "Lakshanya\nSRM University"
+        }
+      ]
+    },
+    {
+      "id": "why-python",
+      "label": "Why Python?",
+      "blocks": [
+        {
+          "type": "explanation",
+          "accentColor": "purple",
+          "title": "Why Python is Perfect for Beginners",
+          "body": "Python was created by Guido van Rossum in 1991 with a clear philosophy: make programming easy and fun. Today it is used by beginners and professionals alike.",
+          "bullets": [
+            "Easy to read — Python code looks almost like plain English",
+            "No complicated symbols or punctuation — clean and minimal",
+            "Huge community — millions of tutorials and libraries available for free",
+            "Runs everywhere — Windows, Mac, Linux, even on small devices"
+          ]
+        },
+        {
+          "type": "explanation",
+          "accentColor": "purple",
+          "title": "Real-World Applications of Python",
+          "body": "Python is not just for learning — it powers some of the most important technology in the world.",
+          "bullets": [
+            "**Web Development** — Instagram, Pinterest, and Spotify use Python for their backends",
+            "**Data Science** — Python is the #1 language for analyzing data and building charts",
+            "**Artificial Intelligence** — Most AI and machine learning libraries are written in Python",
+            "**Automation** — Python can automate boring tasks like renaming files or sending emails"
+          ]
+        },
+        {
+          "type": "analogy",
+          "title": "Think of Python as a Swiss Army Knife",
+          "emoji": "",
+          "text": "A Swiss Army knife has many tools — blade, scissors, screwdriver — all in one device. Python is the same: you can build websites, analyze data, make games, or automate tasks, all with the same language."
+        },
+        {
+          "type": "reflection",
+          "question": "Think about something you do every day on your phone or computer. Can you imagine how a Python program could automate or improve it?",
+          "answer": "There are so many possibilities! Maybe a program that automatically organizes your downloads folder, or sends you a weather alert each morning. That's the power of programming — you can build tools that make your life easier."
+        }
+      ]
+    },
+    {
+      "id": "getting-started",
+      "label": "Getting Started",
+      "blocks": [
+        {
+          "type": "explanation",
+          "accentColor": "green",
+          "title": "Installing Python",
+          "body": "Before you can write Python programs, you need to install Python on your computer. It's free and takes just a few minutes.",
+          "bullets": [
+            "Go to python.org and download the latest version",
+            "Run the installer and check 'Add Python to PATH'",
+            "After installation, open Terminal (Mac/Linux) or Command Prompt (Windows)",
+            "Type python --version to verify it installed correctly"
+          ]
+        },
+        {
+          "type": "explanation",
+          "accentColor": "green",
+          "title": "Python Shell (Interactive Mode)",
+          "body": "The **Python shell** (also called REPL) lets you type Python commands one at a time and see results immediately.",
+          "bullets": [
+            "Type python in your terminal to start the shell",
+            "You'll see >>> prompt — Python is waiting for your command",
+            "Type print(\"Hello\") and press Enter — Python runs it instantly",
+            "Type exit() to leave the shell"
+          ]
+        },
+        {
+          "type": "explanation",
+          "accentColor": "green",
+          "title": "Running .py Files",
+          "body": "For real programs, you save your code in a file with a .py extension and run the entire file at once.",
+          "bullets": [
+            "Create a new file called hello.py",
+            "Write your Python code in the file using any text editor",
+            "Open terminal, navigate to the folder containing the file",
+            "Type python hello.py and press Enter — Python runs every line in order"
+          ]
+        },
+        {
+          "type": "concept_visualization",
+          "title": "How Python Runs Your Code",
+          "accentColor": "green",
+          "leftPanel": {
+            "label": "Step 1",
+            "emoji": "",
+            "title": "Write Code",
+            "description": "You write Python instructions in a .py file using a text editor."
+          },
+          "centerPanel": {
+            "label": "Step 2",
+            "visualType": "flow_diagram",
+            "flowSteps": [
+              "Python reads your file line by line",
+              "It checks for errors (syntax check)",
+              "It translates to bytecode",
+              "Python Virtual Machine executes it"
+            ]
+          },
+          "rightPanel": {
+            "label": "Step 3",
+            "emoji": "",
+            "title": "See Output",
+            "description": "The result appears on your screen. If there's an error, Python shows what went wrong."
+          }
+        },
+        {
+          "type": "code_example",
+          "title": "Interactive Shell vs File: Same Code, Same Result",
+          "language": "python",
+          "code": "# In the shell:\n>>> print(\"Hello, World!\")\nHello, World!\n\n# In a .py file:\nprint(\"Hello, World!\")\n\n# Run: python myfile.py\n# Output: Hello, World!",
+          "expectedOutput": "Hello, World!"
+        },
+        {
+          "type": "explanation",
+          "accentColor": "green",
+          "title": "Python is Interpreted",
+          "body": "Python is an **interpreted language**, which means it runs your code line by line without needing a separate compilation step.",
+          "bullets": [
+            "No compile step — write code and run it immediately",
+            "If Python finds an error on line 5, it stops there and shows the error message",
+            "This makes Python great for beginners — you get instant feedback",
+            "You can test small pieces of code in the shell without creating files"
+          ]
+        },
+        {
+          "type": "reflection",
+          "question": "What do you think is the advantage of an interpreted language like Python compared to a compiled language?",
+          "answer": "You can test code immediately without waiting for compilation. If you make a mistake, Python tells you on the spot. This makes learning faster and debugging easier."
+        },
+        {
+          "type": "practice",
+          "title": "Run Your First Python Program",
+          "instructions": "Write a program that prints your name and your college on separate lines, then prints 'I am learning Python!' on a third line.",
+          "starterCode": "# My first Python program\nprint(\"\")",
+          "solution": "print(\"Lakshanya\")\nprint(\"SRM University\")\nprint(\"I am learning Python!\")",
+          "hint": "Use print() three times, once for each line. Each print() outputs text on a new line.",
+          "expectedOutput": "Lakshanya\nSRM University\nI am learning Python!"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "keyTakeaways": [
+      {
+        "emoji": "",
+        "text": "A program is a sequence of instructions for a computer"
+      },
+      {
+        "emoji": "",
+        "text": "Python is beginner-friendly, readable, and used worldwide"
+      },
+      {
+        "emoji": "",
+        "text": "print() displays text on the screen"
+      },
+      {
+        "emoji": "",
+        "text": "Python is interpreted — runs line by line, no compile step"
+      },
+      {
+        "emoji": "",
+        "text": ".py files store Python programs; run them with python filename.py"
+      },
+      {
+        "emoji": "",
+        "text": "The Python shell lets you test code interactively"
+      }
+    ],
+    "whatYouLearned": [
+      "What programming is and how it works",
+      "Why Python is the best language for beginners",
+      "Real-world applications of Python",
+      "How to install Python and run programs",
+      "The difference between interactive shell and .py files",
+      "How to use print() to display output"
+    ],
+    "nextUp": "Variables & Data Types"
+  }
+}

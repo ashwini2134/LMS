@@ -2,7 +2,7 @@
   {
     "id": "emojize",
     "title": "Emojize",
-    "description": "Because emoji aren't quite as easy to type as text, some programs support \"codes,\" whereby you can type, for instance, `:thumbs_up:`, which will be automatically converted to 👍. Some programs additionally support aliases, e.g. `:thumbsup:`.\n\nIn a file called `emojize.py`, implement a program that prompts the user for a `str` in English and then outputs the \"emojized\" version of that `str`, converting any codes (or aliases) therein to their corresponding emoji. (Uses the third-party `emoji` module: `pip install emoji`.)\n\n**How to Test:**\n```\nInput:  :1st_place_medal:\nOutput: 🥇\n```\n```\nInput:  :money_bag:\nOutput: 💰\n```",
+    "description": "Because emoji aren't quite as easy to type as text, some programs support \"codes,\" whereby you can type, for instance, `:thumbs_up:`, which will be automatically converted to . Some programs additionally support aliases, e.g. `:thumbsup:`.\n\nIn a file called `emojize.py`, implement a program that prompts the user for a `str` in English and then outputs the \"emojized\" version of that `str`, converting any codes (or aliases) therein to their corresponding emoji. (Uses the third-party `emoji` module: `pip install emoji`.)\n\n**How to Test:**\n```\nInput:  :1st_place_medal:\nOutput: \n```\n```\nInput:  :money_bag:\nOutput: \n```",
     "check50_slug": "cs50/problems/2022/python/emojize",
     "difficulty": "easy"
   },
