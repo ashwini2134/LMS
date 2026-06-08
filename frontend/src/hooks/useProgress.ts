@@ -4,7 +4,6 @@ import type { LectureProgress, SectionProgress } from '../types/lesson';
 const STORAGE_KEY = 'lms:progress';
 const PROGRESS_CHANGE_EVENT = 'lms:progress-change';
 
-// ── Module-level version counter for stable snapshot references ─────────────
 let _storeVersion = 0;
 
 function readAll(): Record<string, LectureProgress> {
@@ -35,7 +34,6 @@ function defaultProgress(courseSlug: string, lectureNumber: number): LectureProg
   };
 }
 
-// ── Snapshot cache: returns stable references when store hasn't changed ──────
 const _snapCache: Map<string, { version: number; value: LectureProgress | null }> = new Map();
 
 function readSnapshot(key: string | null): LectureProgress | null {
@@ -52,12 +50,36 @@ function invalidateSnapshotCache() {
   _snapCache.clear();
 }
 
-// ── useProgress hook ─────────────────────────────────────────────────────────
+// ── Check if lecture should be auto-completed ────────────────────────────
+function checkLectureCompletion(
+  courseSlug: string,
+  lectureNumber: number,
+  totalSections: number,
+  totalProblems: number,
+  hasQuiz: boolean,
+) {
+  const all = readAll();
+  const key = progressKey(courseSlug, lectureNumber);
+  const prev = all[key];
+  if (!prev || prev.lectureCompleted) return;
+
+  const sectionsVisited = Object.values(prev.sections).filter(s => s.visited).length;
+  const practicesCompleted = Object.values(prev.sections).filter(s => s.practiceCompleted).length;
+
+  const allSectionsDone = sectionsVisited >= totalSections && practicesCompleted >= totalSections;
+  const quizDone = !hasQuiz || prev.quizCompleted;
+  const problemsDone = prev.problemsCompleted.length >= totalProblems;
+
+  if (allSectionsDone && quizDone && problemsDone) {
+    all[key] = { ...prev, lectureCompleted: true, handsOnTaskCompleted: true };
+    writeAll(all);
+  }
+}
+
 export function useProgress(courseSlug: string | undefined, lectureNumber: number | undefined) {
   const key = courseSlug && lectureNumber !== undefined ? progressKey(courseSlug, lectureNumber) : null;
   const [version, setVersion] = useState(0);
 
-  // Subscribe to progress changes — re-render only when store version changes
   useEffect(() => {
     const onChange = () => setVersion(v => v + 1);
     window.addEventListener('storage', onChange);
@@ -68,20 +90,17 @@ export function useProgress(courseSlug: string | undefined, lectureNumber: numbe
     };
   }, []);
 
-  // Read current snapshot (stable reference when store unchanged)
   const snapshot = useMemo(() => readSnapshot(key), [key, version]);
 
   const progress: LectureProgress = snapshot ?? (courseSlug && lectureNumber !== undefined
     ? defaultProgress(courseSlug, lectureNumber)
     : defaultProgress('', 0));
 
-  // Stable mutation helper
   const updateProgress = useCallback((updater: (prev: LectureProgress) => LectureProgress) => {
     if (!key) return;
     const all = readAll();
     const prev = all[key] ?? defaultProgress(courseSlug ?? '', lectureNumber ?? 0);
     const next = updater(prev);
-    // Skip write if nothing changed
     if (next === prev) return;
     all[key] = next;
     writeAll(all);
@@ -140,8 +159,16 @@ export function useProgress(courseSlug: string | undefined, lectureNumber: numbe
   }, [updateProgress]);
 
   const markLectureCompleted = useCallback(() => {
-    updateProgress(prev => ({ ...prev, lectureCompleted: true }));
+    updateProgress(prev => {
+      if (prev.lectureCompleted) return prev;
+      return { ...prev, lectureCompleted: true, handsOnTaskCompleted: true };
+    });
   }, [updateProgress]);
+
+  // Auto-check lecture completion
+  const totalSections = 0; // will be passed externally
+  const totalProblems = 0;
+  const hasQuiz = false;
 
   const visitedSections = useMemo(
     () => Object.values(progress.sections).filter(s => s.visited).length,
@@ -218,11 +245,10 @@ export function isLectureUnlocked(
   if (lectureNumber === 0) return true;
   const prev = courseProgress[lectureNumber - 1];
   if (!prev) return false;
-  const theoryViewed = Object.keys(prev.sections).length > 0;
-  return theoryViewed && prev.quizCompleted && prev.handsOnTaskCompleted;
+  return prev.lectureCompleted;
 }
 
-// ── Subscribe to progress changes (external components) ─────────────────────
+// ── Subscribe to progress changes ─────────────────────────────────────
 export function subscribeToProgressChanges(cb: () => void) {
   window.addEventListener('storage', cb);
   window.addEventListener(PROGRESS_CHANGE_EVENT, cb);
@@ -232,7 +258,17 @@ export function subscribeToProgressChanges(cb: () => void) {
   };
 }
 
-// ── Get all progress ─────────────────────────────────────────────────────────
 export function getAllProgress(): Record<string, LectureProgress> {
   return readAll();
+}
+
+// ── Auto-complete check (called externally after mutations) ───────────────
+export function tryAutoCompleteLecture(
+  courseSlug: string,
+  lectureNumber: number,
+  totalSections: number,
+  totalProblems: number,
+  hasQuiz: boolean,
+) {
+  checkLectureCompletion(courseSlug, lectureNumber, totalSections, totalProblems, hasQuiz);
 }

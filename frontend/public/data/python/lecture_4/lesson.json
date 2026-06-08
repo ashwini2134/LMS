@@ -29,6 +29,38 @@
           "text": "Green light (True) → you go. Red light (False) → you stop. The if statement checks the condition and decides whether to run the code or skip it."
         },
         {
+          "type": "concept_visualization",
+          "title": "Think Of If/Else As A Traffic Light",
+          "accentColor": "green",
+          "leftPanel": {
+            "label": "Real Life Analogy",
+            "emoji": "🚦",
+            "title": "Traffic Light",
+            "description": "Green → GO, Red → STOP. The condition decides which path to take."
+          },
+          "centerPanel": {
+            "label": "Programming Concept",
+            "visualType": "text",
+            "varName": null,
+            "varValue": null,
+            "flowSteps": null,
+            "textContent": "if condition == True → run code inside if\nif condition == False → skip to else"
+          },
+          "rightPanel": {
+            "label": "Code Example",
+            "code": "light = 'green'\nif light == 'green':\n    print('Go!')\nelse:\n    print('Stop!')",
+            "language": "python",
+            "output": "Go!"
+          }
+        },
+        {
+          "type": "reflection",
+          "question": "Does an if/else statement always run both the if block and the else block?",
+          "answer": "No! An if/else runs exactly ONE of the two blocks — never both. If the condition is True, the if block runs and the else block is skipped. If the condition is False, the if block is skipped and the else block runs. Like a traffic light, it's either green or red — not both at the same time.",
+          "followupCode": null,
+          "followupOutput": null
+        },
+        {
           "type": "code_example",
           "title": "Basic if Statement",
           "language": "python",
@@ -41,8 +73,7 @@
           "instructions": "Ask for age. If 18+, print \"You are eligible to vote!\"",
           "starterCode": "age = int(input(\"Enter your age: \"))\nif age >= 18:",
           "solution": "age = int(input(\"Enter your age: \"))\nif age >= 18:\n    print(\"You are eligible to vote!\")",
-          "hint": "Use if age >= 18: followed by an indented print() statement.",
-          "expectedOutput": "Enter your age: 20\nYou are eligible to vote!"
+          "hint": "Use if age >= 18: followed by an indented print() statement."
         }
       ]
     },
@@ -110,8 +141,7 @@
           "instructions": "Ask for marks. Print grade: 90+ = A, 80-89 = B, 70-79 = C, 60-69 = D, below 60 = F.",
           "starterCode": "marks = int(input(\"Enter marks: \"))\nif marks >= 90:\n    \nelif \nelif \nelif \nelse:",
           "solution": "marks = int(input(\"Enter marks: \"))\nif marks >= 90:\n    print(\"Grade: A\")\nelif marks >= 80:\n    print(\"Grade: B\")\nelif marks >= 70:\n    print(\"Grade: C\")\nelif marks >= 60:\n    print(\"Grade: D\")\nelse:\n    print(\"Grade: F\")",
-          "hint": "Check the highest grade first (>= 90), then work down.",
-          "expectedOutput": "Enter marks: 85\nGrade: B"
+          "hint": "Check the highest grade first (>= 90), then work down."
         }
       ]
     }

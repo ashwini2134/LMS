@@ -77,6 +77,38 @@
           "text": "You ask a question (the prompt), then wait for the person to answer (type and press Enter). The receptionist (input()) hands you the answer on a piece of paper (a string). If you need it as a number, you must convert it yourself."
         },
         {
+          "type": "concept_visualization",
+          "title": "Think Of input() As A Receptionist",
+          "accentColor": "green",
+          "leftPanel": {
+            "label": "Real Life Analogy",
+            "emoji": "🧑‍💼",
+            "title": "Receptionist",
+            "description": "Receptionist asks a question, waits for your answer, then tells the program"
+          },
+          "centerPanel": {
+            "label": "Programming Concept",
+            "visualType": "text",
+            "varName": null,
+            "varValue": null,
+            "flowSteps": null,
+            "textContent": "input():\n1. Displays a prompt\n2. Pauses and waits\n3. Captures what you type\n4. Returns it as a string"
+          },
+          "rightPanel": {
+            "label": "Code Example",
+            "code": "name = input('Enter your name: ')\nprint('Hello, ' + name + '!')",
+            "language": "python",
+            "output": "Enter your name: Alice\nHello, Alice!"
+          }
+        },
+        {
+          "type": "reflection",
+          "question": "Does input() let the program continue running while waiting for the user to type something?",
+          "answer": "No! input() pauses the program completely and waits. The program sits at that line and does nothing else until the user presses Enter. This is like a receptionist who stops everything to listen to your question before continuing their work.",
+          "followupCode": null,
+          "followupOutput": null
+        },
+        {
           "type": "code_example",
           "title": "Getting and Using Input",
           "language": "python",
@@ -108,8 +140,7 @@
           "instructions": "Ask the user for their name (string), age (integer), and city (string). Then print all details in a formatted card using f-strings.",
           "starterCode": "# Get student details\nname = input(\"Enter your name: \")\nage = \ncity = \n\n# Print details card",
           "solution": "name = input(\"Enter your name: \")\nage = int(input(\"Enter your age: \"))\ncity = input(\"Enter your city: \")\n\nprint(f\"--- Student Card ---\")\nprint(f\"Name: {name}\")\nprint(f\"Age: {age}\")\nprint(f\"City: {city}\")",
-          "hint": "Use int(input()) for numbers. Use f-strings to format the output nicely.",
-          "expectedOutput": "--- Student Card ---\nName: Lakshanya\nAge: 20\nCity: Chennai"
+          "hint": "Use int(input()) for numbers. Use f-strings to format the output nicely."
         }
       ]
     },
@@ -128,6 +159,38 @@
             "f-strings handle type conversion automatically",
             "They are faster and more readable than + concatenation"
           ]
+        },
+        {
+          "type": "concept_visualization",
+          "title": "Think Of f-Strings As Fill-In-The-Blank Templates",
+          "accentColor": "blue",
+          "leftPanel": {
+            "label": "Real Life Analogy",
+            "emoji": "📝",
+            "title": "Fill-In-The-Blank",
+            "description": "Write the sentence with blanks { }, then fill them with variable values"
+          },
+          "centerPanel": {
+            "label": "Programming Concept",
+            "visualType": "text",
+            "varName": null,
+            "varValue": null,
+            "flowSteps": null,
+            "textContent": "f\"Hello, {name}!\"\nThe {name} gets replaced\nwith the variable value"
+          },
+          "rightPanel": {
+            "label": "Code Example",
+            "code": "name = 'Bob'\nage = 25\nprint(f'{name} is {age} years old')",
+            "language": "python",
+            "output": "Bob is 25 years old"
+          }
+        },
+        {
+          "type": "reflection",
+          "question": "Does f'Hello, {name}' work the same as f'Hello, {name}' with double quotes?",
+          "answer": "Yes! f-strings work with both single quotes f'...' and double quotes f\"...\". The f before the quote tells Python this is a special string where {curly braces} are replaced with variable values.",
+          "followupCode": null,
+          "followupOutput": null
         },
         {
           "type": "code_example",
@@ -149,8 +212,7 @@
           "instructions": "Ask the user for two numbers. Convert them to integers. Print the sum, difference, and product using f-strings.",
           "starterCode": "# Get two numbers\nnum1 = int(input(\"Enter first number: \"))\nnum2 = \n\n# Calculate and print",
           "solution": "num1 = int(input(\"Enter first number: \"))\nnum2 = int(input(\"Enter second number: \"))\n\nprint(f\"Sum: {num1 + num2}\")\nprint(f\"Difference: {num1 - num2}\")\nprint(f\"Product: {num1 * num2}\")",
-          "hint": "Use int(input()) for both numbers. Use f-strings with {} to show calculations.",
-          "expectedOutput": "Enter first number: 10\nEnter second number: 5\nSum: 15\nDifference: 5\nProduct: 50"
+          "hint": "Use int(input()) for both numbers. Use f-strings with {} to show calculations."
         }
       ]
     }

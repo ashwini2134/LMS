@@ -15,17 +15,20 @@ export default function CodeExampleCard({ block }: { block: CodeExampleBlock }) 
             </svg>
             {block.title}
           </h3>
-          <button
-            onClick={() => setInteractive(false)}
-            className="text-[11px] text-slate-400 hover:text-slate-200 px-2 py-1 rounded bg-slate-700/40 hover:bg-slate-700/70 transition-all"
-          >
-            Read-only view
-          </button>
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] text-slate-500 bg-slate-700/30 px-2 py-0.5 rounded font-medium">Playground</span>
+            <button
+              onClick={() => setInteractive(false)}
+              className="text-[11px] text-slate-400 hover:text-slate-200 px-2 py-1 rounded bg-slate-700/40 hover:bg-slate-700/70 transition-all"
+            >
+              Read-only view
+            </button>
+          </div>
         </div>
+        <p className="text-xs text-slate-500 mb-3">Edit the code and run it. No scoring — experiment freely.</p>
         <CodeEditor
           initialCode={block.code}
           language={block.language}
-          expectedOutput={block.expectedOutput}
           height="180px"
         />
       </div>
@@ -69,7 +72,7 @@ export default function CodeExampleCard({ block }: { block: CodeExampleBlock }) 
           <div className="px-4 py-1.5 bg-slate-800/40 border-b border-slate-700/30">
             <span className="text-[11px] text-slate-500 font-medium uppercase tracking-wider">Output</span>
           </div>
-          <pre className="p-4 text-sm text-green-400 font-mono">{block.expectedOutput}</pre>
+          <pre className="p-4 text-sm text-green-400 font-mono select-none" style={{ userSelect: 'none', WebkitUserSelect: 'none' }}>{block.expectedOutput}</pre>
         </div>
       )}
     </div>

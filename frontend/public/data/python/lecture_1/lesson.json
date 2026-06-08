@@ -30,6 +30,38 @@
         },
         {
           "type": "concept_visualization",
+          "title": "Think Of A Variable As A Labeled Storage Box",
+          "accentColor": "blue",
+          "leftPanel": {
+            "label": "Real Life Analogy",
+            "emoji": "🏷️",
+            "title": "Labeled Storage Box",
+            "description": "Each box has a label and holds one item"
+          },
+          "centerPanel": {
+            "label": "Programming Concept",
+            "visualType": "storage_box",
+            "varName": "name",
+            "varValue": "\"Lakshanya\"",
+            "flowSteps": null,
+            "textContent": null
+          },
+          "rightPanel": {
+            "label": "Code Example",
+            "code": "name = 'Lakshanya'\nprint(name)",
+            "language": "python",
+            "output": "Lakshanya"
+          }
+        },
+        {
+          "type": "reflection",
+          "question": "After writing name = 'Lakshanya', does the variable name store the word 'name' or the value 'Lakshanya'?",
+          "answer": "The variable name stores the value 'Lakshanya'. Think of it like a box labeled 'name' that contains the item 'Lakshanya'. The label (variable name) helps you find the box, but the content is the actual value you stored.",
+          "followupCode": null,
+          "followupOutput": null
+        },
+        {
+          "type": "concept_visualization",
           "title": "Variables Store Data",
           "accentColor": "blue",
           "leftPanel": {
@@ -88,8 +120,7 @@
           "instructions": "Create three variables: your name, your age, and your college. Print each on a separate line.",
           "starterCode": "# Store your information\nname = \"\"\nage = \ncollege = \"\"\n\n# Print each variable",
           "solution": "name = \"Lakshanya\"\nage = 20\ncollege = \"SRM University\"\n\nprint(name)\nprint(age)\nprint(college)",
-          "hint": "Text values need quotes (\" \"), numbers don't. Use = to assign.",
-          "expectedOutput": "Lakshanya\n20\nSRM University"
+          "hint": "Text values need quotes (\" \"), numbers don't. Use = to assign."
         }
       ]
     },
@@ -109,6 +140,38 @@
             "bool — True or False values",
             "Use type() to check the type of any value"
           ]
+        },
+        {
+          "type": "concept_visualization",
+          "title": "Think Of Data Types As Different Containers",
+          "accentColor": "purple",
+          "leftPanel": {
+            "label": "Real Life Analogy",
+            "emoji": "📦",
+            "title": "Different Containers",
+            "description": "Each container type holds specific kinds of items"
+          },
+          "centerPanel": {
+            "label": "Programming Concept",
+            "visualType": "text",
+            "varName": null,
+            "varValue": null,
+            "flowSteps": null,
+            "textContent": "int → stores whole numbers (42)\nfloat → stores decimals (3.14)\nstr → stores text ('Hello')\nbool → stores True/False"
+          },
+          "rightPanel": {
+            "label": "Code Example",
+            "code": "age = 20\npi = 3.14\nname = 'Alice'\nis_student = True\nprint(age, pi, name, is_student)",
+            "language": "python",
+            "output": "20 3.14 Alice True"
+          }
+        },
+        {
+          "type": "reflection",
+          "question": "Can you put text inside an int container? For example, int_name = 'Alice'.",
+          "answer": "No! An int container only holds whole numbers. If you try age = 'Alice', Python will treat it as text (a string), not a number. The type matters because Python behaves differently with each type — you can do math with ints but not with strings.",
+          "followupCode": null,
+          "followupOutput": null
         },
         {
           "type": "concept_visualization",
@@ -153,6 +216,38 @@
           ]
         },
         {
+          "type": "concept_visualization",
+          "title": "Think Of Type Conversion As Repackaging",
+          "accentColor": "green",
+          "leftPanel": {
+            "label": "Real Life Analogy",
+            "emoji": "🔄",
+            "title": "Repackaging Items",
+            "description": "Change the container type while preserving the value"
+          },
+          "centerPanel": {
+            "label": "Programming Concept",
+            "visualType": "text",
+            "varName": null,
+            "varValue": null,
+            "flowSteps": null,
+            "textContent": "\"42\" (str) → int(\"42\") → 42 (int)\n42 (int) → float(42) → 42.0 (float)"
+          },
+          "rightPanel": {
+            "label": "Code Example",
+            "code": "print(int('42') + 8)\nprint(float(42))",
+            "language": "python",
+            "output": "50\n42.0"
+          }
+        },
+        {
+          "type": "reflection",
+          "question": "If you have '42' (a string) and you call int('42'), does the original '42' string change permanently?",
+          "answer": "No! Type conversion creates a new value in the new type. The original string '42' still exists as a string if you stored it in a variable. Python does not modify the original — it just converts it temporarily for the operation.",
+          "followupCode": null,
+          "followupOutput": null
+        },
+        {
           "type": "code_example",
           "title": "Type Conversion in Action",
           "language": "python",
@@ -177,8 +272,7 @@
           "instructions": "Store your current age in a variable. Add 5 to it. Print the result using an f-string.",
           "starterCode": "# Store current age\nage = \n\n# Calculate age after 5 years\nfuture_age = \n\n# Print the result",
           "solution": "age = 20\nfuture_age = age + 5\nprint(f\"After 5 years, I will be {future_age} years old.\")",
-          "hint": "Use + to add numbers. Use f-strings with {} to insert variables into text.",
-          "expectedOutput": "After 5 years, I will be 25 years old."
+          "hint": "Use + to add numbers. Use f-strings with {} to insert variables into text."
         }
       ]
     },
@@ -211,8 +305,7 @@
           "instructions": "Create variables for name, age, and college. Print them in this format: \"Name: [name], Age: [age], College: [college]\"",
           "starterCode": "name = \"\"\nage = \ncollege = \"\"\n\n# Print profile card",
           "solution": "name = \"Lakshanya\"\nage = 20\ncollege = \"SRM University\"\n\nprint(\"Name: \" + name + \", Age: \" + str(age) + \", College: \" + college)",
-          "hint": "Use + to join strings. Convert numbers to strings with str() before concatenating.",
-          "expectedOutput": "Name: Lakshanya, Age: 20, College: SRM University"
+          "hint": "Use + to join strings. Convert numbers to strings with str() before concatenating."
         }
       ]
     }

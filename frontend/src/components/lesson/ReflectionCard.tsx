@@ -13,7 +13,7 @@ export default function ReflectionCard({ block }: { block: ReflectionBlock }) {
           </svg>
         </div>
         <div className="flex-1">
-          <p className="text-xs font-semibold text-purple-300 uppercase tracking-wider mb-1">Think About It</p>
+          <p className="text-xs font-semibold text-purple-300 uppercase tracking-wider mb-1">Is This Correct?</p>
           <p className="text-sm text-slate-300 leading-relaxed">{block.question}</p>
 
           {!revealed ? (

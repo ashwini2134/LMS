@@ -27,6 +27,38 @@
           "title": "File Handling is Like a Notebook",
           "emoji": "",
           "text": "Writing in a notebook saves information even after you close it. Open it tomorrow and the information is still there. File handling does the same for your programs."
+        },
+        {
+          "type": "concept_visualization",
+          "title": "Think Of File Handling As A Notebook",
+          "accentColor": "blue",
+          "leftPanel": {
+            "label": "Real Life Analogy",
+            "emoji": "📓",
+            "title": "Notebook",
+            "description": "Open it, read/write pages, close it when done."
+          },
+          "centerPanel": {
+            "label": "Programming Concept",
+            "visualType": "text",
+            "varName": null,
+            "varValue": null,
+            "flowSteps": null,
+            "textContent": "File = Notebook:\n1. Open: file = open('notes.txt', 'r')\n2. Read/Write: content = file.read()\n3. Close: file.close()"
+          },
+          "rightPanel": {
+            "label": "Code Example",
+            "code": "with open('notes.txt', 'w') as f:\n    f.write('Hello, file!')\nwith open('notes.txt', 'r') as f:\n    print(f.read())",
+            "language": "python",
+            "output": "Hello, file!"
+          }
+        },
+        {
+          "type": "reflection",
+          "question": "What happens if you forget to close a file after writing to it?",
+          "answer": "The data you wrote might not be saved! Python buffers writes in memory for efficiency, and close() flushes that buffer to disk. Using 'with open(...) as f:' is safer because Python automatically closes the file for you — even if an error occurs. It's like always remembering to close your notebook after writing so you don't lose your notes.",
+          "followupCode": null,
+          "followupOutput": null
         }
       ]
     },
@@ -77,8 +109,7 @@
           "instructions": "Write 3 names to students.txt. Read them back and greet each: 'Hello, [name]!'",
           "starterCode": "with open(\"students.txt\", \"w\") as f:\n    f.write(\"Alice\\nBob\\nCharlie\\n\")\n\nwith open(\"students.txt\", \"r\") as f:\n    for name in f:\n        print(f\"Hello, {name.strip()}!\")",
           "solution": "with open(\"students.txt\", \"w\") as f:\n    f.write(\"Alice\\nBob\\nCharlie\\n\")\n\nwith open(\"students.txt\", \"r\") as f:\n    for name in f:\n        print(f\"Hello, {name.strip()}!\")",
-          "hint": "Use strip() on each line to remove the newline character.",
-          "expectedOutput": "Hello, Alice!\nHello, Bob!\nHello, Charlie!"
+          "hint": "Use strip() on each line to remove the newline character."
         }
       ]
     },
@@ -111,8 +142,7 @@
           "instructions": "Ask for 3 notes, write them to a file, then read and display with line numbers.",
           "starterCode": "filename = input(\"Filename: \")\nn1 = input(\"Note 1: \")\nn2 = input(\"Note 2: \")\nn3 = input(\"Note 3: \")\n\nwith open(filename, \"w\") as f:\n    f.write(n1 + \"\\n\")\n    f.write(n2 + \"\\n\")\n    f.write(n3 + \"\\n\")\n\nwith open(filename, \"r\") as f:\n    for i, line in enumerate(f, 1):\n        print(f\"{i}. {line}\", end=\"\")",
           "solution": "filename = input(\"Filename: \")\nn1 = input(\"Note 1: \")\nn2 = input(\"Note 2: \")\nn3 = input(\"Note 3: \")\nwith open(filename, \"w\") as f:\n    f.write(n1 + \"\\n\")\n    f.write(n2 + \"\\n\")\n    f.write(n3 + \"\\n\")\nwith open(filename, \"r\") as f:\n    for i, line in enumerate(f, 1):\n        print(f\"{i}. {line}\", end=\"\")",
-          "hint": "Use \"w\" mode. Add \\\\n at the end of each line when writing.",
-          "expectedOutput": "Filename: notes.txt\nNote 1: Learn Python\nNote 2: Practice daily\nNote 3: Build projects\n1. Learn Python\n2. Practice daily\n3. Build projects"
+          "hint": "Use \"w\" mode. Add \\\\n at the end of each line when writing."
         }
       ]
     }

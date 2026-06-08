@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Star, Crown } from 'lucide-react';
 import { api, type Lecture, getCompletedProjects } from "../api";
-import { getCourseProgress, isLectureUnlocked, subscribeToProgressChanges, getCourseStats } from "../hooks/useProgress";
+import { getCourseProgress, isLectureUnlocked, subscribeToProgressChanges } from "../hooks/useProgress";
 
 type LectureStatus = "completed" | "in-progress" | "locked";
 
@@ -43,8 +43,6 @@ export default function CoursePage() {
   const courseProgress = useMemo(() => getCourseProgress(slug ?? ""), [slug, refreshKey]);
   const completedProjects = useMemo(() => getCompletedProjects(), [refreshKey]);
 
-  const stats = useMemo(() => getCourseStats(slug ?? "", lectureCount), [slug, lectureCount, refreshKey]);
-
   const getLectureStatus = (lecture: Lecture): LectureStatus => {
     const p = courseProgress[lecture.number];
     if (p?.lectureCompleted) return "completed";
@@ -54,8 +52,9 @@ export default function CoursePage() {
   };
 
   const completedCount = lectures?.filter((l) => getLectureStatus(l) === "completed").length ?? 0;
-  const progressPercent = Math.round((completedCount / Math.max(lectureCount, 1)) * 100);
-
+  const progressPercent = lectureCount > 0
+    ? Math.round((completedCount / lectureCount) * 100)
+    : 0;
   const quizzesPassed = lectures?.filter((l) => courseProgress[l.number]?.quizCompleted).length ?? 0;
   const projectsSubmitted = Object.keys(completedProjects).filter((k) => k.startsWith(`${slug}/`)).length;
 

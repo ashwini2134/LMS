@@ -28,6 +28,38 @@
           "text": "While waiting for a friend: check for messages. No message → wait. Message arrives → stop. The while loop checks a condition and keeps going until it changes."
         },
         {
+          "type": "concept_visualization",
+          "title": "Think Of A While Loop As Checking Your Phone",
+          "accentColor": "green",
+          "leftPanel": {
+            "label": "Real Life Analogy",
+            "emoji": "📱",
+            "title": "Checking Your Phone",
+            "description": "Keep checking until there are no more notifications"
+          },
+          "centerPanel": {
+            "label": "Programming Concept",
+            "visualType": "text",
+            "varName": null,
+            "varValue": null,
+            "flowSteps": null,
+            "textContent": "while condition is True:\n    Do something\n    Update the condition\nStop when condition becomes False"
+          },
+          "rightPanel": {
+            "label": "Code Example",
+            "code": "count = 3\nwhile count > 0:\n    print(f'{count} notifications left')\n    count -= 1\nprint('All caught up!')",
+            "language": "python",
+            "output": "3 notifications left\n2 notifications left\n1 notifications left\nAll caught up!"
+          }
+        },
+        {
+          "type": "reflection",
+          "question": "What happens if you forget to update count inside the while loop?",
+          "answer": "The loop would run forever! If count never decreases, the condition count > 0 stays True forever. This is called an infinite loop. It's like checking your phone for notifications, but the number never goes down — you'd be stuck checking forever. Always update the variable that controls the condition.",
+          "followupCode": null,
+          "followupOutput": null
+        },
+        {
           "type": "code_example",
           "title": "Basic while Loop",
           "language": "python",
@@ -57,8 +89,7 @@
           "instructions": "Ask for a number N. Use a while loop to calculate sum of 1 to N.",
           "starterCode": "n = int(input(\"Enter N: \"))\ncount = 1\ntotal = 0\nwhile count <= n:\n    total = \n    count = \nprint(f\"Sum: {total}\")",
           "solution": "n = int(input(\"Enter N: \"))\ncount = 1\ntotal = 0\nwhile count <= n:\n    total = total + count\n    count = count + 1\nprint(f\"Sum of 1 to {n} = {total}\")",
-          "hint": "Add count to total each iteration, then increment count.",
-          "expectedOutput": "Enter N: 5\nSum of 1 to 5 = 15"
+          "hint": "Add count to total each iteration, then increment count."
         }
       ]
     },
@@ -109,8 +140,7 @@
           "instructions": "Set secret = 7. Keep asking the user to guess until correct.",
           "starterCode": "secret = 7\nwhile True:\n    guess = int(input(\"Guess (1-10): \"))\n    if guess == secret:\n        print(\"Correct!\")\n        \n    else:\n        print(\"Wrong!\")",
           "solution": "secret = 7\nwhile True:\n    guess = int(input(\"Guess (1-10): \"))\n    if guess == secret:\n        print(\"Correct! You got it!\")\n        break\n    else:\n        print(\"Wrong, try again.\")",
-          "hint": "Use while True for infinite loop, break when guessed correctly.",
-          "expectedOutput": "Guess (1-10): 3\nWrong, try again.\nGuess (1-10): 7\nCorrect! You got it!"
+          "hint": "Use while True for infinite loop, break when guessed correctly."
         }
       ]
     }

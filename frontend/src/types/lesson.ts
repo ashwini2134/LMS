@@ -55,32 +55,16 @@ export interface ConceptVisualizationBlock {
 // ── Visual Aid ──────────────────────────────────────────────────────────────
 
 export type VisualAidKind =
-  | 'comparison_chart'
-  | 'process_flow'
-  | 'decision_tree'
-  | 'iteration_diagram'
-  | 'cycle_diagram'
-  | 'memory_layout'
-  | 'mapping_visual'
   | 'index_visual'
-  | 'architecture_diagram'
-  | 'lifecycle_diagram'
-  | 'transformation_demo'
-  | 'comparison_grid';
+  | 'mapping_visual'
+  | 'transformation_demo';
 
 export interface VisualAidBlock {
   type: 'visual_aid';
   kind: VisualAidKind;
   title: string;
   accentColor?: 'blue' | 'purple' | 'green' | 'orange' | 'amber';
-  columns?: Array<{ header: string; items: Array<{ label: string; desc?: string; emoji?: string }> }>;
-  steps?: Array<{ label: string; description?: string; emoji?: string }>;
   items?: Array<{ label: string; value?: string; emoji?: string; desc?: string }>;
-  comparison?: {
-    headers: string[];
-    rows: Array<{ label: string; values: string[] }>;
-  };
-  flow?: Array<{ emoji?: string; text: string }>;
   code?: string;
   language?: string;
   output?: string;

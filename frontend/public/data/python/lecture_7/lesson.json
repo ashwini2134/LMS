@@ -29,6 +29,38 @@
           "text": "You write items in order: first eggs, then milk, then bread. You can add items, remove items, or check what's at position 2. Python lists work exactly the same way."
         },
         {
+          "type": "concept_visualization",
+          "title": "Think Of A List As A Shopping List",
+          "accentColor": "blue",
+          "leftPanel": {
+            "label": "Real Life Analogy",
+            "emoji": "🛒",
+            "title": "Shopping List",
+            "description": "Items in order. Add, remove, or access by position."
+          },
+          "centerPanel": {
+            "label": "Programming Concept",
+            "visualType": "text",
+            "varName": null,
+            "varValue": null,
+            "flowSteps": null,
+            "textContent": "A list is an ordered collection:\n• Items stay in order\n• Access by position (index)\n• Add/remove items anytime"
+          },
+          "rightPanel": {
+            "label": "Code Example",
+            "code": "fruits = ['apple', 'banana', 'cherry']\nprint(fruits[0])\nfruits.append('date')\nprint(fruits)",
+            "language": "python",
+            "output": "apple\n['apple', 'banana', 'cherry', 'date']"
+          }
+        },
+        {
+          "type": "reflection",
+          "question": "Does fruits[0] give you the first item or the last item in the list?",
+          "answer": "fruits[0] gives you the first item ('apple'). In Python, indexing starts at 0, not 1. So index 0 = first item, index 1 = second, and so on. This is like saying 'position 0' on your shopping list is the very first item you wrote down.",
+          "followupCode": null,
+          "followupOutput": null
+        },
+        {
           "type": "code_example",
           "title": "Creating and Printing Lists",
           "language": "python",
@@ -116,8 +148,7 @@
           "instructions": "Start with [78, 92, 85, 63, 88]. Add 95, remove the lowest, sort, and print the average.",
           "starterCode": "marks = [78, 92, 85, 63, 88]\nmarks.append()\nmarks.remove()\nmarks.sort()\nprint(f\"Marks: {marks}\")\nprint(f\"Average: {sum(marks)//len(marks)}\")",
           "solution": "marks = [78, 92, 85, 63, 88]\nmarks.append(95)\nmarks.remove(min(marks))\nmarks.sort()\nprint(f\"Marks: {marks}\")\nprint(f\"Average: {sum(marks)//len(marks)}\")",
-          "hint": "Use append() to add, min(marks) with remove() for lowest, sort() to sort.",
-          "expectedOutput": "Marks: [78, 85, 88, 92, 95]\nAverage: 87"
+          "hint": "Use append() to add, min(marks) with remove() for lowest, sort() to sort."
         }
       ]
     }

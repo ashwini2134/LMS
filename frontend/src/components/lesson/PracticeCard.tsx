@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import type { PracticeBlock } from '../../types/lesson';
 import CodeEditor from './CodeEditor';
 
@@ -8,18 +8,47 @@ interface PracticeCardProps {
   onComplete?: () => void;
 }
 
+const SAVE_PREFIX = 'lms:practice:';
+
 export default function PracticeCard({ block, onAttempt, onComplete }: PracticeCardProps) {
+  const saveKey = `${SAVE_PREFIX}${block.title}`;
   const [open, setOpen] = useState(false);
   const [showHint, setShowHint] = useState(false);
   const [showSolution, setShowSolution] = useState(false);
   const [passed, setPassed] = useState(false);
+  const [attempts, setAttempts] = useState(0);
+
+  const [savedCode, setSavedCode] = useState<string | null>(null);
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(saveKey);
+      if (saved) setSavedCode(saved);
+    } catch {}
+  }, [saveKey]);
+
+  const saveCode = useCallback((code: string) => {
+    try { localStorage.setItem(saveKey, code); } catch {}
+  }, [saveKey]);
 
   const handleRun = (_code: string, output: string, error: string | null) => {
     onAttempt?.();
+    setAttempts(a => a + 1);
+  };
+
+  const handleSubmit = (_code: string, output: string, error: string | null) => {
+    onAttempt?.();
+    setAttempts(a => a + 1);
     if (!error && block.expectedOutput && output.trim() === block.expectedOutput.trim()) {
       setPassed(true);
       onComplete?.();
     }
+  };
+
+  const handleReset = () => {
+    setSavedCode(null);
+    try { localStorage.removeItem(saveKey); } catch {}
+    setAttempts(0);
+    setPassed(false);
   };
 
   if (!open) {
@@ -49,76 +78,98 @@ export default function PracticeCard({ block, onAttempt, onComplete }: PracticeC
   }
 
   return (
-    <div className={`rounded-2xl border backdrop-blur-sm p-5 space-y-4 ${
+    <div className={`rounded-2xl border backdrop-blur-sm overflow-hidden ${
       passed ? 'border-green-500/30 bg-gradient-to-br from-green-600/10 to-slate-800/40' : 'border-amber-500/20 bg-gradient-to-br from-amber-600/10 to-slate-800/40'
     }`}>
-      <div className="flex items-center justify-between">
+      {/* Header */}
+      <div className="px-5 py-3 bg-slate-800/40 border-b border-slate-700/20 flex items-center justify-between">
         <div>
-          <p className={`text-xs font-semibold uppercase tracking-wider mb-1 ${passed ? 'text-green-300' : 'text-amber-300'}`}>
-            Practice Exercise {passed && '✓ Completed'}
+          <p className={`text-xs font-semibold uppercase tracking-wider ${passed ? 'text-green-300' : 'text-amber-300'}`}>
+            Practice Exercise {passed && '— Completed'}
           </p>
-          <p className="text-sm font-medium text-slate-200">{block.title}</p>
+          <p className="text-sm font-medium text-slate-200 mt-0.5">{block.title}</p>
         </div>
-        <button
-          onClick={() => setOpen(false)}
-          className="text-slate-500 hover:text-slate-300 transition-colors"
-        >
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
+        <div className="flex items-center gap-2">
+          {attempts > 0 && (
+            <span className="text-[10px] text-slate-500">Attempts: {attempts}</span>
+          )}
+          <button
+            onClick={() => setOpen(false)}
+            className="text-slate-500 hover:text-slate-300 transition-colors"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
       </div>
 
-      {/* Instructions */}
-      <div className="p-3 rounded-xl bg-slate-900/50 border border-slate-700/30">
-        <p className="text-sm text-slate-300 leading-relaxed">{block.instructions}</p>
+      <div className="p-5 space-y-4">
+        {/* Problem Statement */}
+        <div className="p-3 rounded-xl bg-slate-900/50 border border-slate-700/30">
+          <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Instructions</p>
+          <p className="text-sm text-slate-200 leading-relaxed">{block.instructions}</p>
+        </div>
+
+        {/* Expected Output */}
         {block.expectedOutput && (
-          <p className="text-xs text-slate-500 mt-2">
-            Expected output: <code className="text-green-400 font-mono">{block.expectedOutput}</code>
-          </p>
+          <div className="p-3 rounded-xl bg-slate-900/50 border border-slate-700/30">
+            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Expected Output</p>
+            <pre className="text-sm text-emerald-400 font-mono" style={{ userSelect: 'none', WebkitUserSelect: 'none' }}>{block.expectedOutput}</pre>
+          </div>
+        )}
+
+        {/* Code Editor */}
+        <CodeEditor
+          initialCode={savedCode ?? block.starterCode}
+          language="python"
+          height="200px"
+          showSaveButton
+          showSubmitButton
+          expectedOutput={block.expectedOutput}
+          onRun={handleRun}
+          onSubmit={handleSubmit}
+          onSave={saveCode}
+          showResetButton
+          onReset={handleReset}
+        />
+
+        {/* Action buttons */}
+        <div className="flex items-center gap-2 flex-wrap">
+          {!passed && (
+            <button
+              onClick={() => setShowHint(v => !v)}
+              className="text-xs font-medium text-blue-400 hover:text-blue-300 px-3 py-1.5 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 transition-all"
+            >
+              {showHint ? 'Hide Hint' : 'Hint'}
+            </button>
+          )}
+          <button
+            onClick={() => setShowSolution(v => !v)}
+            className="text-xs font-medium text-slate-400 hover:text-slate-200 px-3 py-1.5 rounded-lg bg-slate-700/40 hover:bg-slate-700/70 border border-slate-700/40 transition-all"
+          >
+            {showSolution ? 'Hide Solution' : 'Show Solution'}
+          </button>
+        </div>
+
+        {/* Hint box */}
+        {showHint && block.hint && (
+          <div className="p-3 rounded-xl bg-blue-900/20 border border-blue-700/30">
+            <p className="text-xs font-semibold text-blue-400 mb-1">Hint</p>
+            <p className="text-sm text-slate-300">{block.hint}</p>
+          </div>
+        )}
+
+        {/* Solution */}
+        {showSolution && block.solution && (
+          <div className="rounded-xl bg-[#0d1117] border border-slate-700/40 overflow-hidden">
+            <div className="flex items-center px-4 py-2 bg-slate-800/40 border-b border-slate-700/30">
+              <span className="text-[11px] text-slate-500 font-medium uppercase tracking-wider">Solution</span>
+            </div>
+            <pre className="p-4 text-sm text-slate-200 font-mono leading-relaxed">{block.solution}</pre>
+          </div>
         )}
       </div>
-
-      {/* Editor */}
-      <CodeEditor
-        initialCode={block.starterCode}
-        language="python"
-        height="200px"
-        expectedOutput={block.expectedOutput}
-        onRun={handleRun}
-      />
-
-      {/* Action buttons */}
-      <div className="flex items-center gap-2 flex-wrap">
-        <button
-          onClick={() => setShowHint(v => !v)}
-          className="text-xs font-medium text-blue-400 hover:text-blue-300 px-3 py-1.5 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 transition-all"
-        >
-          {showHint ? 'Hide Hint' : 'Hint'}
-        </button>
-        <button
-          onClick={() => setShowSolution(v => !v)}
-          className="text-xs font-medium text-slate-400 hover:text-slate-200 px-3 py-1.5 rounded-lg bg-slate-700/40 hover:bg-slate-700/70 border border-slate-700/40 transition-all"
-        >
-          {showSolution ? 'Hide Solution' : 'Show Solution'}
-        </button>
-      </div>
-
-      {showHint && (
-        <div className="p-3 rounded-xl bg-blue-900/20 border border-blue-700/30">
-          <p className="text-xs font-semibold text-blue-400 mb-1">Hint</p>
-          <p className="text-sm text-slate-300">{block.hint}</p>
-        </div>
-      )}
-
-      {showSolution && (
-        <div className="rounded-xl bg-[#0d1117] border border-slate-700/40 overflow-hidden">
-          <div className="flex items-center px-4 py-2 bg-slate-800/40 border-b border-slate-700/30">
-            <span className="text-[11px] text-slate-500 font-medium uppercase tracking-wider">Solution</span>
-          </div>
-          <pre className="p-4 text-sm text-slate-200 font-mono leading-relaxed">{block.solution}</pre>
-        </div>
-      )}
     </div>
   );
 }

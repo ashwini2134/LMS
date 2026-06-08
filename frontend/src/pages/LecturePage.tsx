@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { api } from '../api';
 import { useLessonData } from '../hooks/useLessonData';
-import { useProgress, getCourseProgress, isLectureUnlocked } from '../hooks/useProgress';
+import { useProgress, getCourseProgress, isLectureUnlocked, tryAutoCompleteLecture } from '../hooks/useProgress';
 import {
   LessonSection,
   QuizEngine,
@@ -162,6 +162,21 @@ export default function LecturePage() {
     }
   }, [pages.length, currentPageIdx]);
 
+  // Resume from last visited section when re-entering a lecture
+  useEffect(() => {
+    if (!lessonData || !pages.length) return;
+    const lastId = progress.lastSection;
+    if (!lastId || lastId === 'overview') return;
+
+    const idx = pages.findIndex(p => {
+      if (p.type === 'section') return lessonData.sections[p.index]?.id === lastId;
+      return p.type === lastId;
+    });
+    if (idx > 0) {
+      setCurrentPageIdx(idx);
+    }
+  }, [lessonData, pages, progress.lastSection]);
+
   // Mark sections visited on navigation — guard against Strict Mode double-fire
   const visitedRef = useRef<Set<number>>(new Set());
   useEffect(() => {
@@ -292,12 +307,6 @@ export default function LecturePage() {
                   {progress.quizCompleted ? '✓' : '—'}
                 </span>
               </div>
-              <div className="flex justify-between">
-                <span>Task</span>
-                <span className={progress.handsOnTaskCompleted ? 'text-green-400' : 'text-slate-600'}>
-                  {progress.handsOnTaskCompleted ? '✓' : '—'}
-                </span>
-              </div>
             </div>
           </div>
         </aside>
@@ -310,8 +319,13 @@ export default function LecturePage() {
               <LessonSection
                 section={lessonData.sections[currentPage.index]}
                 index={currentPage.index}
-                onPracticeAttempt={() => markPracticeAttempted(lessonData.sections[currentPage.index].id)}
-                onPracticeComplete={() => markPracticeCompleted(lessonData.sections[currentPage.index].id)}
+                  onPracticeAttempt={() => markPracticeAttempted(lessonData.sections[currentPage.index].id)}
+                  onPracticeComplete={() => {
+                    markPracticeCompleted(lessonData.sections[currentPage.index].id);
+                    if (slug && lessonData) {
+                      tryAutoCompleteLecture(slug, lectureNumber, lessonData.sections.length, problems.length, quiz.length > 0);
+                    }
+                  }}
               />
             )}
 
@@ -334,7 +348,12 @@ export default function LecturePage() {
                     questions={quiz}
                     onComplete={(score, total) => {
                       markQuizCompleted(score);
-                      if (score / total >= 0.7) markSectionVisited('quiz');
+                      if (score / total >= 0.7) {
+                        markSectionVisited('quiz');
+                        if (slug && lessonData) {
+                          tryAutoCompleteLecture(slug, lectureNumber, lessonData.sections.length, problems.length, quiz.length > 0);
+                        }
+                      }
                     }}
                   />
                 </div>
@@ -369,17 +388,12 @@ export default function LecturePage() {
                           markProblemCompleted(id);
                           markSectionVisited('problems');
                           markHandsOnTaskCompleted();
+                          if (slug && lessonData) {
+                            tryAutoCompleteLecture(slug, lectureNumber, lessonData.sections.length, problems.length, quiz.length > 0);
+                          }
                         }}
                       />
                     ))}
-                  </div>
-                  <div className="pt-2">
-                    <button
-                      onClick={() => navigate(`/course/${slug}/lecture/${lectureNumber}/project`)}
-                      className="inline-flex items-center gap-2 text-sm font-medium text-orange-400 hover:text-orange-300 px-4 py-2 rounded-xl bg-orange-500/10 hover:bg-orange-500/15 border border-orange-500/20 transition-all"
-                    >
-                      Open Full Problem Set
-                    </button>
                   </div>
                 </div>
               </section>

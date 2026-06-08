@@ -23,6 +23,38 @@
           ]
         },
         {
+          "type": "concept_visualization",
+          "title": "Think Of A String As A Chain Of Characters",
+          "accentColor": "blue",
+          "leftPanel": {
+            "label": "Real Life Analogy",
+            "emoji": "⛓️",
+            "title": "Chain of Characters",
+            "description": "Each character has a position. You can access individual links."
+          },
+          "centerPanel": {
+            "label": "Programming Concept",
+            "visualType": "text",
+            "varName": null,
+            "varValue": null,
+            "flowSteps": null,
+            "textContent": "String = ordered sequence of characters:\n• Each character has an index\n• Index starts at 0\n• Access with [ ] brackets"
+          },
+          "rightPanel": {
+            "label": "Code Example",
+            "code": "word = 'Python'\nprint(word[0])\nprint(word[-1])\nprint(word[1:4])",
+            "language": "python",
+            "output": "P\nn\nyth"
+          }
+        },
+        {
+          "type": "reflection",
+          "question": "What does word[-1] give you for word = 'Python'?",
+          "answer": "word[-1] gives you 'n', the last character. Negative indices count from the end of the string: -1 is the last character, -2 is the second-to-last, and so on. It's like asking 'what's the last link in the chain?' without having to count all the links first.",
+          "followupCode": null,
+          "followupOutput": null
+        },
+        {
           "type": "code_example",
           "title": "String Indexing and Slicing",
           "language": "python",
@@ -35,8 +67,30 @@
           "instructions": "Create a string with your name. Print first char, last char, length, and first 3 chars.",
           "starterCode": "name = \"Lakshanya\"\nprint(f\"First: {name[0]}\")\nprint(f\"Last: {name[]}\")\nprint(f\"Length: {len()}\")\nprint(f\"First 3: {name[:]}\")",
           "solution": "name = \"Lakshanya\"\nprint(f\"First: {name[0]}\")\nprint(f\"Last: {name[-1]}\")\nprint(f\"Length: {len(name)}\")\nprint(f\"First 3: {name[:3]}\")",
-          "hint": "Use index 0 for first, -1 for last, len() for length, [:3] for slice.",
-          "expectedOutput": "First: L\nLast: a\nLength: 9\nFirst 3: Lak"
+          "hint": "Use index 0 for first, -1 for last, len() for length, [:3] for slice."
+        },
+        {
+          "type": "visual_aid",
+          "kind": "index_visual",
+          "title": "Character Index Positions",
+          "accentColor": "blue",
+          "items": [
+            {
+              "label": "H"
+            },
+            {
+              "label": "E"
+            },
+            {
+              "label": "L"
+            },
+            {
+              "label": "L"
+            },
+            {
+              "label": "O"
+            }
+          ]
         }
       ]
     },
@@ -56,6 +110,38 @@
             "find(substring) — returns index or -1 if not found",
             "startswith() / endswith() — check beginning/end"
           ]
+        },
+        {
+          "type": "concept_visualization",
+          "title": "Think Of String Methods As Editing Tools",
+          "accentColor": "purple",
+          "leftPanel": {
+            "label": "Real Life Analogy",
+            "emoji": "🛠️",
+            "title": "Editing Tools",
+            "description": "Each method transforms the string in a specific way"
+          },
+          "centerPanel": {
+            "label": "Programming Concept",
+            "visualType": "text",
+            "varName": null,
+            "varValue": null,
+            "flowSteps": null,
+            "textContent": ".upper() → ALL CAPS\n.lower() → all lowercase\n.strip() → removes spaces\n.split() → breaks into list"
+          },
+          "rightPanel": {
+            "label": "Code Example",
+            "code": "msg = '  Hello World  '\nprint(msg.strip())\nprint(msg.strip().upper())",
+            "language": "python",
+            "output": "Hello World\nHELLO WORLD"
+          }
+        },
+        {
+          "type": "reflection",
+          "question": "Does calling msg.upper() permanently change the original msg variable?",
+          "answer": "No! String methods return a NEW string — they don't modify the original. If you want to keep the change, you must store it back: msg = msg.upper(). This is because strings in Python are immutable (cannot be changed after creation).",
+          "followupCode": null,
+          "followupOutput": null
         },
         {
           "type": "code_example",
@@ -95,8 +181,27 @@
           "instructions": "Ask for a word. Check if it reads the same forward and backward (ignore case).",
           "starterCode": "word = input(\"Enter a word: \")\ncleaned = word.lower().strip()\nif cleaned == cleaned[]:\n    print(\"Palindrome!\")\nelse:\n    print(\"Not a palindrome\")",
           "solution": "word = input(\"Enter a word: \")\ncleaned = word.lower().strip()\nif cleaned == cleaned[::-1]:\n    print(\"Yes, it's a palindrome!\")\nelse:\n    print(\"No, it's not a palindrome.\")",
-          "hint": "Use [::-1] to reverse the string. Use lower() to ignore case.",
-          "expectedOutput": "Enter a word: Racecar\nYes, it's a palindrome!"
+          "hint": "Use [::-1] to reverse the string. Use lower() to ignore case."
+        },
+        {
+          "type": "visual_aid",
+          "kind": "transformation_demo",
+          "title": "String Transformations",
+          "accentColor": "purple",
+          "items": [
+            {
+              "label": "\"hello\".upper()",
+              "desc": "HELLO"
+            },
+            {
+              "label": "\"HELLO\".lower()",
+              "desc": "hello"
+            },
+            {
+              "label": "\"  hi  \".strip()",
+              "desc": "hi"
+            }
+          ]
         }
       ]
     }

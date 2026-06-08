@@ -29,6 +29,38 @@
           "text": "You look up a person's name (the key) to find their phone number (the value). Each name is unique. You search by name directly — that's how Python dictionaries work."
         },
         {
+          "type": "concept_visualization",
+          "title": "Think Of A Dictionary As A Phone Book",
+          "accentColor": "green",
+          "leftPanel": {
+            "label": "Real Life Analogy",
+            "emoji": "📞",
+            "title": "Phone Book",
+            "description": "Look up a name (key) to find the number (value)."
+          },
+          "centerPanel": {
+            "label": "Programming Concept",
+            "visualType": "text",
+            "varName": null,
+            "varValue": null,
+            "flowSteps": null,
+            "textContent": "Dictionary = Key→Value Pairs:\n• Keys are unique labels\n• Each key maps to a value\n• Fast lookup by key"
+          },
+          "rightPanel": {
+            "label": "Code Example",
+            "code": "phone = {'Alice': '123', 'Bob': '456'}\nprint(phone['Alice'])\nphone['Charlie'] = '789'\nprint(phone)",
+            "language": "python",
+            "output": "123\n{'Alice': '123', 'Bob': '456', 'Charlie': '789'}"
+          }
+        },
+        {
+          "type": "reflection",
+          "question": "Can two people have the same phone number in a dictionary? Can two keys have the same value?",
+          "answer": "Yes! Values can be duplicated. Two different keys (people) could have the same value (phone number). But the keys themselves must be unique — you cannot have two 'Alice' entries. It's like a real phone book: two people can share a number, but you can't have two listings for Alice.",
+          "followupCode": null,
+          "followupOutput": null
+        },
+        {
           "type": "code_example",
           "title": "Creating and Accessing Dictionaries",
           "language": "python",
@@ -41,8 +73,27 @@
           "instructions": "Create a dictionary with keys: name, age, city, hobby. Print each value.",
           "starterCode": "profile = {\n    \"name\": \"\",\n    \"age\": ,\n    \"city\": \"\",\n    \"hobby\": \"\"\n}\nprint(f\"Name: {profile['name']}\")",
           "solution": "profile = {\"name\": \"Lakshanya\", \"age\": 20, \"city\": \"Chennai\", \"hobby\": \"coding\"}\nprint(f\"Name: {profile['name']}\")\nprint(f\"Age: {profile['age']}\")\nprint(f\"City: {profile['city']}\")\nprint(f\"Hobby: {profile['hobby']}\")",
-          "hint": "Use profile[\"key_name\"] to access each value.",
-          "expectedOutput": "Name: Lakshanya\nAge: 20\nCity: Chennai\nHobby: coding"
+          "hint": "Use profile[\"key_name\"] to access each value."
+        },
+        {
+          "type": "visual_aid",
+          "kind": "mapping_visual",
+          "title": "Key → Value Mapping",
+          "accentColor": "green",
+          "items": [
+            {
+              "label": "\"name\"",
+              "desc": "\"Alice\""
+            },
+            {
+              "label": "\"age\"",
+              "desc": "25"
+            },
+            {
+              "label": "\"city\"",
+              "desc": "\"New York\""
+            }
+          ]
         }
       ]
     },
@@ -94,8 +145,27 @@
           "instructions": "Create a student dict with name and 3 subject marks. Calculate average and add as new key. Print all items.",
           "starterCode": "student = {\"name\": \"Lakshanya\", \"math\": 85, \"science\": 92, \"english\": 78}\nstudent[\"average\"] = \nfor key, value in student.items():\n    print(f\"{key}: {value}\")",
           "solution": "student = {\"name\": \"Lakshanya\", \"math\": 85, \"science\": 92, \"english\": 78}\nstudent[\"average\"] = (student[\"math\"] + student[\"science\"] + student[\"english\"]) // 3\nfor key, value in student.items():\n    print(f\"{key}: {value}\")",
-          "hint": "Calculate (math + science + english) // 3. Add with student['average'] = avg.",
-          "expectedOutput": "name: Lakshanya\nmath: 85\nscience: 92\nenglish: 78\naverage: 85"
+          "hint": "Calculate (math + science + english) // 3. Add with student['average'] = avg."
+        },
+        {
+          "type": "visual_aid",
+          "kind": "mapping_visual",
+          "title": "Key → Value Mapping",
+          "accentColor": "green",
+          "items": [
+            {
+              "label": "\"name\"",
+              "desc": "\"Alice\""
+            },
+            {
+              "label": "\"age\"",
+              "desc": "25"
+            },
+            {
+              "label": "\"city\"",
+              "desc": "\"New York\""
+            }
+          ]
         }
       ]
     }

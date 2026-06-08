@@ -45,8 +45,10 @@ LECTURES.append({
                  "instructions": "Write a program that prints your name on the first line and your college name on the second line.",
                  "starterCode": "# Print your name\nprint(\"\")\n# Print your college\n",
                  "solution": "print(\"Lakshanya\")\nprint(\"SRM University\")",
-                 "hint": "Use print(\"YourName\") for the first line and print(\"YourCollege\") for the second. Put quotes around text.",
-                 "expectedOutput": "Lakshanya\nSRM University"}
+                 "hint": "Use print(\"YourName\") for the first line and print(\"YourCollege\") for the second. Put quotes around text."
+
+                 }
+
             ]
         },
         {
@@ -124,8 +126,10 @@ LECTURES.append({
                  "instructions": "Write a program that prints your name and your college on separate lines, then prints 'I am learning Python!' on a third line.",
                  "starterCode": "# My first Python program\nprint(\"\")\n",
                  "solution": "print(\"Lakshanya\")\nprint(\"SRM University\")\nprint(\"I am learning Python!\")",
-                 "hint": "Use print() three times, once for each line. Each print() outputs text on a new line.",
-                 "expectedOutput": "Lakshanya\nSRM University\nI am learning Python!"}
+                 "hint": "Use print() three times, once for each line. Each print() outputs text on a new line."
+
+                 }
+
             ]
         }
     ],
@@ -191,8 +195,10 @@ LECTURES.append({
                  "instructions": "Create three variables: your name, your age, and your college. Print each on a separate line.",
                  "starterCode": "# Store your information\nname = \"\"\nage = \ncollege = \"\"\n\n# Print each variable\n",
                  "solution": "name = \"Lakshanya\"\nage = 20\ncollege = \"SRM University\"\n\nprint(name)\nprint(age)\nprint(college)",
-                 "hint": "Text values need quotes (\" \"), numbers don't. Use = to assign.",
-                 "expectedOutput": "Lakshanya\n20\nSRM University"}
+                 "hint": "Text values need quotes (\" \"), numbers don't. Use = to assign."
+
+                 }
+
             ]
         },
         {
@@ -235,8 +241,10 @@ LECTURES.append({
                  "instructions": "Store your current age in a variable. Add 5 to it. Print the result using an f-string.",
                  "starterCode": "# Store current age\nage = \n\n# Calculate age after 5 years\nfuture_age = \n\n# Print the result\n",
                  "solution": "age = 20\nfuture_age = age + 5\nprint(f\"After 5 years, I will be {future_age} years old.\")",
-                 "hint": "Use + to add numbers. Use f-strings with {} to insert variables into text.",
-                 "expectedOutput": "After 5 years, I will be 25 years old."}
+                 "hint": "Use + to add numbers. Use f-strings with {} to insert variables into text."
+
+                 }
+
             ]
         },
         {
@@ -257,8 +265,10 @@ LECTURES.append({
                  "instructions": "Create variables for name, age, and college. Print them in this format: \"Name: [name], Age: [age], College: [college]\"",
                  "starterCode": "name = \"\"\nage = \ncollege = \"\"\n\n# Print profile card\n",
                  "solution": "name = \"Lakshanya\"\nage = 20\ncollege = \"SRM University\"\n\nprint(\"Name: \" + name + \", Age: \" + str(age) + \", College: \" + college)",
-                 "hint": "Use + to join strings. Convert numbers to strings with str() before concatenating.",
-                 "expectedOutput": "Name: Lakshanya, Age: 20, College: SRM University"}
+                 "hint": "Use + to join strings. Convert numbers to strings with str() before concatenating."
+
+                 }
+
             ]
         }
     ],
@@ -343,8 +353,10 @@ LECTURES.append({
                  "instructions": "Ask the user for their name (string), age (integer), and city (string). Then print all details in a formatted card using f-strings.",
                  "starterCode": "# Get student details\nname = input(\"Enter your name: \")\nage = \ncity = \n\n# Print details card\n",
                  "solution": "name = input(\"Enter your name: \")\nage = int(input(\"Enter your age: \"))\ncity = input(\"Enter your city: \")\n\nprint(f\"--- Student Card ---\")\nprint(f\"Name: {name}\")\nprint(f\"Age: {age}\")\nprint(f\"City: {city}\")",
-                 "hint": "Use int(input()) for numbers. Use f-strings to format the output nicely.",
-                 "expectedOutput": "--- Student Card ---\nName: Lakshanya\nAge: 20\nCity: Chennai"}
+                 "hint": "Use int(input()) for numbers. Use f-strings to format the output nicely."
+
+                 }
+
             ]
         },
         {
@@ -368,8 +380,10 @@ LECTURES.append({
                  "instructions": "Ask the user for two numbers. Convert them to integers. Print the sum, difference, and product using f-strings.",
                  "starterCode": "# Get two numbers\nnum1 = int(input(\"Enter first number: \"))\nnum2 = \n\n# Calculate and print\n",
                  "solution": "num1 = int(input(\"Enter first number: \"))\nnum2 = int(input(\"Enter second number: \"))\n\nprint(f\"Sum: {num1 + num2}\")\nprint(f\"Difference: {num1 - num2}\")\nprint(f\"Product: {num1 * num2}\")",
-                 "hint": "Use int(input()) for both numbers. Use f-strings with {} to show calculations.",
-                 "expectedOutput": "Enter first number: 10\nEnter second number: 5\nSum: 15\nDifference: 5\nProduct: 50"}
+                 "hint": "Use int(input()) for both numbers. Use f-strings with {} to show calculations."
+
+                 }
+
             ]
         }
     ],
@@ -435,8 +449,10 @@ LECTURES.append({
                  "instructions": "Ask the user for marks obtained and total marks. Calculate percentage = (obtained / total) * 100. Print with 2 decimal places.",
                  "starterCode": "obtained = int(input(\"Marks obtained: \"))\ntotal = int(input(\"Total marks: \"))\n\npercentage = \nprint(f\"Percentage: {percentage:.2f}%\")",
                  "solution": "obtained = int(input(\"Marks obtained: \"))\ntotal = int(input(\"Total marks: \"))\npercentage = (obtained / total) * 100\nprint(f\"Percentage: {percentage:.2f}%\")",
-                 "hint": "Use (obtained / total) * 100. The :.2f in f-string rounds to 2 decimal places.",
-                 "expectedOutput": "Marks obtained: 85\nTotal marks: 100\nPercentage: 85.00%"}
+                 "hint": "Use (obtained / total) * 100. The :.2f in f-string rounds to 2 decimal places."
+
+                 }
+
             ]
         },
         {
@@ -463,8 +479,10 @@ LECTURES.append({
                  "instructions": "Ask the user for their age. Check if they are eligible to vote (age >= 18). Print the result.",
                  "starterCode": "age = int(input(\"Enter your age: \"))\neligible = \nprint(f\"Eligible to vote: {eligible}\")",
                  "solution": "age = int(input(\"Enter your age: \"))\neligible = age >= 18\nprint(f\"Eligible to vote: {eligible}\")",
-                 "hint": "Use age >= 18 as the comparison. This gives a boolean True or False.",
-                 "expectedOutput": "Enter your age: 20\nEligible to vote: True"}
+                 "hint": "Use age >= 18 as the comparison. This gives a boolean True or False."
+
+                 }
+
             ]
         },
         {
@@ -486,8 +504,10 @@ LECTURES.append({
                  "instructions": "Ask for marks and family income. Qualifies if marks >= 85 AND income < 50000.",
                  "starterCode": "marks = int(input(\"Marks: \"))\nincome = int(input(\"Income: \"))\nqualifies = \nprint(f\"Qualifies: {qualifies}\")",
                  "solution": "marks = int(input(\"Marks: \"))\nincome = int(input(\"Income: \"))\nqualifies = marks >= 85 and income < 50000\nprint(f\"Qualifies: {qualifies}\")",
-                 "hint": "Use marks >= 85 and income < 50000 with the and operator.",
-                 "expectedOutput": "Marks: 90\nIncome: 40000\nQualifies: True"}
+                 "hint": "Use marks >= 85 and income < 50000 with the and operator."
+
+                 }
+
             ]
         }
     ],
@@ -533,8 +553,10 @@ LECTURES.append({
                  "instructions": "Ask for age. If 18+, print \"You are eligible to vote!\"",
                  "starterCode": "age = int(input(\"Enter your age: \"))\nif age >= 18:\n    ",
                  "solution": "age = int(input(\"Enter your age: \"))\nif age >= 18:\n    print(\"You are eligible to vote!\")",
-                 "hint": "Use if age >= 18: followed by an indented print() statement.",
-                 "expectedOutput": "Enter your age: 20\nYou are eligible to vote!"}
+                 "hint": "Use if age >= 18: followed by an indented print() statement."
+
+                 }
+
             ]
         },
         {
@@ -574,8 +596,10 @@ LECTURES.append({
                  "instructions": "Ask for marks. Print grade: 90+ = A, 80-89 = B, 70-79 = C, 60-69 = D, below 60 = F.",
                  "starterCode": "marks = int(input(\"Enter marks: \"))\nif marks >= 90:\n    \nelif \nelif \nelif \nelse:\n    ",
                  "solution": "marks = int(input(\"Enter marks: \"))\nif marks >= 90:\n    print(\"Grade: A\")\nelif marks >= 80:\n    print(\"Grade: B\")\nelif marks >= 70:\n    print(\"Grade: C\")\nelif marks >= 60:\n    print(\"Grade: D\")\nelse:\n    print(\"Grade: F\")",
-                 "hint": "Check the highest grade first (>= 90), then work down.",
-                 "expectedOutput": "Enter marks: 85\nGrade: B"}
+                 "hint": "Check the highest grade first (>= 90), then work down."
+
+                 }
+
             ]
         }
     ],
@@ -665,8 +689,10 @@ LECTURES.append({
                  "instructions": "Ask for a number. Print its multiplication table from 1 to 10.",
                  "starterCode": "num = int(input(\"Enter a number: \"))\nfor i in range(1, 11):\n    print(f\"{num} x {i} = \")",
                  "solution": "num = int(input(\"Enter a number: \"))\nfor i in range(1, 11):\n    print(f\"{num} x {i} = {num * i}\")",
-                 "hint": "Loop from 1 to 10. Inside the loop, print num * i.",
-                 "expectedOutput": "Enter a number: 5\n5 x 1 = 5\n5 x 2 = 10\n5 x 3 = 15\n5 x 4 = 20\n5 x 5 = 25\n5 x 6 = 30\n5 x 7 = 35\n5 x 8 = 40\n5 x 9 = 45\n5 x 10 = 50"}
+                 "hint": "Loop from 1 to 10. Inside the loop, print num * i."
+
+                 }
+
             ]
         }
     ],
@@ -721,8 +747,10 @@ LECTURES.append({
                  "instructions": "Ask for a number N. Use a while loop to calculate sum of 1 to N.",
                  "starterCode": "n = int(input(\"Enter N: \"))\ncount = 1\ntotal = 0\nwhile count <= n:\n    total = \n    count = \nprint(f\"Sum: {total}\")",
                  "solution": "n = int(input(\"Enter N: \"))\ncount = 1\ntotal = 0\nwhile count <= n:\n    total = total + count\n    count = count + 1\nprint(f\"Sum of 1 to {n} = {total}\")",
-                 "hint": "Add count to total each iteration, then increment count.",
-                 "expectedOutput": "Enter N: 5\nSum of 1 to 5 = 15"}
+                 "hint": "Add count to total each iteration, then increment count."
+
+                 }
+
             ]
         },
         {
@@ -753,8 +781,10 @@ LECTURES.append({
                  "instructions": "Set secret = 7. Keep asking the user to guess until correct.",
                  "starterCode": "secret = 7\nwhile True:\n    guess = int(input(\"Guess (1-10): \"))\n    if guess == secret:\n        print(\"Correct!\")\n        \n    else:\n        print(\"Wrong!\")",
                  "solution": "secret = 7\nwhile True:\n    guess = int(input(\"Guess (1-10): \"))\n    if guess == secret:\n        print(\"Correct! You got it!\")\n        break\n    else:\n        print(\"Wrong, try again.\")",
-                 "hint": "Use while True for infinite loop, break when guessed correctly.",
-                 "expectedOutput": "Guess (1-10): 3\nWrong, try again.\nGuess (1-10): 7\nCorrect! You got it!"}
+                 "hint": "Use while True for infinite loop, break when guessed correctly."
+
+                 }
+
             ]
         }
     ],
@@ -847,8 +877,10 @@ LECTURES.append({
                  "instructions": "Start with [78, 92, 85, 63, 88]. Add 95, remove the lowest, sort, and print the average.",
                  "starterCode": "marks = [78, 92, 85, 63, 88]\nmarks.append()\nmarks.remove()\nmarks.sort()\nprint(f\"Marks: {marks}\")\nprint(f\"Average: {sum(marks)//len(marks)}\")",
                  "solution": "marks = [78, 92, 85, 63, 88]\nmarks.append(95)\nmarks.remove(min(marks))\nmarks.sort()\nprint(f\"Marks: {marks}\")\nprint(f\"Average: {sum(marks)//len(marks)}\")",
-                 "hint": "Use append() to add, min(marks) with remove() for lowest, sort() to sort.",
-                 "expectedOutput": "Marks: [78, 85, 88, 92, 95]\nAverage: 87"}
+                 "hint": "Use append() to add, min(marks) with remove() for lowest, sort() to sort."
+
+                 }
+
             ]
         }
     ],
@@ -905,8 +937,10 @@ LECTURES.append({
                  "instructions": "Create a tuple with your name, age, and city. Unpack it and print each value.",
                  "starterCode": "my_info = (\"\", , \"\")\nname, age, city = my_info\n",
                  "solution": "my_info = (\"Lakshanya\", 20, \"Chennai\")\nname, age, city = my_info\nprint(f\"Name: {name}\")\nprint(f\"Age: {age}\")\nprint(f\"City: {city}\")",
-                 "hint": "Unpack by putting variable names separated by commas on the left.",
-                 "expectedOutput": "Name: Lakshanya\nAge: 20\nCity: Chennai"}
+                 "hint": "Unpack by putting variable names separated by commas on the left."
+
+                 }
+
             ]
         },
         {
@@ -984,8 +1018,10 @@ LECTURES.append({
                  "instructions": "Create a dictionary with keys: name, age, city, hobby. Print each value.",
                  "starterCode": "profile = {\n    \"name\": \"\",\n    \"age\": ,\n    \"city\": \"\",\n    \"hobby\": \"\"\n}\nprint(f\"Name: {profile['name']}\")\n",
                  "solution": "profile = {\"name\": \"Lakshanya\", \"age\": 20, \"city\": \"Chennai\", \"hobby\": \"coding\"}\nprint(f\"Name: {profile['name']}\")\nprint(f\"Age: {profile['age']}\")\nprint(f\"City: {profile['city']}\")\nprint(f\"Hobby: {profile['hobby']}\")",
-                 "hint": "Use profile[\"key_name\"] to access each value.",
-                 "expectedOutput": "Name: Lakshanya\nAge: 20\nCity: Chennai\nHobby: coding"}
+                 "hint": "Use profile[\"key_name\"] to access each value."
+
+                 }
+
             ]
         },
         {
@@ -1017,8 +1053,10 @@ LECTURES.append({
                  "instructions": "Create a student dict with name and 3 subject marks. Calculate average and add as new key. Print all items.",
                  "starterCode": "student = {\"name\": \"Lakshanya\", \"math\": 85, \"science\": 92, \"english\": 78}\nstudent[\"average\"] = \nfor key, value in student.items():\n    print(f\"{key}: {value}\")",
                  "solution": "student = {\"name\": \"Lakshanya\", \"math\": 85, \"science\": 92, \"english\": 78}\nstudent[\"average\"] = (student[\"math\"] + student[\"science\"] + student[\"english\"]) // 3\nfor key, value in student.items():\n    print(f\"{key}: {value}\")",
-                 "hint": "Calculate (math + science + english) // 3. Add with student['average'] = avg.",
-                 "expectedOutput": "name: Lakshanya\nmath: 85\nscience: 92\nenglish: 78\naverage: 85"}
+                 "hint": "Calculate (math + science + english) // 3. Add with student['average'] = avg."
+
+                 }
+
             ]
         }
     ],
@@ -1141,8 +1179,10 @@ LECTURES.append({
                  "instructions": "Create a string with your name. Print first char, last char, length, and first 3 chars.",
                  "starterCode": "name = \"Lakshanya\"\nprint(f\"First: {name[0]}\")\nprint(f\"Last: {name[]}\")\nprint(f\"Length: {len()}\")\nprint(f\"First 3: {name[:]}\")",
                  "solution": "name = \"Lakshanya\"\nprint(f\"First: {name[0]}\")\nprint(f\"Last: {name[-1]}\")\nprint(f\"Length: {len(name)}\")\nprint(f\"First 3: {name[:3]}\")",
-                 "hint": "Use index 0 for first, -1 for last, len() for length, [:3] for slice.",
-                 "expectedOutput": "First: L\nLast: a\nLength: 9\nFirst 3: Lak"}
+                 "hint": "Use index 0 for first, -1 for last, len() for length, [:3] for slice."
+
+                 }
+
             ]
         },
         {
@@ -1177,8 +1217,10 @@ LECTURES.append({
                  "instructions": "Ask for a word. Check if it reads the same forward and backward (ignore case).",
                  "starterCode": "word = input(\"Enter a word: \")\ncleaned = word.lower().strip()\nif cleaned == cleaned[]:\n    print(\"Palindrome!\")\nelse:\n    print(\"Not a palindrome\")",
                  "solution": "word = input(\"Enter a word: \")\ncleaned = word.lower().strip()\nif cleaned == cleaned[::-1]:\n    print(\"Yes, it's a palindrome!\")\nelse:\n    print(\"No, it's not a palindrome.\")",
-                 "hint": "Use [::-1] to reverse the string. Use lower() to ignore case.",
-                 "expectedOutput": "Enter a word: Racecar\nYes, it's a palindrome!"}
+                 "hint": "Use [::-1] to reverse the string. Use lower() to ignore case."
+
+                 }
+
             ]
         }
     ],
@@ -1247,8 +1289,10 @@ LECTURES.append({
                  "instructions": "Write 3 names to students.txt. Read them back and greet each: 'Hello, [name]!'",
                  "starterCode": "with open(\"students.txt\", \"w\") as f:\n    f.write(\"Alice\\nBob\\nCharlie\\n\")\n\nwith open(\"students.txt\", \"r\") as f:\n    for name in f:\n        print(f\"Hello, {name.strip()}!\")",
                  "solution": "with open(\"students.txt\", \"w\") as f:\n    f.write(\"Alice\\nBob\\nCharlie\\n\")\n\nwith open(\"students.txt\", \"r\") as f:\n    for name in f:\n        print(f\"Hello, {name.strip()}!\")",
-                 "hint": "Use strip() on each line to remove the newline character.",
-                 "expectedOutput": "Hello, Alice!\nHello, Bob!\nHello, Charlie!"}
+                 "hint": "Use strip() on each line to remove the newline character."
+
+                 }
+
             ]
         },
         {
@@ -1269,8 +1313,10 @@ LECTURES.append({
                  "instructions": "Ask for 3 notes, write them to a file, then read and display with line numbers.",
                  "starterCode": "filename = input(\"Filename: \")\nn1 = input(\"Note 1: \")\nn2 = input(\"Note 2: \")\nn3 = input(\"Note 3: \")\n\nwith open(filename, \"w\") as f:\n    f.write(n1 + \"\\n\")\n    f.write(n2 + \"\\n\")\n    f.write(n3 + \"\\n\")\n\nwith open(filename, \"r\") as f:\n    for i, line in enumerate(f, 1):\n        print(f\"{i}. {line}\", end=\"\")",
                  "solution": "filename = input(\"Filename: \")\nn1 = input(\"Note 1: \")\nn2 = input(\"Note 2: \")\nn3 = input(\"Note 3: \")\nwith open(filename, \"w\") as f:\n    f.write(n1 + \"\\n\")\n    f.write(n2 + \"\\n\")\n    f.write(n3 + \"\\n\")\nwith open(filename, \"r\") as f:\n    for i, line in enumerate(f, 1):\n        print(f\"{i}. {line}\", end=\"\")",
-                 "hint": "Use \"w\" mode. Add \\\\n at the end of each line when writing.",
-                 "expectedOutput": "Filename: notes.txt\nNote 1: Learn Python\nNote 2: Practice daily\nNote 3: Build projects\n1. Learn Python\n2. Practice daily\n3. Build projects"}
+                 "hint": "Use \"w\" mode. Add \\\\n at the end of each line when writing."
+
+                 }
+
             ]
         }
     ],
@@ -1335,8 +1381,10 @@ LECTURES.append({
                  "instructions": "Write a menu program showing 4 project options. Let the user pick one (1-4) and print a confirmation.",
                  "starterCode": "print(\"1. Student Management System\")\nprint(\"2. Expense Tracker\")\nprint(\"3. Quiz Application\")\nprint(\"4. To-Do List\")\nchoice = int(input(\"Choose (1-4): \"))\nprojects = [\"\", \"Student Management System\", \"Expense Tracker\", \"Quiz Application\", \"To-Do List\"]\n",
                  "solution": "print(\"1. Student Management System\")\nprint(\"2. Expense Tracker\")\nprint(\"3. Quiz Application\")\nprint(\"4. To-Do List\")\nchoice = int(input(\"Choose (1-4): \"))\nprojects = [\"\", \"Student Management System\", \"Expense Tracker\", \"Quiz Application\", \"To-Do List\"]\nprint(f\"You selected: {projects[choice]}\")",
-                 "hint": "Use a list to map choice numbers to project names.",
-                 "expectedOutput": "1. Student Management System\n2. Expense Tracker\n3. Quiz Application\n4. To-Do List\nChoose (1-4): 3\nYou selected: Quiz Application"}
+                 "hint": "Use a list to map choice numbers to project names."
+
+                 }
+
             ]
         }
     ],

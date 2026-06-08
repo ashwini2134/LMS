@@ -29,6 +29,44 @@
           "text": "A recipe lists ingredients and steps: chop onions, boil water, cook for 10 minutes. A program does the same thing — it lists steps like 'store this value,' 'add these two numbers,' 'print the result.' The computer follows the recipe just like you follow cooking instructions."
         },
         {
+          "type": "concept_visualization",
+          "title": "Think Of A Program As A Cooking Recipe",
+          "accentColor": "orange",
+          "leftPanel": {
+            "label": "Real Life Analogy",
+            "emoji": "📖",
+            "title": "Recipe",
+            "description": "Ingredients + Steps → Dish"
+          },
+          "centerPanel": {
+            "label": "Programming Concept",
+            "visualType": "flow_diagram",
+            "varName": null,
+            "varValue": null,
+            "flowSteps": [
+              "Ingredients",
+              "↓",
+              "Instructions",
+              "↓",
+              "Dish"
+            ],
+            "textContent": null
+          },
+          "rightPanel": {
+            "label": "Code Example",
+            "code": "print('Hello World')",
+            "language": "python",
+            "output": "Hello World"
+          }
+        },
+        {
+          "type": "reflection",
+          "question": "Is it true that a programming language is like a recipe because both have a list of steps that must be followed exactly?",
+          "answer": "Yes! Both recipes and programs are sequences of instructions. A recipe tells a cook what to do step by step. A program tells the computer what to do step by step. If you skip a step in a recipe, the dish may not turn out right. If you skip a step in code, the program may crash or give the wrong output.",
+          "followupCode": null,
+          "followupOutput": null
+        },
+        {
           "type": "explanation",
           "accentColor": "blue",
           "title": "Programming Languages",
@@ -64,8 +102,7 @@
           "instructions": "Write a program that prints your name on the first line and your college name on the second line.",
           "starterCode": "# Print your name\nprint(\"\")\n# Print your college",
           "solution": "print(\"Lakshanya\")\nprint(\"SRM University\")",
-          "hint": "Use print(\"YourName\") for the first line and print(\"YourCollege\") for the second. Put quotes around text.",
-          "expectedOutput": "Lakshanya\nSRM University"
+          "hint": "Use print(\"YourName\") for the first line and print(\"YourCollege\") for the second. Put quotes around text."
         }
       ]
     },
@@ -104,6 +141,38 @@
           "text": "A Swiss Army knife has many tools — blade, scissors, screwdriver — all in one device. Python is the same: you can build websites, analyze data, make games, or automate tasks, all with the same language."
         },
         {
+          "type": "concept_visualization",
+          "title": "Think Of Python As A Swiss Army Knife",
+          "accentColor": "purple",
+          "leftPanel": {
+            "label": "Real Life Analogy",
+            "emoji": "🔧",
+            "title": "Swiss Army Knife",
+            "description": "One tool, many uses"
+          },
+          "centerPanel": {
+            "label": "Programming Concept",
+            "visualType": "text",
+            "varName": null,
+            "varValue": null,
+            "flowSteps": null,
+            "textContent": "Python is a multi-purpose language:\n• Web Development\n• Data Science\n• AI / Machine Learning\n• Automation"
+          },
+          "rightPanel": {
+            "label": "Code Example",
+            "code": "# Python can build anything\nprint('Hello from Python!')",
+            "language": "python",
+            "output": "Hello from Python!"
+          }
+        },
+        {
+          "type": "reflection",
+          "question": "Can you build a website with Python even though we only printed text?",
+          "answer": "Absolutely! Printing text is just the beginning. Python has special libraries (Django, Flask) that help build websites, and libraries (Pandas, NumPy) for data science. The Swiss Army Knife idea means one language can do all of these things — you just pick the right tool (library) for the job.",
+          "followupCode": null,
+          "followupOutput": null
+        },
+        {
           "type": "reflection",
           "question": "Think about something you do every day on your phone or computer. Can you imagine how a Python program could automate or improve it?",
           "answer": "There are so many possibilities! Maybe a program that automatically organizes your downloads folder, or sends you a weather alert each morning. That's the power of programming — you can build tools that make your life easier."
@@ -125,6 +194,38 @@
             "After installation, open Terminal (Mac/Linux) or Command Prompt (Windows)",
             "Type python --version to verify it installed correctly"
           ]
+        },
+        {
+          "type": "concept_visualization",
+          "title": "Think Of Installing Python As Setting Up A Kitchen",
+          "accentColor": "blue",
+          "leftPanel": {
+            "label": "Real Life Analogy",
+            "emoji": "🔨",
+            "title": "Setting Up Your Kitchen",
+            "description": "Gather tools before you cook"
+          },
+          "centerPanel": {
+            "label": "Programming Concept",
+            "visualType": "text",
+            "varName": null,
+            "varValue": null,
+            "flowSteps": null,
+            "textContent": "Install once, use anywhere.\n1. Download from python.org\n2. Run installer\n3. Verify with python --version"
+          },
+          "rightPanel": {
+            "label": "Code Example",
+            "code": "python --version\nPython 3.12.0",
+            "language": "python",
+            "output": "Python 3.12.0"
+          }
+        },
+        {
+          "type": "reflection",
+          "question": "Do you need to reinstall Python every time you want to write a new program?",
+          "answer": "No! You install Python once, and it stays on your computer. After that, you can write and run any number of programs — just like a kitchen stays ready for you to cook again and again.",
+          "followupCode": null,
+          "followupOutput": null
         },
         {
           "type": "explanation",
@@ -207,8 +308,7 @@
           "instructions": "Write a program that prints your name and your college on separate lines, then prints 'I am learning Python!' on a third line.",
           "starterCode": "# My first Python program\nprint(\"\")",
           "solution": "print(\"Lakshanya\")\nprint(\"SRM University\")\nprint(\"I am learning Python!\")",
-          "hint": "Use print() three times, once for each line. Each print() outputs text on a new line.",
-          "expectedOutput": "Lakshanya\nSRM University\nI am learning Python!"
+          "hint": "Use print() three times, once for each line. Each print() outputs text on a new line."
         }
       ]
     }

@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, useCallback } from 'react';
 import MonacoEditor from '@monaco-editor/react';
 import { runPython } from '../../utils/pythonRunner';
 
@@ -8,11 +8,55 @@ interface CodeEditorProps {
   readOnly?: boolean;
   height?: string;
   showRunButton?: boolean;
-  showCopyButton?: boolean;
   showResetButton?: boolean;
+  showSaveButton?: boolean;
+  showSubmitButton?: boolean;
   expectedOutput?: string;
   onChange?: (code: string) => void;
   onRun?: (code: string, output: string, error: string | null) => void;
+  onSubmit?: (code: string, output: string, error: string | null) => void;
+  onSave?: (code: string) => void;
+  onReset?: () => void;
+}
+
+const ERROR_TRANSLATIONS: Record<string, (msg: string) => string> = {
+  'SyntaxError: EOL while scanning string literal': () =>
+    'You forgot to close a string with a matching quote mark.',
+  'SyntaxError: EOF while scanning triple-quoted string literal': () =>
+    'You started a triple-quoted string but didn\'t close it.',
+  'SyntaxError: unexpected EOF while parsing': (msg) =>
+    msg.includes(')') ? 'You opened a parenthesis but forgot to close it.' : 'Python reached the end of your code and found something unexpected.',
+  'SyntaxError: unmatched': (msg) => {
+    if (msg.includes("'") ) return 'You have an unmatched bracket or parenthesis.';
+    return 'There\'s a syntax error in your code — check your brackets and parentheses.';
+  },
+  'NameError: name': (msg) => {
+    const m = msg.match(/name '(\w+)'/);
+    return m ? `You're using the variable "${m[1]}" but it hasn't been defined yet. Did you spell it correctly?` : 'You\'re using a variable name that hasn\'t been defined.';
+  },
+  'TypeError: unsupported operand': () =>
+    'You\'re trying to combine two values that don\'t work together (like adding text and a number).',
+  'ZeroDivisionError: division by zero': () =>
+    'You tried to divide by zero, which is not allowed in math.',
+  'IndentationError': () =>
+    'Your indentation is inconsistent. Make sure all lines in a block start with the same number of spaces.',
+  'ValueError: invalid literal for int()': () =>
+    'You tried to convert something to a number, but Python doesn\'t recognize it as a valid number.',
+  'ValueError: could not convert string to float': () =>
+    'You tried to convert a string to a decimal number, but Python doesn\'t recognize it.',
+  'return outside function': () =>
+    'You used "return" outside of a function. Return can only be used inside a function body.',
+};
+
+function friendlyError(error: string): string {
+  if (!error) return error;
+  for (const [key, fn] of Object.entries(ERROR_TRANSLATIONS)) {
+    if (error.includes(key)) return fn(error);
+  }
+  const lines = error.split('\n');
+  const lastLine = lines[lines.length - 1]?.trim() ?? '';
+  if (lastLine && !lastLine.includes('Traceback')) return lastLine;
+  return error;
 }
 
 export default function CodeEditor({
@@ -21,16 +65,20 @@ export default function CodeEditor({
   readOnly = false,
   height = '180px',
   showRunButton = true,
-  showCopyButton = true,
   showResetButton = true,
+  showSaveButton = false,
+  showSubmitButton = false,
   expectedOutput,
   onChange,
   onRun,
+  onSubmit,
+  onSave,
+  onReset,
 }: CodeEditorProps) {
   const [code, setCode] = useState(initialCode);
   const [output, setOutput] = useState<string | null>(null);
   const [runError, setRunError] = useState<string | null>(null);
-  const [copied, setCopied] = useState(false);
+  const [saved, setSaved] = useState(false);
   const [running, setRunning] = useState(false);
   const editorRef = useRef<any>(null);
 
@@ -40,39 +88,53 @@ export default function CodeEditor({
     onChange?.(v);
   };
 
-  const handleRun = async () => {
+  const doRun = useCallback((notify: 'run' | 'submit') => {
     if (running) return;
     setRunning(true);
     setOutput(null);
     setRunError(null);
-    // Small delay so the UI updates before the potentially blocking eval
-    await new Promise(r => setTimeout(r, 50));
-    try {
-      const result = runPython(code);
-      setOutput(result.output);
-      setRunError(result.error);
-      onRun?.(code, result.output, result.error);
-    } finally {
-      setRunning(false);
-    }
-  };
+    setTimeout(() => {
+      try {
+        const result = runPython(code);
+        setOutput(result.output);
+        if (result.error) {
+          setRunError(friendlyError(result.error));
+        }
+        if (notify === 'run') onRun?.(code, result.output, result.error ? friendlyError(result.error) : null);
+        if (notify === 'submit') onSubmit?.(code, result.output, result.error ? friendlyError(result.error) : null);
+      } finally {
+        setRunning(false);
+      }
+    }, 50);
+  }, [code, running, onRun, onSubmit]);
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(code).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1500);
-    });
+  const handleRun = () => doRun('run');
+  const handleSubmit = () => doRun('submit');
+
+  const handleSave = () => {
+    onSave?.(code);
+    setSaved(true);
+    setTimeout(() => setSaved(false), 1500);
   };
 
   const handleReset = () => {
     setCode(initialCode);
     setOutput(null);
     setRunError(null);
-    editorRef.current?.setValue(initialCode);
+    setSaved(false);
+    if (editorRef.current) {
+      editorRef.current.setValue(initialCode);
+    }
+    onReset?.();
   };
 
   const isCorrect = expectedOutput !== undefined && output !== null &&
-    output.trim() === expectedOutput.trim();
+    !runError && output.trim() === expectedOutput.trim();
+
+  const isWrong = expectedOutput !== undefined && output !== null &&
+    !runError && output.trim() !== expectedOutput.trim();
+
+  const hasError = runError !== null;
 
   return (
     <div className="rounded-xl overflow-hidden border border-slate-700/40 bg-[#1e1e1e]">
@@ -85,20 +147,23 @@ export default function CodeEditor({
           {language}
         </span>
         <div className="flex items-center gap-1">
-          {showCopyButton && (
+          {showSaveButton && (
             <button
-              onClick={handleCopy}
-              className="px-2 py-1 text-[10px] font-medium text-slate-400 hover:text-slate-200 rounded bg-slate-700/40 hover:bg-slate-700/70 transition-all"
+              onClick={handleSave}
+              className="px-2 py-1 text-[10px] font-medium text-blue-400 hover:text-blue-300 rounded bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 transition-all"
             >
-              {copied ? 'Copied!' : 'Copy'}
+              {saved ? 'Saved' : 'Save'}
             </button>
           )}
           {showResetButton && !readOnly && (
             <button
               onClick={handleReset}
-              className="px-2 py-1 text-[10px] font-medium text-slate-400 hover:text-slate-200 rounded bg-slate-700/40 hover:bg-slate-700/70 transition-all"
+              className="p-1 text-slate-400 hover:text-slate-200 rounded bg-slate-700/40 hover:bg-slate-700/70 transition-all"
+              title="Reset code"
             >
-              Reset
+              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
             </button>
           )}
           {showRunButton && !readOnly && (
@@ -119,6 +184,30 @@ export default function CodeEditor({
                 <>
                   <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
                   Run
+                </>
+              )}
+            </button>
+          )}
+          {showSubmitButton && !readOnly && (
+            <button
+              onClick={handleSubmit}
+              disabled={running}
+              className="px-3 py-1 text-[10px] font-semibold text-white rounded bg-blue-600 hover:bg-blue-500 disabled:opacity-50 transition-all flex items-center gap-1"
+            >
+              {running ? (
+                <>
+                  <svg className="w-3 h-3 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                  </svg>
+                  Running...
+                </>
+              ) : (
+                <>
+                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  Submit
                 </>
               )}
             </button>
@@ -155,20 +244,65 @@ export default function CodeEditor({
       />
 
       {/* Output */}
-      {(output !== null || runError) && (
-        <div className={`border-t ${runError ? 'border-red-700/40' : isCorrect ? 'border-green-700/40' : 'border-slate-700/40'}`}>
-          <div className={`px-4 py-1.5 text-[10px] font-semibold uppercase tracking-wider flex items-center gap-2 ${
-            runError ? 'bg-red-900/20 text-red-400' : isCorrect ? 'bg-green-900/20 text-green-400' : 'bg-slate-800/40 text-slate-400'
-          }`}>
-            {runError ? (
-              <><svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> Error</>
-            ) : isCorrect ? (
-              <><svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> Correct!</>
-            ) : 'Output'}
-          </div>
-          <pre className={`px-4 py-3 text-sm font-mono leading-relaxed ${runError ? 'text-red-300' : 'text-green-300'}`}>
-            {runError || output}
-          </pre>
+      {(output !== null || hasError) && (
+        <div className={`border-t ${
+          hasError ? 'border-red-700/40' :
+          isCorrect ? 'border-green-700/40' :
+          isWrong ? 'border-amber-700/40' :
+          'border-slate-700/40'
+        }`}>
+          {hasError ? (
+            <>
+              <div className="px-4 py-1.5 bg-red-900/20 border-b border-red-700/30 flex items-center gap-2">
+                <svg className="w-3.5 h-3.5 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span className="text-[10px] font-semibold uppercase tracking-wider text-red-400">Error</span>
+              </div>
+              <pre className="px-4 py-3 text-sm font-mono leading-relaxed text-red-300 whitespace-pre-wrap">
+                {runError}
+              </pre>
+            </>
+          ) : output !== null ? (
+            <>
+              <div className={`px-4 py-1.5 border-b flex items-center gap-2 ${
+                isCorrect ? 'bg-green-900/20 border-green-700/30 text-green-400' :
+                isWrong ? 'bg-amber-900/20 border-amber-700/30 text-amber-400' :
+                'bg-slate-800/40 border-slate-700/30 text-slate-400'
+              }`}>
+                {isCorrect ? (
+                  <>
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span className="text-[10px] font-semibold uppercase tracking-wider">Output — Correct!</span>
+                  </>
+                ) : isWrong ? (
+                  <>
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span className="text-[10px] font-semibold uppercase tracking-wider">Output — Wrong Answer</span>
+                    {expectedOutput && (
+                      <span className="text-[10px] text-slate-500 ml-auto">
+                        Expected: <span className="text-emerald-400 select-none" style={{ userSelect: 'none', WebkitUserSelect: 'none' }}>{expectedOutput}</span>
+                      </span>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-3.5 h-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                    </svg>
+                    <span className="text-[10px] font-semibold uppercase tracking-wider">Console Output</span>
+                  </>
+                )}
+              </div>
+              <pre className="px-4 py-3 text-sm font-mono leading-relaxed text-green-300">
+                {output}
+              </pre>
+            </>
+          ) : null}
         </div>
       )}
     </div>

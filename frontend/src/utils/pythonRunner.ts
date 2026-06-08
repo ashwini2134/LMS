@@ -1,5 +1,5 @@
-// Minimal Python interpreter for CS50P introductory exercises.
-// Handles: variables, print, f-strings, basic arithmetic, simple functions.
+// Lightweight Python interpreter for educational exercises.
+// Returns real-looking Python error messages for debugging practice.
 
 type PyVal = string | number | boolean | null;
 type Env = Map<string, PyVal>;
@@ -8,6 +8,7 @@ type FnDef = { params: string[]; bodyLines: string[] };
 export interface RunResult {
   output: string;
   error: string | null;
+  exitCode: number; // 0 = success, 1 = error
 }
 
 export function runPython(code: string): RunResult {
@@ -18,15 +19,86 @@ class MiniPython {
   private globals: Env = new Map();
   private fns: Map<string, FnDef> = new Map();
   private out: string[] = [];
+  private traceback: string[] = [];
+  private currentLine = 0;
 
   run(code: string): RunResult {
     try {
+      this.validateSyntax(code);
       this.execLines(code.split('\n'), 0, this.globals);
-      return { output: this.out.join('\n'), error: null };
+      return { output: this.out.join('\n'), error: null, exitCode: 0 };
     } catch (e) {
-      return { output: this.out.join('\n'), error: String(e instanceof Error ? e.message : e) };
+      const msg = String(e instanceof Error ? e.message : e);
+      const tb = this.traceback.length > 0
+        ? `Traceback (most recent call last):\n  File "<stdin>", line ${this.traceback[0]}, in <module>\n${msg}`
+        : msg;
+      return { output: this.out.join('\n'), error: tb, exitCode: 1 };
     }
   }
+
+  // ── Syntax validation (pre-run) ────────────────────────────────────────
+
+  private validateSyntax(code: string) {
+    const lines = code.split('\n');
+    let inSingleQuote = false, inDoubleQuote = false, inTripleSingle = false, inTripleDouble = false;
+    let parenDepth = 0, bracketDepth = 0, braceDepth = 0;
+
+    for (let i = 0; i < lines.length; i++) {
+      const raw = lines[i];
+      let j = 0;
+      while (j < raw.length) {
+        const ch = raw[j];
+        const next = raw[j + 1] ?? '';
+
+        // String tracking
+        if (!inTripleDouble && !inTripleSingle && !inDoubleQuote && !inSingleQuote) {
+          if (ch === "'" && next === "'" && raw[j + 2] === "'") { inTripleSingle = true; j += 3; continue; }
+          if (ch === '"' && next === '"' && raw[j + 2] === '"') { inTripleDouble = true; j += 3; continue; }
+          if (ch === "'") { inSingleQuote = true; j++; continue; }
+          if (ch === '"') { inDoubleQuote = true; j++; continue; }
+        } else if (inTripleSingle && ch === "'" && next === "'" && raw[j + 2] === "'") { inTripleSingle = false; j += 3; continue; }
+        else if (inTripleDouble && ch === '"' && next === '"' && raw[j + 2] === '"') { inTripleDouble = false; j += 3; continue; }
+        else if (inSingleQuote && ch === "'") { inSingleQuote = false; }
+        else if (inDoubleQuote && ch === '"') { inDoubleQuote = false; }
+
+        if (!inSingleQuote && !inDoubleQuote && !inTripleSingle && !inTripleDouble) {
+          if (ch === '(') parenDepth++;
+          if (ch === ')') parenDepth--;
+          if (ch === '[') bracketDepth++;
+          if (ch === ']') bracketDepth--;
+          if (ch === '{') braceDepth++;
+          if (ch === '}') braceDepth--;
+
+          // Detect invalid indentation (mixed tabs and spaces)
+          if (j === 0 && ch === '\t') {
+            // Check for inconsistent indentation
+            let nextNonSpace = raw.search(/\S/);
+            if (nextNonSpace > 0 && nextNonSpace % 4 !== 0 && raw[0] !== ' ') {
+              throw new Error(`  IndentationError: inconsistent use of tabs and spaces in indentation\n    at line ${i + 1}`);
+            }
+          }
+        }
+        j++;
+      }
+
+      // Check unmatched brackets at end of line (outside strings)
+      if (!inSingleQuote && !inDoubleQuote && !inTripleSingle && !inTripleDouble) {
+        if (raw.trim() && !raw.trim().startsWith('#') && parenDepth < 0) {
+          throw new Error(`  SyntaxError: unmatched ')' (line ${i + 1})`);
+        }
+        if (bracketDepth < 0) throw new Error(`  SyntaxError: unmatched ']' (line ${i + 1})`);
+        if (braceDepth < 0) throw new Error(`  SyntaxError: unmatched '}' (line ${i + 1})`);
+      }
+    }
+
+    if (inSingleQuote) throw new Error(`  SyntaxError: EOL while scanning string literal`);
+    if (inDoubleQuote) throw new Error(`  SyntaxError: EOL while scanning string literal`);
+    if (inTripleSingle) throw new Error(`  SyntaxError: EOF while scanning triple-quoted string literal`);
+    if (inTripleDouble) throw new Error(`  SyntaxError: EOF while scanning triple-quoted string literal`);
+    if (parenDepth > 0) throw new Error(`  SyntaxError: unexpected EOF while parsing (missing ')')`);
+  }
+
+  // ── Indentation ────────────────────────────────────────────────────────
 
   private indent(line: string): number {
     let n = 0;
@@ -38,9 +110,12 @@ class MiniPython {
     return n;
   }
 
+  // ── Code execution ─────────────────────────────────────────────────────
+
   private execLines(lines: string[], base: number, env: Env): void {
     let i = 0;
     while (i < lines.length) {
+      this.currentLine = i + 1;
       const raw = lines[i];
       const t = raw.trim();
       if (!t || t.startsWith('#')) { i++; continue; }
@@ -58,41 +133,172 @@ class MiniPython {
         while (i < lines.length) {
           const bl = lines[i];
           const bt = bl.trim();
-          if (bt && this.indent(bl) <= ind) break;
+          if (bt && this.indent(bl) <= ind && !bt.startsWith('#')) break;
           body.push(bl);
           i++;
         }
+        this.traceback.push(String(i + 1));
         this.fns.set(name, { params, bodyLines: body });
         continue;
       }
 
-      // print()
-      if (t.match(/^print\s*\(/)) {
+      // Print statement
+      if (t.startsWith('print(') || t.startsWith('print (')) {
         const inner = this.unParen(t.slice(t.indexOf('(')));
         this.out.push(this.repr(this.eval(inner, env)));
         i++; continue;
       }
 
-      // Augmented assignment  x += 1
-      const augM = t.match(/^([a-zA-Z_]\w*)\s*([+\-*\/])=\s*(.+)$/);
+      // Augmented assignment
+      const augM = t.match(/^([a-zA-Z_]\w*)\s*([+\-*\/%]|\/\/)=\s*(.+)$/);
       if (augM) {
-        const cur = this.eval(augM[1], env) ?? 0;
-        const rhs = this.eval(augM[3].trim(), env) ?? 0;
+        const cur = this.eval(augM[1], env);
+        if (cur === null || cur === undefined) {
+          throw new Error(`  NameError: name '${augM[1]}' is not defined\n    at line ${i + 1}`);
+        }
+        const rhs = this.eval(augM[3].trim(), env);
         const op = augM[2];
         let res: PyVal;
-        if (op === '+' && (typeof cur === 'string' || typeof rhs === 'string')) res = String(cur) + String(rhs);
-        else if (op === '+') res = Number(cur) + Number(rhs);
-        else if (op === '-') res = Number(cur) - Number(rhs);
-        else if (op === '*') res = Number(cur) * Number(rhs);
-        else res = Number(cur) / Number(rhs);
+        if (typeof cur !== 'number' || typeof rhs !== 'number') {
+          throw new Error(`  TypeError: unsupported operand type(s) for ${op}=: '${typeof cur}' and '${typeof rhs}'\n    at line ${i + 1}`);
+        }
+        switch (op) {
+          case '+': res = cur + rhs; break;
+          case '-': res = cur - rhs; break;
+          case '*': res = cur * rhs; break;
+          case '/':
+            if (rhs === 0) throw new Error(`  ZeroDivisionError: division by zero\n    at line ${i + 1}`);
+            res = cur / rhs; break;
+          case '//':
+            if (rhs === 0) throw new Error(`  ZeroDivisionError: integer division or modulo by zero\n    at line ${i + 1}`);
+            res = Math.floor(cur / rhs); break;
+          case '%':
+            if (rhs === 0) throw new Error(`  ZeroDivisionError: modulo by zero\n    at line ${i + 1}`);
+            res = cur % rhs; break;
+          default: res = 0;
+        }
         env.set(augM[1], res);
         i++; continue;
       }
 
-      // Variable assignment  x = expr
+      // if / elif / else
+      if (t.startsWith('if ') || t.startsWith('elif ')) {
+        const condStr = t.slice(t.startsWith('elif ') ? 5 : 3, t.lastIndexOf(':')).trim();
+        const cond = this.eval(condStr, env);
+        const body: string[] = [];
+        i++;
+        while (i < lines.length) {
+          const bl = lines[i];
+          const bt = bl.trim();
+          if (bt && this.indent(bl) <= ind) break;
+          body.push(bl);
+          i++;
+        }
+        if (cond) { this.execLines(body, ind + 1, env); continue; }
+
+        // Check for elif / else
+        while (i < lines.length) {
+          const nextLine = lines[i].trim();
+          if (nextLine.startsWith('elif ')) {
+            const elCondStr = nextLine.slice(5, nextLine.lastIndexOf(':')).trim();
+            const elCond = this.eval(elCondStr, env);
+            const elBody: string[] = [];
+            i++;
+            while (i < lines.length) {
+              const bl = lines[i];
+              const bt = bl.trim();
+              if (bt && this.indent(bl) <= ind) break;
+              elBody.push(bl);
+              i++;
+            }
+            if (elCond) { this.execLines(elBody, ind + 1, env); break; }
+          } else if (nextLine.startsWith('else:')) {
+            const elBody: string[] = [];
+            i++;
+            while (i < lines.length) {
+              const bl = lines[i];
+              const bt = bl.trim();
+              if (bt && this.indent(bl) <= ind) break;
+              elBody.push(bl);
+              i++;
+            }
+            this.execLines(elBody, ind + 1, env);
+            break;
+          } else {
+            break;
+          }
+        }
+        continue;
+      }
+
+      if (t.startsWith('else:')) {
+        throw new Error(`  SyntaxError: 'else' without 'if' (line ${i + 1})`);
+      }
+
+      // for loop
+      const forM = t.match(/^for\s+([a-zA-Z_]\w*)\s+in\s+(.+):\s*$/);
+      if (forM) {
+        const varName = forM[1];
+        const iterExpr = forM[2].trim();
+        const body: string[] = [];
+        i++;
+        while (i < lines.length) {
+          const bl = lines[i];
+          const bt = bl.trim();
+          if (bt && this.indent(bl) <= ind) break;
+          body.push(bl);
+          i++;
+        }
+
+        // Handle range()
+        const rangeM = iterExpr.match(/^range\s*\(([^)]*)\)\s*$/);
+        if (rangeM) {
+          const args = rangeM[1].split(',').map(s => s.trim()).filter(Boolean);
+          let start = 0, stop = 0, step = 1;
+          if (args.length === 1) { stop = Number(this.eval(args[0], env)); }
+          else if (args.length === 2) { start = Number(this.eval(args[0], env)); stop = Number(this.eval(args[1], env)); }
+          else if (args.length === 3) { start = Number(this.eval(args[0], env)); stop = Number(this.eval(args[1], env)); step = Number(this.eval(args[2], env)); }
+          for (let val = start; step > 0 ? val < stop : val > stop; val += step) {
+            env.set(varName, val);
+            this.execLines(body, ind + 1, env);
+          }
+        } else if (iterExpr === 'range' || iterExpr === '[]' || iterExpr === 'list' || iterExpr === '[1, 2, 3]') {
+          // Skip unsupported
+        }
+        continue;
+      }
+
+      // while loop
+      const whileM = t.match(/^while\s+(.+):\s*$/);
+      if (whileM) {
+        const condStr = whileM[1].trim();
+        const body: string[] = [];
+        i++;
+        while (i < lines.length) {
+          const bl = lines[i];
+          const bt = bl.trim();
+          if (bt && this.indent(bl) <= ind) break;
+          body.push(bl);
+          i++;
+        }
+
+        let iterations = 0;
+        const maxIter = 10000; // Prevent infinite loops
+        while (this.eval(condStr, env) && iterations < maxIter) {
+          this.execLines(body, ind + 1, env);
+          iterations++;
+        }
+        if (iterations >= maxIter) {
+          // silently stop (educational context)
+        }
+        continue;
+      }
+
+      // Variable assignment
       const assignM = t.match(/^([a-zA-Z_]\w*)\s*=(?!=)\s*(.+)$/);
       if (assignM) {
-        env.set(assignM[1], this.eval(assignM[2].trim(), env));
+        const val = this.eval(assignM[2].trim(), env);
+        env.set(assignM[1], val);
         i++; continue;
       }
 
@@ -101,6 +307,11 @@ class MiniPython {
       if (callM) {
         this.call(callM[1], callM[2] ?? '', env);
         i++; continue;
+      }
+
+      // return outside function
+      if (t.startsWith('return ')) {
+        throw new Error(`  SyntaxError: 'return' outside function (line ${i + 1})`);
       }
 
       i++;
@@ -115,36 +326,49 @@ class MiniPython {
     if (!isFinite(baseInd)) return null;
 
     for (let i = 0; i < lines.length; i++) {
+      this.currentLine = this.currentLine + 1;
       const raw = lines[i];
       const t = raw.trim();
       if (!t || t.startsWith('#')) continue;
 
       if (t.startsWith('return ')) return this.eval(t.slice(7).trim(), env);
 
-      if (t.match(/^print\s*\(/)) {
+      if (t.startsWith('print(') || t.startsWith('print (')) {
         const inner = this.unParen(t.slice(t.indexOf('(')));
         this.out.push(this.repr(this.eval(inner, env)));
         continue;
       }
 
-      const augM = t.match(/^([a-zA-Z_]\w*)\s*([+\-*\/])=\s*(.+)$/);
+      const augM = t.match(/^([a-zA-Z_]\w*)\s*([+\-*\/%]|\/\/)=\s*(.+)$/);
       if (augM) {
-        const cur = this.eval(augM[1], env) ?? 0;
-        const rhs = this.eval(augM[3].trim(), env) ?? 0;
+        const cur = this.eval(augM[1], env);
+        const rhs = this.eval(augM[3].trim(), env);
         const op = augM[2];
-        if (op === '+' && (typeof cur === 'string' || typeof rhs === 'string')) env.set(augM[1], String(cur) + String(rhs));
-        else if (op === '+') env.set(augM[1], Number(cur) + Number(rhs));
-        else if (op === '-') env.set(augM[1], Number(cur) - Number(rhs));
-        else if (op === '*') env.set(augM[1], Number(cur) * Number(rhs));
-        else env.set(augM[1], Number(cur) / Number(rhs));
+        let res: PyVal;
+        if (typeof cur !== 'number' || typeof rhs !== 'number') {
+          throw new Error(`  TypeError: unsupported operand type(s) for ${op}=`);
+        }
+        switch (op) {
+          case '+': res = cur + rhs; break;
+          case '-': res = cur - rhs; break;
+          case '*': res = cur * rhs; break;
+          case '/':
+            if (rhs === 0) throw new Error(`  ZeroDivisionError: division by zero`);
+            res = cur / rhs; break;
+          case '//':
+            if (rhs === 0) throw new Error(`  ZeroDivisionError: integer division or modulo by zero`);
+            res = Math.floor(cur / rhs); break;
+          case '%':
+            if (rhs === 0) throw new Error(`  ZeroDivisionError: modulo by zero`);
+            res = cur % rhs; break;
+          default: res = 0;
+        }
+        env.set(augM[1], res);
         continue;
       }
 
       const assignM = t.match(/^([a-zA-Z_]\w*)\s*=(?!=)\s*(.+)$/);
-      if (assignM) {
-        env.set(assignM[1], this.eval(assignM[2].trim(), env));
-        continue;
-      }
+      if (assignM) { env.set(assignM[1], this.eval(assignM[2].trim(), env)); continue; }
 
       const callM = t.match(/^([a-zA-Z_]\w*)\s*\((.*)?\)\s*$/);
       if (callM) { this.call(callM[1], callM[2] ?? '', env); continue; }
@@ -152,25 +376,46 @@ class MiniPython {
     return null;
   }
 
+  // ── Function call ───────────────────────────────────────────────────────
+
   private call(name: string, argsStr: string, env: Env): PyVal {
-    // Built-ins
     if (name === 'str') return String(this.eval(argsStr, env));
-    if (name === 'int') return Math.trunc(Number(this.eval(argsStr, env)));
-    if (name === 'float') return parseFloat(String(this.eval(argsStr, env)));
-    if (name === 'len') { const v = this.eval(argsStr, env); return typeof v === 'string' ? v.length : 0; }
+    if (name === 'int') {
+      const v = this.eval(argsStr, env);
+      const n = Number(v);
+      if (isNaN(n)) throw new Error(`  ValueError: invalid literal for int() with base 10: '${v}'`);
+      if (typeof v === 'string' && v.includes('.')) return Math.trunc(n);
+      return Math.trunc(n);
+    }
+    if (name === 'float') {
+      const v = this.eval(argsStr, env);
+      const n = Number(v);
+      if (isNaN(n)) throw new Error(`  ValueError: could not convert string to float: '${v}'`);
+      return n;
+    }
+    if (name === 'len') {
+      const v = this.eval(argsStr, env);
+      if (typeof v === 'string') return v.length;
+      if (v === null) return 0;
+      throw new Error(`  TypeError: object of type '${typeof v}' has no len()`);
+    }
     if (name === 'input') return '[user input]';
     if (name === 'print') { this.out.push(this.repr(this.eval(argsStr, env))); return null; }
-    if (name === 'range') return null; // not supported
     if (name === 'upper' || name === 'lower' || name === 'strip') return null;
 
     const fn = this.fns.get(name);
-    if (!fn) throw new Error(`NameError: name '${name}' is not defined`);
+    if (!fn) throw new Error(`  NameError: name '${name}' is not defined`);
 
     const argVals = argsStr.trim() ? this.parseArgs(argsStr, env) : [];
+    if (argVals.length !== fn.params.length) {
+      throw new Error(`  TypeError: ${name}() takes ${fn.params.length} positional argument${fn.params.length === 1 ? '' : 's'} but ${argVals.length} were given`);
+    }
     const local: Env = new Map(this.globals);
     fn.params.forEach((p, i) => local.set(p, argVals[i] ?? null));
     return this.runBody(fn.bodyLines, local);
   }
+
+  // ── Expression evaluator ───────────────────────────────────────────────
 
   private eval(expr: string, env: Env): PyVal {
     expr = expr.trim();
@@ -194,32 +439,90 @@ class MiniPython {
       return expr.slice(1, -1).replace(/\\n/g, '\n').replace(/\\t/g, '\t');
     }
 
-    // Keyword literals
+    // Keywords
     if (expr === 'None') return null;
     if (expr === 'True') return true;
     if (expr === 'False') return false;
 
-    // Numeric literals
+    // Numbers
     if (/^-?\d+$/.test(expr)) return parseInt(expr, 10);
     if (/^-?\d*\.\d+$/.test(expr)) return parseFloat(expr);
 
-    // String multiply: "=" * 3
+    // String repeat: "=" * 3
     const mulStrM = expr.match(/^(['"])(.*)\1\s*\*\s*(\d+)$/);
     if (mulStrM) return mulStrM[2].repeat(parseInt(mulStrM[3], 10));
 
-    // Binary operators (scan right-to-left, skip strings/parens)
+    // Comparison operators (lowest precedence)
+    const compOps = ['==', '!=', '>=', '<=', '>', '<'];
+    for (const op of compOps) {
+      const idx = this.findOpOutsideStrings(expr, op);
+      if (idx > 0) {
+        const lhs = expr.slice(0, idx).trim();
+        const rhs = expr.slice(idx + op.length).trim();
+        if (!lhs || !rhs) continue;
+        const lv = this.eval(lhs, env);
+        const rv = this.eval(rhs, env);
+        switch (op) {
+          case '==': return lv === rv;
+          case '!=': return lv !== rv;
+          case '>': return Number(lv) > Number(rv);
+          case '<': return Number(lv) < Number(rv);
+          case '>=': return Number(lv) >= Number(rv);
+          case '<=': return Number(lv) <= Number(rv);
+        }
+      }
+    }
+
+    // Logical operators
+    const logOps: Array<[string, (a: PyVal, b: PyVal) => PyVal]> = [
+      [' and ', (a, b) => a && b],
+      [' or ', (a, b) => a || b],
+    ];
+    for (const [op, fn] of logOps) {
+      const idx = expr.indexOf(op);
+      if (idx > 0) {
+        const lhs = this.eval(expr.slice(0, idx).trim(), env);
+        if (op === ' and ' && !lhs) return lhs;
+        if (op === ' or ' && lhs) return lhs;
+        return fn(lhs, this.eval(expr.slice(idx + op.length).trim(), env));
+      }
+    }
+
+    // not
+    if (expr.startsWith('not ')) {
+      return !this.eval(expr.slice(4).trim(), env);
+    }
+
+    // Binary operators
     const bin = this.findBinOp(expr);
     if (bin) {
       const [lhs, op, rhs] = bin;
       const lv = this.eval(lhs, env);
       const rv = this.eval(rhs, env);
-      if (op === '+' && (typeof lv === 'string' || typeof rv === 'string')) return String(lv ?? '') + String(rv ?? '');
-      if (op === '+') return Number(lv) + Number(rv);
-      if (op === '-') return Number(lv) - Number(rv);
-      if (op === '*') return Number(lv) * Number(rv);
-      if (op === '//') return Math.floor(Number(lv) / Number(rv));
-      if (op === '/') return Number(lv) / Number(rv);
-      if (op === '%') return Number(lv) % Number(rv);
+      if (lv === null || rv === null) {
+        throw new Error(`  TypeError: unsupported operand type(s) for ${op}: '${typeof lv}' and '${typeof rv}'`);
+      }
+      if (typeof lv === 'string' || typeof rv === 'string') {
+        if (op === '+') return String(lv ?? '') + String(rv ?? '');
+        throw new Error(`  TypeError: unsupported operand type(s) for ${op}: '${typeof lv}' and '${typeof rv}'`);
+      }
+      if (typeof lv !== 'number' || typeof rv !== 'number') {
+        throw new Error(`  TypeError: unsupported operand type(s) for ${op}: '${typeof lv}' and '${typeof rv}'`);
+      }
+      switch (op) {
+        case '+': return lv + rv;
+        case '-': return lv - rv;
+        case '*': return lv * rv;
+        case '/':
+          if (rv === 0) throw new Error(`  ZeroDivisionError: division by zero`);
+          return lv / rv;
+        case '//':
+          if (rv === 0) throw new Error(`  ZeroDivisionError: integer division or modulo by zero`);
+          return Math.floor(lv / rv);
+        case '%':
+          if (rv === 0) throw new Error(`  ZeroDivisionError: modulo by zero`);
+          return lv % rv;
+      }
     }
 
     // Function call
@@ -230,10 +533,23 @@ class MiniPython {
     if (/^[a-zA-Z_]\w*$/.test(expr)) {
       if (env.has(expr)) return env.get(expr)!;
       if (this.globals.has(expr)) return this.globals.get(expr)!;
-      throw new Error(`NameError: name '${expr}' is not defined`);
+      throw new Error(`  NameError: name '${expr}' is not defined`);
     }
 
     return null;
+  }
+
+  private findOpOutsideStrings(expr: string, op: string): number {
+    let inStr = false, strCh = '';
+    for (let i = 0; i <= expr.length - op.length; i++) {
+      const ch = expr[i];
+      if (ch === '"' || ch === "'") {
+        if (!inStr) { inStr = true; strCh = ch; }
+        else if (ch === strCh) inStr = false;
+      }
+      if (!inStr && expr.slice(i, i + op.length) === op) return i;
+    }
+    return -1;
   }
 
   private repr(v: PyVal): string {
@@ -253,7 +569,6 @@ class MiniPython {
   }
 
   private parseArgs(argsStr: string, env: Env): PyVal[] {
-    // Split by top-level commas
     const parts: string[] = [];
     let cur = '', depth = 0, inStr = false, strCh = '';
     for (const ch of argsStr) {
