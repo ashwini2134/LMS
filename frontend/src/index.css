@@ -1,12 +1,229 @@
 @import "tailwindcss";
 
+/* ──────────────────────────────────────────────────────────────────────────────
+   THEME STYLE SYSTEM ( Midnight Blue, Cyberpunk Neon, Slate Dark )
+   ────────────────────────────────────────────────────────────────────────────── */
+
+:root {
+  /* Default: Midnight Blue */
+  --bg-main: #0b0f19;
+  --bg-surface: #0d111a;
+  --bg-sidebar: #0f172a;
+  --bg-header: #0f172a;
+  --bg-editor: #090d12;
+  --bg-gutter: #070b0f;
+  --border-primary: #1e293b;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --accent: #2563eb; /* Cobalt Blue */
+  --accent-hover: #1d4ed8;
+  --accent-glow: rgba(37, 99, 235, 0.15);
+  --accent-text: #ffffff;
+}
+
+[data-theme="cyberpunk"] {
+  /* Cyberpunk Neon Theme */
+  --bg-main: #030303;
+  --bg-surface: #0c0b11;
+  --bg-sidebar: #08070d;
+  --bg-header: #08070d;
+  --bg-editor: #020204;
+  --bg-gutter: #000000;
+  --border-primary: #ff0055; /* Neon Pink */
+  --text-primary: #00ffcc; /* Neon Cyan */
+  --text-secondary: #39ff14; /* Neon Green */
+  --accent: #ff0055; /* Neon Pink accent */
+  --accent-hover: #ff3377;
+  --accent-glow: rgba(255, 0, 85, 0.4);
+  --accent-text: #ffffff;
+}
+
+[data-theme="slate"] {
+  /* Slate Dark Theme */
+  --bg-main: #121214;
+  --bg-surface: #1e1e24;
+  --bg-sidebar: #0f0f11;
+  --bg-header: #0f0f11;
+  --bg-editor: #16161a;
+  --bg-gutter: #0b0b0d;
+  --border-primary: #2d2d38; /* Steel Grey */
+  --text-primary: #f4f4f5; /* Off-white */
+  --text-secondary: #a1a1aa; /* Zinc */
+  --accent: #6366f1; /* Indigo */
+  --accent-hover: #4f46e5;
+  --accent-glow: rgba(99, 102, 241, 0.2);
+  --accent-text: #ffffff;
+}
+
+/* Base resets & transitions */
 html,
 body,
 #root {
   margin: 0;
   padding: 0;
   min-height: 100%;
-  background: #0f172a;
-  color: white;
+  background-color: var(--bg-main) !important;
+  color: var(--text-primary) !important;
   font-family: Inter, sans-serif;
+}
+
+/* Global transitions for theme elements */
+div, header, aside, main, button, input, select, textarea, a, span {
+  transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────────
+   GLOBAL UTILITY OVERRIDES
+   ────────────────────────────────────────────────────────────────────────────── */
+
+/* Background Main */
+.bg-\[\#0b0f19\],
+.bg-\[\#080c10\],
+.bg-\[\#080c14\],
+.bg-\[\#0b0f19\]\/50,
+.bg-slate-900 {
+  background-color: var(--bg-main) !important;
+}
+
+/* Background Surface / Card */
+.bg-\[\#0d1117\]\/40,
+.bg-\[\#0d111a\],
+.bg-\[\#0c1015\]\/40,
+.bg-\[\#0c1017\]\/80,
+.bg-\[\#0c111d\]\/30,
+.bg-\[\#0c111d\]\/75,
+.bg-\[\#0b0f14\],
+.bg-slate-900\/95,
+.bg-slate-900\/80 {
+  background-color: var(--bg-surface) !important;
+}
+
+/* Background Editor */
+.bg-\[\#090d12\],
+.bg-\[\#090d12\]\/50 {
+  background-color: var(--bg-editor) !important;
+}
+
+/* Background Gutter */
+.bg-\[\#070b0f\] {
+  background-color: var(--bg-gutter) !important;
+}
+
+/* Background Header & Control Bar */
+.bg-\[\#10141b\],
+.bg-\[\#10141b\]\/80,
+.bg-\[\#10141b\]\/60 {
+  background-color: var(--bg-header) !important;
+}
+
+/* Hover Sidebar states */
+.hover\:bg-slate-800\/50:hover {
+  background-color: var(--bg-surface) !important;
+  opacity: 0.9;
+}
+
+.hover\:border-slate-700\/50:hover {
+  border-color: var(--border-primary) !important;
+}
+
+.bg-slate-800\/45,
+.bg-slate-800\/40,
+.bg-slate-800,
+.bg-slate-850,
+.bg-slate-850\/80,
+.hover\:bg-slate-800:hover,
+.hover\:bg-slate-700\/80:hover,
+.hover\:bg-slate-750:hover {
+  background-color: var(--bg-surface) !important;
+  border-color: var(--border-primary) !important;
+}
+
+/* Borders */
+.border,
+.border-t,
+.border-r,
+.border-b,
+.border-x,
+.border-slate-800,
+.border-slate-800\/80,
+.border-slate-800\/85,
+.border-slate-700\/50,
+.border-slate-850,
+.border-slate-750 {
+  border-color: var(--border-primary) !important;
+}
+
+/* Text Colors - Primary */
+.text-slate-100,
+.text-slate-150,
+.text-slate-200,
+.text-slate-300,
+.text-white {
+  color: var(--text-primary) !important;
+}
+
+/* Text Colors - Muted */
+.text-slate-400,
+.text-slate-500 {
+  color: var(--text-muted) !important;
+}
+
+/* Accents (Blue colors) */
+.text-blue-400,
+.text-blue-500,
+.text-blue-600 {
+  color: var(--accent) !important;
+}
+
+.bg-blue-600,
+.bg-blue-600\/15,
+.bg-blue-600\/20 {
+  background-color: var(--accent-glow) !important;
+  color: var(--accent) !important;
+  border-color: var(--accent) !important;
+}
+
+/* Active buttons & tabs overrides */
+.border-t-blue-500 {
+  border-top-color: var(--accent) !important;
+}
+
+.border-blue-500,
+.border-blue-500\/30 {
+  border-color: var(--accent) !important;
+}
+
+/* Sign out / Primary actions */
+.bg-slate-800.text-slate-300:hover,
+.bg-blue-600.text-white,
+button[type="submit"],
+.bg-green-600\/10 {
+  border-color: var(--accent) !important;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────────
+   THEME CUSTOM EFFECTS ( Cyberpunk Neon Glances )
+   ────────────────────────────────────────────────────────────────────────────── */
+
+[data-theme="cyberpunk"] input:focus,
+[data-theme="cyberpunk"] select:focus,
+[data-theme="cyberpunk"] textarea:focus {
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 8px var(--accent-glow) !important;
+}
+
+[data-theme="cyberpunk"] button:hover {
+  box-shadow: 0 0 10px var(--accent-glow) !important;
+}
+
+[data-theme="cyberpunk"] .prose code {
+  color: var(--text-muted) !important;
+  background: var(--bg-editor) !important;
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+
+[data-theme="cyberpunk"] .border-t-blue-500 {
+  border-top-color: var(--accent) !important;
+  box-shadow: inset 0 2px 8px var(--accent-glow);
 }

@@ -1,34 +1,122 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { api, type Course, getCompletedProjects, getStreak, getTotalXp } from "../api";
+import { Link } from "react-router-dom";
+import { api, type Course, getCompletedProjects, getStreak, getTotalXp, getSubmissionHistory } from "../api";
 import { useAuth } from "../auth";
 import { Card, LoadingCard } from "../components";
 import { getCourseStats, subscribeToProgressChanges, getAllProgress } from "../hooks/useProgress";
-import {
-  Book,
-  BookOpen,
-  Brain,
-  Star,
-  Sparkle,
-  Rocket,
-  GraduationCap,
-  Flame,
-  BarChart3,
-  Gem,
-  CheckCircle,
-  Monitor,
-  Trophy,
-} from "lucide-react";
+
+const IconBook = () => (
+  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+  </svg>
+);
+
+const IconGraduation = () => (
+  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 14l9-5-9-5-9 5 9 5z" />
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 14v7" />
+  </svg>
+);
+
+const IconDevice = () => (
+  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+  </svg>
+);
+
+const IconBrain = () => (
+  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+  </svg>
+);
+
+const IconCheck = () => (
+  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+  </svg>
+);
+
+const IconMonitor = () => (
+  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+  </svg>
+);
+
+const IconStreak = () => (
+  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 3C10 7 7 8 7 12a5 5 0 0010 0c0-4-3-5-5-9z" />
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9V7" />
+  </svg>
+);
+
+const IconChart = () => (
+  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2z" />
+  </svg>
+);
+
+const IconDiamond = () => (
+  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 3h12l4 6-10 12L2 9z" />
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 3L8 9l4 12 4-12-3-6" />
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2 9h20" />
+  </svg>
+);
+
+const IconTrophy = () => (
+  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5a2 2 0 10-2 2h2zm0 0h4m-4 0H8m12 3v3a6 6 0 01-6 6H10a6 6 0 01-6-6v-3M4 11h16" />
+  </svg>
+);
+
+const IconCourseCard = () => (
+  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 6h8M8 10h8M8 14h8M8 18h5" />
+  </svg>
+);
+
+const IconSolved = () => (
+  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4" />
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 12a7 7 0 1114 0 7 7 0 01-14 0z" />
+  </svg>
+);
 
 export default function Dashboard() {
   const { user } = useAuth();
-  const navigate = useNavigate();
   const [courses, setCourses] = useState<Course[] | null>(null);
   const [err, setErr] = useState<string | null>(null);
   const [completedProjects, setCompletedProjects] = useState<Record<string, boolean>>({});
   const [streak, setStreak] = useState({ count: 0, lastDate: null as string | null });
   const [totalXp, setTotalXp] = useState(0);
+  const [submissionHistory, setSubmissionHistory] = useState<Record<string, number>>({});
   const [refreshKey, setRefreshKey] = useState(0);
+
+  const [activeCourseId, setActiveCourseId] = useState<string | null>(null);
+  const [activeStatId, setActiveStatId] = useState<string | null>(null);
+  const [activeBadgeId, setActiveBadgeId] = useState<string | null>(null);
+
+  const handleCourseClick = (slug: string) => {
+    setActiveCourseId(slug);
+    window.setTimeout(() => {
+      setActiveCourseId((current) => (current === slug ? null : current));
+    }, 700);
+  };
+
+  const handleStatClick = (id: string) => {
+    setActiveStatId(id);
+    window.setTimeout(() => {
+      setActiveStatId((current) => (current === id ? null : current));
+    }, 700);
+  };
+
+  const handleBadgeClick = (id: string) => {
+    setActiveBadgeId(id);
+    window.setTimeout(() => {
+      setActiveBadgeId((current) => (current === id ? null : current));
+    }, 900);
+  };
 
   // Listen for progress changes
   useEffect(() => {
@@ -36,23 +124,23 @@ export default function Dashboard() {
     return unsub;
   }, []);
 
-  // Refresh localStorage data on mount and on progress changes
+  // Refresh data on mount and progress updates
   useEffect(() => {
     setCompletedProjects(getCompletedProjects());
     setStreak(getStreak());
     setTotalXp(getTotalXp());
+    setSubmissionHistory(getSubmissionHistory());
   }, [refreshKey]);
 
-  // ── Compute ALL values dynamically from actual progress data ──
+  // Fetch all progress data
   const allProgress = useMemo(() => getAllProgress(), [refreshKey]);
 
-  // Overall stats across all courses
+  // Overall stats dynamically computed
   const overallStats = useMemo(() => {
     const lecturesCompleted = new Set<string>();
     const quizzesPassed = new Set<string>();
     const tasksCompleted = new Set<string>();
     const coursesStarted = new Set<string>();
-    const coursesCompleted = new Set<string>();
 
     for (const [key, p] of Object.entries(allProgress)) {
       const [courseSlug] = key.split(':');
@@ -116,55 +204,13 @@ export default function Dashboard() {
   const totalCompleted = Object.keys(completedProjects).length;
   const projectsCount = totalCompleted;
 
-  // Compute dynamic achievements from actual progress
-  const achievements = useMemo(() => [
-    {
-      id: "first_lecture",
-      title: "First Lecture Completed",
-      description: "Complete your first lecture",
-      icon: <Book size={16} />,
-      unlocked: overallStats.lecturesCompleted >= 1,
-    },
-    {
-      id: "first_quiz",
-      title: "First Quiz Passed",
-      description: "Pass your first knowledge check",
-      icon: <Brain size={16} />,
-      unlocked: overallStats.quizzesPassed >= 1,
-    },
-    {
-      id: "five_lectures",
-      title: "5 Lectures Completed",
-      description: "Complete 5 lectures",
-      icon: <Star size={16} />,
-      unlocked: overallStats.lecturesCompleted >= 5,
-    },
-    {
-      id: "ten_lectures",
-      title: "10 Lectures Completed",
-      description: "Complete 10 lectures",
-      icon: <Sparkle size={16} />,
-      unlocked: overallStats.lecturesCompleted >= 10,
-    },
-    {
-      id: "first_project",
-      title: "First Project Submitted",
-      description: "Submit your first hands-on task",
-      icon: <Rocket size={16} />,
-      unlocked: overallStats.tasksCompleted >= 1,
-    },
-    {
-      id: "course_completed",
-      title: "Course Completed",
-      description: "Complete an entire course",
-      icon: <GraduationCap size={16} />,
-      unlocked: coursesCompletedCount >= 1,
-    },
-  ], [overallStats, coursesCompletedCount]);
+  const coursesStarted = overallStats.coursesStarted;
+  const lecturesCompleted = overallStats.lecturesCompleted;
+  const quizzesPassed = overallStats.quizzesPassed;
+  const tasksSubmitted = overallStats.tasksCompleted;
+  const projectsSolved = projectsCount;
 
-  const unlockedBadgesCount = achievements.filter((b) => b.unlocked).length;
-
-  // Overall progress = % of lectures completed across all courses
+  // Overall progress computed dynamically
   const overallProgress = useMemo(() => {
     let completed = 0;
     let total = 0;
@@ -175,209 +221,472 @@ export default function Dashboard() {
     return total > 0 ? Math.round((completed / total) * 100) : 0;
   }, [courseStatsMap]);
 
+  // Get last 7 days for streak heatmap
+  const getStreakDays = () => {
+    const days = [];
+    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      const dateStr = date.toISOString().split('T')[0];
+      const hasActivity = submissionHistory[dateStr] > 0;
+      const isToday = i === 0;
+      days.push({
+        name: dayNames[date.getDay()],
+        hasActivity,
+        isToday,
+        count: submissionHistory[dateStr] || 0
+      });
+    }
+    return days;
+  };
+
+  const streakDays = getStreakDays();
+
+  const achievements = useMemo(() => [
+    {
+      id: "first_lecture",
+      title: "First Lecture Completed",
+      description: "Complete your first lecture",
+      icon: <IconDevice />,
+      unlocked: overallStats.lecturesCompleted >= 1,
+    },
+    {
+      id: "first_quiz",
+      title: "First Quiz Passed",
+      description: "Pass your first knowledge check",
+      icon: <IconSolved />,
+      unlocked: overallStats.quizzesPassed >= 1,
+    },
+    {
+      id: "five_lectures",
+      title: "5 Lectures Completed",
+      description: "Complete 5 lectures",
+      icon: <IconStreak />,
+      unlocked: overallStats.lecturesCompleted >= 5,
+    },
+    {
+      id: "ten_lectures",
+      title: "10 Lectures Completed",
+      description: "Complete 10 lectures",
+      icon: <IconBrain />,
+      unlocked: overallStats.lecturesCompleted >= 10,
+    },
+    {
+      id: "first_project",
+      title: "First Project Submitted",
+      description: "Submit your first hands-on task",
+      icon: <IconDiamond />,
+      unlocked: overallStats.tasksCompleted >= 1,
+    },
+    {
+      id: "course_completed",
+      title: "Course Completed",
+      description: "Complete an entire course",
+      icon: <IconGraduation />,
+      unlocked: coursesCompletedCount >= 1,
+    },
+  ], [overallStats, coursesCompletedCount]);
+
   return (
-    <div className="w-full min-h-screen bg-[#0b0f19] text-slate-100 flex flex-col">
-      {/* Welcome & Onboarding Header Banner */}
-      <div className="border-b border-slate-800 bg-gradient-to-br from-slate-900 via-slate-900 to-blue-950/20 px-4 md:px-8 py-8 md:py-10">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-6">
+    <div className="w-full min-h-screen bg-[#0b0f19] text-slate-100 flex flex-col p-4 md:p-8">
+      <div className="max-w-7xl mx-auto w-full flex-1 flex flex-col">
+        {/* Header Block */}
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-8 px-4 md:px-0">
           <div>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20 mb-3">
-              <span className="w-2 h-2 rounded-full bg-blue-400"></span>
+            <div className="inline-flex items-center gap-2 rounded-full border border-slate-800 bg-slate-900/40 px-3 py-1 text-xs text-blue-400 mb-4 font-medium">
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
               Learning Hub
-            </span>
-            <h1 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight">
-              Welcome back, {user?.name || "Student"}!
+            </div>
+            <h1 className="text-3xl font-extrabold text-white tracking-tight mb-2">
+              Welcome back, {user?.name?.split(' ')[0] || "Student"}!
             </h1>
-            <p className="text-slate-400 text-sm mt-2 max-w-xl">
+            <p className="text-slate-400 text-sm">
               Track your progress, earn achievements, and build real skills.
             </p>
           </div>
 
-          {/* Live Stats Summary */}
-          <div className="flex flex-wrap gap-3 items-center">
-            <div className="bg-slate-850/80 backdrop-blur border border-slate-800 rounded-2xl p-4 flex items-center gap-4 shadow-lg min-w-[140px]">
-              <div className="w-12 h-12 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center">
-                <Flame size={24} className="text-orange-400" />
+          {/* Top-Right Stats row */}
+          <div className="flex flex-wrap items-center gap-4">
+            {/* Streak card */}
+            <button
+              type="button"
+              onClick={() => handleStatClick('header_streak')}
+              className={`relative flex items-center gap-4 bg-slate-900/30 border rounded-2xl p-4 min-w-[170px] text-left transition-all duration-300 active:scale-[0.96] overflow-hidden ${
+                activeStatId === 'header_streak' ? 'border-orange-500/80 bg-orange-500/10 scale-[1.02] shadow-lg shadow-orange-500/10' : 'border-slate-800/80 hover:border-orange-500/30'
+              }`}
+            >
+              <div className="relative rounded-xl bg-orange-500/10 p-3 text-orange-400 flex-shrink-0 transition-transform duration-300">
+                <IconStreak />
+                {activeStatId === 'header_streak' && (
+                  <span className="absolute inset-0 rounded-xl bg-orange-500/30 animate-ping pointer-events-none" />
+                )}
               </div>
               <div>
-                <div className="text-2xl font-bold text-white leading-none">{streak.count} Day{streak.count !== 1 ? "s" : ""}</div>
-                <div className="text-xs text-slate-400 mt-1">Current Streak</div>
+                <div className="text-2xl font-bold text-white leading-none">{streak.count} Days</div>
+                <div className="text-[11px] text-slate-400 mt-1 font-medium">Current Streak</div>
               </div>
-            </div>
+            </button>
 
-            <div className="bg-slate-850/80 backdrop-blur border border-slate-800 rounded-2xl p-4 flex items-center gap-4 shadow-lg min-w-[140px]">
-              <div className="w-12 h-12 rounded-xl bg-green-500/10 border border-green-500/20 flex items-center justify-center">
-                <BarChart3 size={24} className="text-green-400" />
+            {/* Progress card */}
+            <button
+              type="button"
+              onClick={() => handleStatClick('header_progress')}
+              className={`relative flex items-center gap-4 bg-slate-900/30 border rounded-2xl p-4 min-w-[170px] text-left transition-all duration-300 active:scale-[0.96] overflow-hidden ${
+                activeStatId === 'header_progress' ? 'border-emerald-500/80 bg-emerald-500/10 scale-[1.02] shadow-lg shadow-emerald-500/10' : 'border-slate-800/80 hover:border-emerald-500/30'
+              }`}
+            >
+              <div className="relative rounded-xl bg-emerald-500/10 p-3 text-emerald-400 flex-shrink-0 transition-transform duration-300">
+                <IconChart />
+                {activeStatId === 'header_progress' && (
+                  <span className="absolute inset-0 rounded-xl bg-emerald-500/30 animate-ping pointer-events-none" />
+                )}
               </div>
               <div>
                 <div className="text-2xl font-bold text-white leading-none">{overallProgress}%</div>
-                <div className="text-xs text-slate-400 mt-1">Overall Progress</div>
+                <div className="text-[11px] text-slate-400 mt-1 font-medium">Overall Progress</div>
               </div>
-            </div>
+            </button>
 
-            <div className="bg-slate-850/80 backdrop-blur border border-slate-800 rounded-2xl p-4 flex items-center gap-4 shadow-lg min-w-[140px]">
-              <div className="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
-                <Gem size={24} className="text-blue-400" />
+            {/* Total XP card */}
+            <button
+              type="button"
+              onClick={() => handleStatClick('header_xp')}
+              className={`relative flex items-center gap-4 bg-slate-900/30 border rounded-2xl p-4 min-w-[170px] text-left transition-all duration-300 active:scale-[0.96] overflow-hidden ${
+                activeStatId === 'header_xp' ? 'border-cyan-500/80 bg-cyan-500/10 scale-[1.02] shadow-lg shadow-cyan-500/10' : 'border-slate-800/80 hover:border-cyan-500/30'
+              }`}
+            >
+              <div className="relative rounded-xl bg-blue-500/10 p-3 text-cyan-400 flex-shrink-0 transition-transform duration-300">
+                <IconDiamond />
+                {activeStatId === 'header_xp' && (
+                  <span className="absolute inset-0 rounded-xl bg-blue-500/30 animate-ping pointer-events-none" />
+                )}
               </div>
               <div>
                 <div className="text-2xl font-bold text-white leading-none">{totalXp}</div>
-                <div className="text-xs text-slate-400 mt-1">Total XP</div>
+                <div className="text-[11px] text-slate-400 mt-1 font-medium">Total XP</div>
               </div>
-            </div>
+            </button>
           </div>
         </div>
-      </div>
 
-      {/* Main Grid Content */}
-      <div className="flex-1 px-4 md:px-8 py-8 max-w-7xl mx-auto w-full">
         {err && (
-          <div className="mb-6 p-4 bg-red-950/30 border border-red-900/50 rounded-xl text-red-300">
+          <div className="mb-6 p-4 bg-red-950/30 border border-red-900/50 rounded-xl text-red-300 mx-4 md:mx-0">
             <p className="font-semibold text-sm">Error loading courses</p>
             <p className="text-xs mt-1 opacity-80">{err}</p>
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left Columns: Stats Grid & Courses */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Live Stats Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {[
-                { label: "Courses Started", value: overallStats.coursesStarted, icon: <BookOpen size={20} />, color: "blue" },
-                { label: "Courses Completed", value: coursesCompletedCount, icon: <GraduationCap size={20} />, color: "green" },
-                { label: "Lectures Completed", value: overallStats.lecturesCompleted, icon: <Book size={20} />, color: "purple" },
-                { label: "Quizzes Passed", value: overallStats.quizzesPassed, icon: <Brain size={20} />, color: "amber" },
-                { label: "Tasks Submitted", value: overallStats.tasksCompleted, icon: <CheckCircle size={20} />, color: "emerald" },
-                { label: "Projects Solved", value: projectsCount, icon: <Monitor size={20} />, color: "orange" },
-              ].map((stat) => {
-                const colorMap: Record<string, string> = {
-                  blue: 'from-blue-600/20 to-blue-900/10 border-blue-500/20 text-blue-300',
-                  green: 'from-green-600/20 to-green-900/10 border-green-500/20 text-green-300',
-                  purple: 'from-purple-600/20 to-purple-900/10 border-purple-500/20 text-purple-300',
-                  amber: 'from-amber-600/20 to-amber-900/10 border-amber-500/20 text-amber-300',
-                  emerald: 'from-emerald-600/20 to-emerald-900/10 border-emerald-500/20 text-emerald-300',
-                  orange: 'from-orange-600/20 to-orange-900/10 border-orange-500/20 text-orange-300',
-                };
-                return (
-                  <div key={stat.label} className={`rounded-2xl bg-gradient-to-br ${colorMap[stat.color]} border p-5`}>
-                    <div className="flex items-center justify-between mb-3">
-                      {stat.icon}
-                    </div>
-                    <p className="text-3xl font-bold text-white">{stat.value}</p>
-                    <p className="text-xs text-slate-400 mt-1">{stat.label}</p>
+        {/* Separated Content Wrapper Pane */}
+        <div className="bg-[#0c101b]/80 border border-slate-800/60 rounded-3xl p-6 md:p-8 mb-8">
+          {/* Main Columns layout */}
+          <div className="grid gap-8 lg:grid-cols-3 items-start">
+            {/* Left Panel */}
+            <div className="lg:col-span-2 space-y-8">
+              {/* 6 Stats card grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                {/* Courses Started */}
+                <button
+                  type="button"
+                  onClick={() => handleStatClick('courses_started')}
+                  className={`relative flex items-center gap-4 bg-slate-950/40 border rounded-3xl p-5 text-left transition-all duration-300 active:scale-[0.96] overflow-hidden ${
+                    activeStatId === 'courses_started' ? 'border-blue-500/80 scale-[1.02] bg-blue-500/10 shadow-lg shadow-blue-500/10' : 'border-slate-800/60 hover:border-slate-700/60'
+                  }`}
+                >
+                  <div className="relative w-10 h-10 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-400 flex-shrink-0 font-bold">
+                    <IconBook />
+                    {activeStatId === 'courses_started' && (
+                      <span className="absolute inset-0 rounded-2xl bg-blue-500/30 animate-ping pointer-events-none" />
+                    )}
                   </div>
-                );
-              })}
+                  <div>
+                    <div className="text-3xl font-extrabold text-white leading-none mb-1">{coursesStarted}</div>
+                    <div className="text-[11px] text-slate-400 font-medium">Courses Started</div>
+                  </div>
+                </button>
+
+                {/* Courses Completed */}
+                <button
+                  type="button"
+                  onClick={() => handleStatClick('courses_completed')}
+                  className={`relative flex items-center gap-4 bg-slate-950/40 border rounded-3xl p-5 text-left transition-all duration-300 active:scale-[0.96] overflow-hidden ${
+                    activeStatId === 'courses_completed' ? 'border-green-500/80 scale-[1.02] bg-green-500/10 shadow-lg shadow-green-500/10' : 'border-slate-800/60 hover:border-slate-700/60'
+                  }`}
+                >
+                  <div className="relative w-10 h-10 rounded-2xl bg-green-500/10 flex items-center justify-center text-green-400 flex-shrink-0">
+                    <IconGraduation />
+                    {activeStatId === 'courses_completed' && (
+                      <span className="absolute inset-0 rounded-2xl bg-green-500/30 animate-ping pointer-events-none" />
+                    )}
+                  </div>
+                  <div>
+                    <div className="text-3xl font-extrabold text-white leading-none mb-1">{coursesCompletedCount}</div>
+                    <div className="text-[11px] text-slate-400 font-medium">Courses Completed</div>
+                  </div>
+                </button>
+
+                {/* Lectures Completed */}
+                <button
+                  type="button"
+                  onClick={() => handleStatClick('lectures_completed')}
+                  className={`relative flex items-center gap-4 bg-slate-950/40 border rounded-3xl p-5 text-left transition-all duration-300 active:scale-[0.96] overflow-hidden ${
+                    activeStatId === 'lectures_completed' ? 'border-purple-500/80 scale-[1.02] bg-purple-500/10 shadow-lg shadow-purple-500/10' : 'border-slate-800/60 hover:border-slate-700/60'
+                  }`}
+                >
+                  <div className="relative w-10 h-10 rounded-2xl bg-purple-500/10 flex items-center justify-center text-purple-400 flex-shrink-0">
+                    <IconDevice />
+                    {activeStatId === 'lectures_completed' && (
+                      <span className="absolute inset-0 rounded-2xl bg-purple-500/30 animate-ping pointer-events-none" />
+                    )}
+                  </div>
+                  <div>
+                    <div className="text-3xl font-extrabold text-white leading-none mb-1">{lecturesCompleted}</div>
+                    <div className="text-[11px] text-slate-400 font-medium">Lectures Completed</div>
+                  </div>
+                </button>
+
+                {/* Quizzes Passed */}
+                <button
+                  type="button"
+                  onClick={() => handleStatClick('quizzes_passed')}
+                  className={`relative flex items-center gap-4 bg-slate-950/40 border rounded-3xl p-5 text-left transition-all duration-300 active:scale-[0.96] overflow-hidden ${
+                    activeStatId === 'quizzes_passed' ? 'border-amber-500/80 scale-[1.02] bg-amber-500/10 shadow-lg shadow-amber-500/10' : 'border-slate-800/60 hover:border-slate-700/60'
+                  }`}
+                >
+                  <div className="relative w-10 h-10 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-400 flex-shrink-0 font-bold">
+                    <IconBrain />
+                    {activeStatId === 'quizzes_passed' && (
+                      <span className="absolute inset-0 rounded-2xl bg-amber-500/30 animate-ping pointer-events-none" />
+                    )}
+                  </div>
+                  <div>
+                    <div className="text-3xl font-extrabold text-white leading-none mb-1">{quizzesPassed}</div>
+                    <div className="text-[11px] text-slate-400 font-medium">Quizzes Passed</div>
+                  </div>
+                </button>
+
+                {/* Tasks Submitted */}
+                <button
+                  type="button"
+                  onClick={() => handleStatClick('tasks_submitted')}
+                  className={`relative flex items-center gap-4 bg-slate-950/40 border rounded-3xl p-5 text-left transition-all duration-300 active:scale-[0.96] overflow-hidden ${
+                    activeStatId === 'tasks_submitted' ? 'border-teal-500/80 scale-[1.02] bg-teal-500/10 shadow-lg shadow-teal-500/10' : 'border-slate-800/60 hover:border-slate-700/60'
+                  }`}
+                >
+                  <div className="relative w-10 h-10 rounded-2xl bg-teal-500/10 flex items-center justify-center text-teal-400 flex-shrink-0">
+                    <IconCheck />
+                    {activeStatId === 'tasks_submitted' && (
+                      <span className="absolute inset-0 rounded-2xl bg-teal-500/30 animate-ping pointer-events-none" />
+                    )}
+                  </div>
+                  <div>
+                    <div className="text-3xl font-extrabold text-white leading-none mb-1">{tasksSubmitted}</div>
+                    <div className="text-[11px] text-slate-400 font-medium">Tasks Submitted</div>
+                  </div>
+                </button>
+
+                {/* Projects Solved */}
+                <button
+                  type="button"
+                  onClick={() => handleStatClick('projects_solved')}
+                  className={`relative flex items-center gap-4 bg-slate-950/40 border rounded-3xl p-5 text-left transition-all duration-300 active:scale-[0.96] overflow-hidden ${
+                    activeStatId === 'projects_solved' ? 'border-orange-500/80 scale-[1.02] bg-orange-500/10 shadow-lg shadow-orange-500/10' : 'border-slate-800/60 hover:border-slate-700/60'
+                  }`}
+                >
+                  <div className="relative w-10 h-10 rounded-2xl bg-orange-500/10 flex items-center justify-center text-orange-400 flex-shrink-0">
+                    <IconMonitor />
+                    {activeStatId === 'projects_solved' && (
+                      <span className="absolute inset-0 rounded-2xl bg-orange-500/30 animate-ping pointer-events-none" />
+                    )}
+                  </div>
+                  <div>
+                    <div className="text-3xl font-extrabold text-white leading-none mb-1">{projectsSolved}</div>
+                    <div className="text-[11px] text-slate-400 font-medium">Projects Solved</div>
+                  </div>
+                </button>
+              </div>
+
+              {/* Courses section */}
+              <div>
+                <div className="flex items-center gap-2 mb-6">
+                  <div className="text-white">
+                    <IconBook />
+                  </div>
+                  <h2 className="text-xl font-bold text-white tracking-tight">Your Courses</h2>
+                </div>
+
+                {courses === null ? (
+                  <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
+                    {[1, 2].map((i) => (
+                      <LoadingCard key={i} lines={3} />
+                    ))}
+                  </div>
+                ) : courses.length === 0 ? (
+                  <div className="text-center py-12 bg-slate-900/40 border border-slate-800 rounded-2xl">
+                    <p className="text-slate-400">No courses available at this time.</p>
+                  </div>
+                ) : (
+                  <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
+                    {courses.map((c) => {
+                      const progress = courseStatsMap[c.slug] || { completed: 0, total: 0, lecturesCompleted: 0 };
+                      const percent = progress.total > 0 ? Math.round((progress.completed / progress.total) * 100) : 0;
+                      const isCourseActive = activeCourseId === c.slug;
+                      return (
+                        <Link key={c.id} to={`/course/${c.slug}`} className="group block active:scale-[0.97] transition-all duration-300">
+                          <Card
+                            onClick={() => handleCourseClick(c.slug)}
+                            className={`relative p-6 bg-slate-950/40 border rounded-3xl transition-all duration-300 h-full flex flex-col justify-between overflow-hidden ${
+                              isCourseActive
+                                ? 'border-cyan-500/80 bg-cyan-950/5 scale-[1.02] shadow-lg shadow-cyan-500/10'
+                                : 'border-slate-800/60 hover:shadow-xl hover:shadow-cyan-950/10 hover:border-cyan-500/20'
+                            }`}
+                          >
+                            <div className="flex flex-col gap-4">
+                              <div className="relative w-10 h-10 rounded-xl bg-slate-900/60 border border-slate-800/80 flex items-center justify-center self-start mb-2">
+                                {c.slug === 'cs50p' ? (
+                                  <span className="font-bold text-xs text-cyan-400">Py</span>
+                                ) : (
+                                  <span className="text-slate-400">
+                                    <IconCourseCard />
+                                  </span>
+                                )}
+                                {isCourseActive && (
+                                  <span className="absolute inset-0 rounded-xl bg-cyan-400/20 animate-ping pointer-events-none" />
+                                )}
+                              </div>
+                              <div>
+                                <h3 className="text-lg font-bold text-white group-hover:text-cyan-400 transition-colors">{c.title}</h3>
+                                <p className="text-xs text-slate-400 mt-2 line-clamp-3 leading-relaxed min-h-[48px]">{c.description}</p>
+                              </div>
+                            </div>
+                            <div className="mt-6 space-y-2">
+                              <div className="flex items-center justify-between text-[11px] font-semibold text-slate-400">
+                                <span>Progress</span>
+                                <span className="text-slate-300">{progress.lecturesCompleted} / {progress.total} Lectures ({percent}%)</span>
+                              </div>
+                              <div className="w-full h-1.5 bg-slate-900 rounded-full overflow-hidden">
+                                <div className="h-full bg-gradient-to-r from-blue-500 via-cyan-400 to-indigo-500 rounded-full transition-all duration-500" style={{ width: `${percent}%` }}></div>
+                              </div>
+                            </div>
+                          </Card>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
             </div>
 
-            <h2 className="text-xl font-bold text-white flex items-center gap-2">
-              <BookOpen size={20} /> Your Courses
-            </h2>
-
-            {courses === null ? (
-              <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
-                {[1, 2].map((i) => (
-                  <LoadingCard key={i} lines={3} />
-                ))}
-              </div>
-            ) : courses.length === 0 ? (
-              <div className="text-center py-12 bg-slate-900/40 border border-slate-800 rounded-2xl">
-                <p className="text-slate-400">No courses available at this time.</p>
-              </div>
-            ) : (
-              <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
-                {courses.map((c) => {
-                  const progress = courseStatsMap[c.slug] || { completed: 0, total: 0, lecturesCompleted: 0 };
-                  const percent = progress.total > 0 ? Math.round((progress.completed / progress.total) * 100) : 0;
-
-                  return (
-                    <Link key={c.id} to={`/course/${c.slug}`} className="group block">
-                      <Card className="p-6 h-full flex flex-col justify-between hover:shadow-xl hover:shadow-blue-950/20 hover:border-slate-700 hover:-translate-y-0.5 transition-all duration-300 bg-slate-900/60 border border-slate-800/80 rounded-2xl">
-                        <div>
-                          <div className="mb-4 inline-flex items-center justify-center w-10 h-10 rounded-xl bg-slate-800 border border-slate-700/50 flex-shrink-0">
-                            {c.slug === "cs50p" ? <span className="text-xs font-bold">Py</span> : <Brain size={20} />}
-                          </div>
-
-                          <h3 className="text-lg font-bold text-white group-hover:text-blue-400 transition-colors mb-2">
-                            {c.title}
-                          </h3>
-                          <p className="text-slate-400 text-xs leading-relaxed mb-6 line-clamp-3">
-                            {c.description}
-                          </p>
-                        </div>
-
-                        <div className="space-y-2">
-                          <div className="flex justify-between text-xs font-semibold">
-                            <span className="text-slate-400">Progress</span>
-                            <span className="text-slate-200">
-                              {progress.lecturesCompleted} / {progress.total} Lectures ({percent}%)
-                            </span>
-                          </div>
-                          <div className="w-full h-2 bg-slate-850 rounded-full overflow-hidden border border-slate-800">
-                            <div
-                              className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full transition-all duration-500"
-                              style={{ width: `${percent}%` }}
-                            ></div>
-                          </div>
-                        </div>
-                      </Card>
-                    </Link>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-
-          {/* Right Column: Achievements & Badges */}
-          <div className="space-y-6">
-            <h2 className="text-xl font-bold text-white flex items-center gap-2">
-              <Trophy size={20} /> Achievements
-              <span className="text-xs bg-slate-800 border border-slate-700/80 px-2 py-0.5 rounded-full text-slate-400 font-normal">
-                {unlockedBadgesCount} / {achievements.length} Unlocked
-              </span>
-            </h2>
-
-            <Card className="bg-slate-900/60 border border-slate-800/80 p-5 rounded-2xl space-y-4">
-              <div className="space-y-3.5">
-                {achievements.map((badge) => (
-                  <div
-                    key={badge.id}
-                    className={`flex items-start gap-4 p-3.5 rounded-xl border transition-all ${
-                      badge.unlocked
-                        ? "bg-slate-850/50 border-slate-800/80 shadow-sm"
-                        : "bg-slate-900/20 border-slate-900/40 opacity-40 select-none"
-                    }`}
-                  >
-                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${
-                      badge.unlocked ? "bg-amber-500/10 border border-amber-500/20" : "bg-slate-800 border border-slate-750"
-                    }`}>
-                      {badge.icon}
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <h4 className="font-bold text-sm text-slate-250 flex items-center gap-1.5">
-                        {badge.title}
-                        {badge.unlocked && (
-                          <span className="text-[10px] uppercase tracking-wider font-semibold text-amber-400 bg-amber-400/10 border border-amber-400/20 px-1.5 py-0.5 rounded">
-                            Unlocked
-                          </span>
-                        )}
-                      </h4>
-                      <p className="text-slate-400 text-xs mt-1 leading-normal">
-                        {badge.description}
-                      </p>
-                    </div>
+            {/* Right Panel: Achievements */}
+            <div>
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-2">
+                  <div className="text-slate-300">
+                    <IconTrophy />
                   </div>
-                ))}
+                  <h3 className="text-lg font-bold text-white tracking-tight">Achievements</h3>
+                </div>
+                <div className="rounded-full bg-slate-900/60 border border-slate-800/80 px-2.5 py-0.5 text-[10px] font-semibold text-slate-400">
+                  {achievements.filter(a => a.unlocked).length} / {achievements.length} Unlocked
+                </div>
               </div>
-            </Card>
 
-            <button
-              onClick={() => navigate('/leaderboard')}
-              className="w-full text-center text-xs font-medium text-blue-400 hover:text-blue-300 py-3 rounded-xl bg-blue-500/8 hover:bg-blue-500/15 border border-blue-500/15 hover:border-blue-500/30 transition-all duration-200"
-            >
-              View Leaderboard →
-            </button>
+              <Card className="bg-slate-950/40 border border-slate-800/60 rounded-3xl p-6 flex flex-col gap-5">
+                <div className="flex flex-col gap-4">
+                  {achievements.map((achievement) => {
+                    const isActive = activeBadgeId === achievement.id;
+                    return (
+                      <button
+                        key={achievement.id}
+                        type="button"
+                        onClick={() => handleBadgeClick(achievement.id)}
+                        className={`relative flex items-start gap-4 p-3 rounded-2xl border text-left transition-all duration-300 active:scale-[0.96] overflow-hidden ${
+                          achievement.unlocked
+                            ? "border-emerald-500/10 bg-emerald-500/5 hover:border-emerald-500/20"
+                            : "border-slate-900 bg-slate-950/40 opacity-50 hover:border-slate-800"
+                        } ${isActive ? 'scale-[1.02] border-amber-500/60 bg-amber-500/5 shadow-md shadow-amber-500/5' : ''}`}
+                      >
+                        <div className="relative w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0">
+                          <div className={`absolute inset-0 rounded-full flex items-center justify-center ${
+                            achievement.unlocked
+                              ? "bg-amber-500/10 text-amber-400 border border-amber-500/20"
+                              : "bg-slate-900 text-slate-500 border border-slate-800"
+                          }`}>
+                            {achievement.icon}
+                          </div>
+                          {isActive && (
+                            <span className="absolute inset-0 rounded-full bg-amber-500/30 animate-ping pointer-events-none" />
+                          )}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span className="text-xs font-bold text-white leading-tight">{achievement.title}</span>
+                            {achievement.unlocked && (
+                              <span className="px-1.5 py-0.5 rounded bg-amber-500/10 border border-amber-500/20 text-[8px] font-extrabold text-amber-400 tracking-wider">
+                                UNLOCKED
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-[10px] text-slate-400 mt-1 leading-normal">{achievement.description}</p>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <Link
+                  to="/leaderboard"
+                  className="mt-2 block w-full text-center py-2.5 bg-slate-900/40 hover:bg-slate-900/80 border border-slate-800 text-xs font-bold text-slate-300 rounded-2xl transition-all active:scale-[0.98]"
+                >
+                  View Leaderboard →
+                </Link>
+              </Card>
+            </div>
           </div>
+        </div>
+
+        {/* Bottom Submission Activity heatmap - kept exactly as is */}
+        <div className="mt-auto pt-4 pb-12 w-full px-4 md:px-0">
+          <Card className="bg-slate-900/60 border border-slate-800/80 p-5 rounded-2xl">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4">
+              <div>
+                <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                  <IconChart /> Submission Activity
+                </h2>
+                <div className="text-xs text-slate-400 uppercase tracking-[0.24em]">Past 7 days</div>
+              </div>
+              <div className="flex flex-wrap gap-3">
+                <div className="rounded-2xl bg-slate-950/70 p-3 text-xs uppercase tracking-[0.24em] text-slate-400">Total Submissions: {totalCompleted}</div>
+                <div className="rounded-2xl bg-slate-950/70 p-3 text-xs uppercase tracking-[0.24em] text-slate-400">Longest Streak: {streak.count} days</div>
+                <div className="rounded-2xl bg-slate-950/70 p-3 text-xs uppercase tracking-[0.24em] text-slate-400">Most Active Day: Today</div>
+              </div>
+            </div>
+            <div className="grid grid-cols-7 gap-1.5 mb-4">
+              {streakDays.map((day, idx) => (
+                <div key={idx} className="flex flex-col items-center gap-1">
+                  <div
+                    className={`w-full aspect-square rounded-md flex items-center justify-center text-[10px] font-bold transition-all duration-300 ${
+                      day.count >= 4
+                        ? 'bg-green-500 text-white'
+                        : day.count >= 2
+                          ? 'bg-green-600/70 text-white'
+                          : day.count >= 1
+                            ? 'bg-green-700/50 text-white'
+                            : day.isToday
+                              ? 'bg-slate-700 border border-dashed border-slate-600'
+                              : 'bg-slate-800'
+                    }`}
+                    title={`${day.count} submissions`}
+                  >
+                    {day.count > 0 ? day.count : ''}
+                  </div>
+                  <span className={`text-[9px] ${day.isToday ? 'text-green-400' : 'text-slate-500'}`}>
+                    {day.name.charAt(0)}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </Card>
         </div>
       </div>
     </div>

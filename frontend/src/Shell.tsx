@@ -115,7 +115,7 @@ export default function Shell() {
           <div className="flex-1" />
 
           <div className="flex items-center gap-3 text-sm">
-            {user && (
+              {user && (
               <div className="hidden sm:flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-800/40 border border-slate-700/50">
                 <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
                 <span className="text-slate-300 truncate max-w-[140px] font-medium">

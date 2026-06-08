@@ -302,6 +302,7 @@ export function saveCompletedProject(courseSlug: string, projectId: string, comp
       addXp(meta.xp);
     }
     current[key] = true;
+    recordSubmission();
   } else {
     delete current[key];
   }
@@ -496,3 +497,262 @@ export function getProjectMetadata(projectId: string, customDifficulty?: string)
   };
 }
 
+// ── XP Level System ─────────────────────────────────────────────────────────────
+export function getXpLevel(totalXp: number): { level: number; currentXp: number; xpToNext: number; progress: number } {
+  const levels = [
+    { level: 1, xpRequired: 0 },
+    { level: 2, xpRequired: 100 },
+    { level: 3, xpRequired: 250 },
+    { level: 4, xpRequired: 500 },
+    { level: 5, xpRequired: 1000 },
+    { level: 6, xpRequired: 2000 },
+    { level: 7, xpRequired: 3500 },
+    { level: 8, xpRequired: 5000 },
+    { level: 9, xpRequired: 7500 },
+    { level: 10, xpRequired: 10000 },
+  ];
+
+  let currentLevel = 1;
+  let xpForCurrentLevel = 0;
+  let xpForNextLevel = 100;
+
+  for (let i = 0; i < levels.length; i++) {
+    if (totalXp >= levels[i].xpRequired) {
+      currentLevel = levels[i].level;
+      xpForCurrentLevel = levels[i].xpRequired;
+      xpForNextLevel = levels[i + 1]?.xpRequired || levels[i].xpRequired;
+    }
+  }
+
+  const currentXp = totalXp - xpForCurrentLevel;
+  const xpToNext = xpForNextLevel - xpForCurrentLevel;
+  const progress = xpToNext > 0 ? Math.round((currentXp / xpToNext) * 100) : 100;
+
+  return { level: currentLevel, currentXp, xpToNext, progress };
+}
+
+// ── Submission History for Heatmap ─────────────────────────────────────────────
+export interface SubmissionRecord {
+  date: string;
+  count: number;
+}
+
+export function getSubmissionHistory(): Record<string, number> {
+  try {
+    return JSON.parse(localStorage.getItem("fa_submission_history") ?? "{}");
+  } catch {
+    return {};
+  }
+}
+
+export function recordSubmission() {
+  const todayStr = new Date().toISOString().split("T")[0];
+  const history = getSubmissionHistory();
+  history[todayStr] = (history[todayStr] || 0) + 1;
+  localStorage.setItem("fa_submission_history", JSON.stringify(history));
+}
+
+// ── Daily Missions ─────────────────────────────────────────────────────────────
+export interface DailyMission {
+  id: string;
+  title: string;
+  description: string;
+  target: number;
+  current: number;
+  xpReward: number;
+  completed: boolean;
+}
+
+export function getDailyMissions(): DailyMission[] {
+  const todayStr = new Date().toISOString().split("T")[0];
+  const missionsKey = `fa_daily_missions_${todayStr}`;
+  
+  try {
+    const stored = localStorage.getItem(missionsKey);
+    if (stored) {
+      return JSON.parse(stored);
+    }
+  } catch {
+    // Fall through to create new missions
+  }
+
+  // Create new daily missions
+  const completedProjects = getCompletedProjects();
+  const streak = getStreak();
+  const totalXp = getTotalXp();
+
+  const missions: DailyMission[] = [
+    {
+      id: "solve_one",
+      title: "Solve 1 coding problem",
+      description: "Complete at least one problem today",
+      target: 1,
+      current: Object.values(completedProjects).filter(Boolean).length,
+      xpReward: 25,
+      completed: false,
+    },
+    {
+      id: "earn_xp",
+      title: "Earn 25 XP",
+      description: "Gain 25 XP from solving problems",
+      target: 25,
+      current: totalXp,
+      xpReward: 50,
+      completed: false,
+    },
+    {
+      id: "maintain_streak",
+      title: "Maintain streak",
+      description: "Keep your daily streak alive",
+      target: 1,
+      current: streak.count >= 1 ? 1 : 0,
+      xpReward: 30,
+      completed: streak.count >= 1,
+    },
+  ];
+
+  localStorage.setItem(missionsKey, JSON.stringify(missions));
+  return missions;
+}
+
+export function updateDailyMissions() {
+  const missions = getDailyMissions();
+  const streak = getStreak();
+  const totalXp = getTotalXp();
+  const todayStr = new Date().toISOString().split("T")[0];
+
+  let updated = false;
+
+  missions.forEach((mission) => {
+    if (mission.completed) return;
+
+    if (mission.id === "solve_one") {
+      const todaySubmissions = getSubmissionHistory()[todayStr] || 0;
+      if (todaySubmissions >= mission.target) {
+        mission.current = todaySubmissions;
+        mission.completed = true;
+        updated = true;
+      }
+    } else if (mission.id === "earn_xp") {
+      if (totalXp >= mission.target) {
+        mission.current = totalXp;
+        mission.completed = true;
+        updated = true;
+      }
+    } else if (mission.id === "maintain_streak") {
+      if (streak.count >= mission.target) {
+        mission.current = streak.count;
+        mission.completed = true;
+        updated = true;
+      }
+    }
+  });
+
+  if (updated) {
+    const missionsKey = `fa_daily_missions_${todayStr}`;
+    localStorage.setItem(missionsKey, JSON.stringify(missions));
+  }
+}
+
+// ── Enhanced Badges with Progress ───────────────────────────────────────────────
+export interface BadgeWithProgress extends Badge {
+  progress: number;
+  xpReward: number;
+  target: number;
+  current: number;
+}
+
+export function getBadgesWithProgress(completedCount: number, streak: number): BadgeWithProgress[] {
+  const badges = [
+    {
+      id: "first_step",
+      title: "First Steps",
+      description: "Completed your first coding problem",
+      icon: "🌱",
+      unlocked: completedCount >= 1,
+      progress: Math.min(100, (completedCount / 1) * 100),
+      xpReward: 50,
+      target: 1,
+      current: completedCount,
+    },
+    {
+      id: "pythonista",
+      title: "Pythonista",
+      description: "Completed 5 or more coding problems",
+      icon: "🐍",
+      unlocked: completedCount >= 5,
+      progress: Math.min(100, (completedCount / 5) * 100),
+      xpReward: 100,
+      target: 5,
+      current: completedCount,
+    },
+    {
+      id: "streak_star",
+      title: "Streak Star",
+      description: "Maintained a streak of 3 or more days",
+      icon: "🔥",
+      unlocked: streak >= 3,
+      progress: Math.min(100, (streak / 3) * 100),
+      xpReward: 75,
+      target: 3,
+      current: streak,
+    },
+    {
+      id: "master",
+      title: "Master Hacker",
+      description: "Completed 10 or more coding problems",
+      icon: "🏆",
+      unlocked: completedCount >= 10,
+      progress: Math.min(100, (completedCount / 10) * 100),
+      xpReward: 200,
+      target: 10,
+      current: completedCount,
+    },
+    {
+      id: "speed_runner",
+      title: "Speed Runner",
+      description: "Complete 20 problems",
+      icon: "⚡",
+      unlocked: completedCount >= 20,
+      progress: Math.min(100, (completedCount / 20) * 100),
+      xpReward: 300,
+      target: 20,
+      current: completedCount,
+    },
+  ];
+
+  return badges;
+}
+
+// ── Mock Leaderboard ────────────────────────────────────────────────────────────
+export interface LeaderboardEntry {
+  rank: number;
+  name: string;
+  xp: number;
+  streak: number;
+}
+
+export function getLeaderboard(): LeaderboardEntry[] {
+  // In a real app, this would come from the backend
+  // For now, return mock data with current user included
+  const currentXp = getTotalXp();
+  const currentStreak = getStreak().count;
+  
+  const mockData: LeaderboardEntry[] = [
+    { rank: 1, name: "Priya", xp: 2500, streak: 15 },
+    { rank: 2, name: "Rahul", xp: 1800, streak: 8 },
+    { rank: 3, name: "Ashwini", xp: currentXp, streak: currentStreak },
+    { rank: 4, name: "Sneha", xp: 1200, streak: 5 },
+    { rank: 5, name: "Arjun", xp: 950, streak: 3 },
+  ];
+
+  // Sort by XP descending
+  mockData.sort((a, b) => b.xp - a.xp);
+  
+  // Update ranks
+  mockData.forEach((entry, index) => {
+    entry.rank = index + 1;
+  });
+
+  return mockData;
+}
