@@ -1,16 +1,76 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { api } from '../api';
 import { useLessonData } from '../hooks/useLessonData';
-import { useProgress } from '../hooks/useProgress';
+import { useProgress, getCourseProgress, isLectureUnlocked } from '../hooks/useProgress';
 import {
-  LessonSidebar,
   LessonSection,
   QuizEngine,
   ProblemCard,
   SummaryCard,
 } from '../components/lesson';
 import type { CodingProblem } from '../types/lesson';
+import { ArrowLeft, ArrowRight, CheckCircle, Lock } from 'lucide-react';
+
+// ── Helpers ──────────────────────────────────────────────────────────────────
+
+type Page =
+  | { type: 'section'; index: number }
+  | { type: 'quiz' }
+  | { type: 'problems' }
+  | { type: 'summary' };
+
+function pageId(page: Page, sections: Array<{ id: string }>): string {
+  if (page.type === 'section') return sections[page.index].id;
+  return page.type;
+}
+
+function pageLabel(page: Page, sections: Array<{ label: string }>): string {
+  if (page.type === 'section') return sections[page.index].label;
+  if (page.type === 'quiz') return 'Quiz';
+  if (page.type === 'problems') return 'Problems';
+  return 'Summary';
+}
+
+type PageStatus = 'completed' | 'current' | 'upcoming';
+
+function LockedLectureView({ slug, lectureNumber, courseTitle }: { slug: string; lectureNumber: number; courseTitle: string }) {
+  const navigate = useNavigate();
+  const prevLecture = lectureNumber > 0 ? lectureNumber - 1 : null;
+
+  return (
+    <div className="w-full h-full flex items-center justify-center bg-[#0b0f19]">
+      <div className="text-center max-w-md p-8">
+        <div className="w-20 h-20 rounded-2xl bg-slate-800/60 border border-slate-700/40 flex items-center justify-center mx-auto mb-6">
+          <Lock size={40} className="text-slate-500" />
+        </div>
+        <h2 className="text-2xl font-bold text-white mb-3">Lecture Locked</h2>
+        <p className="text-slate-400 text-sm mb-6">
+          Complete the previous lecture first to unlock this one.
+          You need to view the theory, submit the quiz, and complete the hands-on task.
+        </p>
+        <div className="space-y-3">
+          {prevLecture !== null && (
+            <button
+              onClick={() => navigate(`/course/${slug}/lecture/${prevLecture}`)}
+              className="inline-flex items-center gap-2 text-sm font-medium text-white px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 transition-all"
+            >
+              <ArrowLeft size={16} />
+              Go to Lecture {prevLecture}
+            </button>
+          )}
+          <br />
+          <button
+            onClick={() => navigate(`/course/${slug}`)}
+            className="mt-2 text-xs text-blue-400 hover:text-blue-300"
+          >
+            Back to Course
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 // ── Fallback legacy renderer (notes.md) ──────────────────────────────────────
 
@@ -35,16 +95,6 @@ function LegacyLecturePage({ slug, lectureNumber }: { slug: string; lectureNumbe
           <span className="text-slate-600">/</span>
           <span className="text-white">Lecture {lectureNumber}</span>
         </nav>
-        <div className="flex items-center gap-2">
-          {lectureNumber > 0 && (
-            <button onClick={() => navigate(`/course/${slug}/lecture/${lectureNumber - 1}`)} className="p-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 transition-all">
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
-            </button>
-          )}
-          <button onClick={() => navigate(`/course/${slug}/lecture/${lectureNumber + 1}`)} className="p-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 transition-all">
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
-          </button>
-        </div>
       </div>
       <div className="p-6 max-w-3xl mx-auto">
         <pre className="text-sm text-slate-300 leading-relaxed whitespace-pre-wrap font-sans">{content || 'Loading lecture content…'}</pre>
@@ -68,14 +118,14 @@ export default function LecturePage() {
     markPracticeCompleted,
     markQuizCompleted,
     markProblemCompleted,
+    markHandsOnTaskCompleted,
     markLectureCompleted,
   } = useProgress(slug, lectureNumber);
 
-  const [activeSection, setActiveSection] = useState('overview');
+  const [currentPageIdx, setCurrentPageIdx] = useState(0);
   const [allLectures, setAllLectures] = useState<Array<{ number: number; title: string }>>([]);
-  const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
 
-  // Load lecture list for prev/next navigation
+  // Load lecture list for prev/next lecture navigation
   useEffect(() => {
     if (!slug) return;
     api.courseLectures(slug).then(lectures => {
@@ -83,44 +133,73 @@ export default function LecturePage() {
     }).catch(() => {});
   }, [slug]);
 
-  // IntersectionObserver to track active section
-  useEffect(() => {
-    const refs = sectionRefs.current;
-    const obs = new IntersectionObserver(
-      entries => {
-        for (const entry of entries) {
-          const id = entry.target.id.replace('section-', '');
-          if (entry.isIntersecting && entry.intersectionRatio > 0.2) {
-            setActiveSection(id);
-            markSectionVisited(id);
-          }
-        }
-      },
-      { threshold: [0, 0.2, 0.4, 0.6] }
-    );
-    for (const el of Object.values(refs)) {
-      if (el) obs.observe(el);
-    }
-    return () => obs.disconnect();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // Derive unlock status from stored progress (no state needed — avoids loops)
+  const unlocked = useMemo(() => {
+    if (!slug) return null;
+    if (lectureNumber === 0) return true;
+    const cp = getCourseProgress(slug);
+    return isLectureUnlocked(lectureNumber, cp);
+  }, [slug, lectureNumber]);
+
+  // Build ordered page list
+  const pages: Page[] = useMemo(() => {
+    if (!lessonData) return [];
+    const quiz = lessonData.quiz ?? [];
+    const problems: CodingProblem[] = lessonData.problems ?? [];
+    const summary = lessonData.summary;
+
+    const result: Page[] = lessonData.sections.map((_, i) => ({ type: 'section', index: i }));
+    if (quiz.length > 0) result.push({ type: 'quiz' });
+    if (problems.length > 0) result.push({ type: 'problems' });
+    if (summary) result.push({ type: 'summary' });
+    return result;
   }, [lessonData]);
 
-  const setSectionRef = useCallback((id: string) => (el: HTMLElement | null) => {
-    sectionRefs.current[id] = el;
-  }, []);
+  // Keep currentPageIdx in bounds
+  useEffect(() => {
+    if (currentPageIdx >= pages.length) {
+      setCurrentPageIdx(Math.max(0, pages.length - 1));
+    }
+  }, [pages.length, currentPageIdx]);
 
-  const scrollToSection = (id: string) => {
-    document.getElementById(`section-${id}`)?.scrollIntoView({ behavior: 'smooth' });
-  };
+  // Mark sections visited on navigation — guard against Strict Mode double-fire
+  const visitedRef = useRef<Set<number>>(new Set());
+  useEffect(() => {
+    const page = pages[currentPageIdx];
+    if (!page || !lessonData) return;
+    // Already visited this page index this mount — skip to prevent loops
+    if (visitedRef.current.has(currentPageIdx)) return;
+    visitedRef.current.add(currentPageIdx);
+    if (page.type === 'section') {
+      markSectionVisited(lessonData.sections[page.index].id);
+    } else {
+      markSectionVisited(page.type);
+    }
+  }, [currentPageIdx, pages, lessonData, markSectionVisited]);
+
+  // Compute status for each page item
+  const pageStatuses: PageStatus[] = useMemo(() => {
+    return pages.map((page, idx) => {
+      if (idx < currentPageIdx) return 'completed';
+      if (idx === currentPageIdx) return 'current';
+      return 'upcoming';
+    });
+  }, [pages, currentPageIdx]);
 
   if (!slug) return null;
+
+  // Show locked view
+  if (unlocked === false) {
+    const courseTitle = slug === 'cs50p' ? 'CS50 Python' : slug === 'cs50ai' ? 'CS50 AI' : slug.toUpperCase();
+    return <LockedLectureView slug={slug} lectureNumber={lectureNumber} courseTitle={courseTitle} />;
+  }
 
   // Fallback to legacy renderer if no lesson.json
   if (!loading && (error === 'no-lesson-json' || (!lessonData && error))) {
     return <LegacyLecturePage slug={slug} lectureNumber={lectureNumber} />;
   }
 
-  if (loading) {
+  if (loading || unlocked === null) {
     return (
       <div className="flex items-center justify-center h-64">
         <svg className="h-7 w-7 animate-spin text-blue-500" fill="none" viewBox="0 0 24 24">
@@ -136,84 +215,108 @@ export default function LecturePage() {
   const prevLecture = allLectures.find(l => l.number === lectureNumber - 1);
   const nextLecture = allLectures.find(l => l.number === lectureNumber + 1);
   const courseTitle = slug === 'cs50p' ? 'CS50 Python' : slug === 'cs50ai' ? 'CS50 AI' : slug.toUpperCase();
-
   const quiz = lessonData.quiz ?? [];
   const problems: CodingProblem[] = lessonData.problems ?? [];
   const summary = lessonData.summary;
 
+  const currentPage = pages[currentPageIdx];
+  const isFirstPage = currentPageIdx === 0;
+  const isLastPage = currentPageIdx === pages.length - 1;
+
+  const goNext = () => {
+    if (!isLastPage) setCurrentPageIdx(c => c + 1);
+  };
+  const goPrev = () => {
+    if (!isFirstPage) setCurrentPageIdx(c => c - 1);
+  };
+
   return (
     <div className="w-full flex flex-col" style={{ height: 'calc(100vh - 64px)' }}>
-      {/* ── Top Nav Bar ── */}
+      {/* ── Top Bar ── */}
       <div className="flex-shrink-0 flex items-center justify-between border-b border-slate-700/20 px-6 py-3 bg-slate-900/40 backdrop-blur-sm">
-        <div className="flex items-center gap-3">
-          {prevLecture && (
-            <button
-              onClick={() => navigate(`/course/${slug}/lecture/${prevLecture.number}`)}
-              className="p-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 transition-all"
-              title={`Previous: ${prevLecture.title}`}
-            >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
-            </button>
-          )}
-          <nav className="hidden md:flex items-center gap-2 text-xs text-slate-400">
-            <button onClick={() => navigate('/')} className="text-blue-400 hover:text-blue-300 transition-colors">Dashboard</button>
-            <span className="text-slate-600">/</span>
-            <button onClick={() => navigate(`/course/${slug}`)} className="text-blue-400 hover:text-blue-300 transition-colors">{courseTitle}</button>
-            <span className="text-slate-600">/</span>
-            <span className="text-white font-medium">{lessonData.title}</span>
-          </nav>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <span className="text-sm font-medium text-white hidden sm:block">{lessonData.title}</span>
-          <span className="text-[11px] text-slate-400 hidden sm:block">Week {lectureNumber} · {lessonData.estimatedMinutes} min</span>
-          {nextLecture && (
-            <button
-              onClick={() => navigate(`/course/${slug}/lecture/${nextLecture.number}`)}
-              className="p-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 transition-all"
-              title={`Next: ${nextLecture.title}`}
-            >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
-            </button>
-          )}
+        <nav className="flex items-center gap-2 text-xs text-slate-400">
+          <button onClick={() => navigate('/')} className="text-blue-400 hover:text-blue-300 transition-colors">Dashboard</button>
+          <span className="text-slate-600">/</span>
+          <button onClick={() => navigate(`/course/${slug}`)} className="text-blue-400 hover:text-blue-300 transition-colors">{courseTitle}</button>
+          <span className="text-slate-600">/</span>
+          <span className="text-white font-medium">{lessonData.title}</span>
+        </nav>
+        <div className="flex items-center gap-3 text-xs text-slate-400">
+          <span>{currentPageIdx + 1} / {pages.length}</span>
         </div>
       </div>
 
-      {/* ── Body: Sidebar + Content ── */}
+      {/* ── Body: nav panel + content ── */}
       <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar */}
-        <LessonSidebar
-          sections={lessonData.sections}
-          hasQuiz={quiz.length > 0}
-          hasProblems={problems.length > 0}
-          hasSummary={!!summary}
-          activeSection={activeSection}
-          progress={progress}
-          onNavigate={scrollToSection}
-        />
+        {/* Left nav panel */}
+        <aside className="hidden md:flex flex-shrink-0 w-56 flex-col border-r border-slate-700/30 bg-slate-900/60 overflow-y-auto">
+          <div className="p-3 space-y-0.5">
+            {pages.map((page, idx) => {
+              const status = pageStatuses[idx];
+              const id = pageId(page, lessonData.sections);
+              const label = pageLabel(page, lessonData.sections);
 
-        {/* Main Content */}
+              return (
+                <button
+                  key={id}
+                  onClick={() => setCurrentPageIdx(idx)}
+                  className={`w-full flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-medium transition-all duration-200 text-left ${
+                    status === 'current'
+                      ? 'bg-blue-600/15 text-blue-300 border border-blue-500/25'
+                      : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border border-transparent'
+                  }`}
+                >
+                  {/* Status indicator */}
+                  <span className="w-4 h-4 flex items-center justify-center flex-shrink-0">
+                    {status === 'completed' && (
+                      <CheckCircle size={14} className="text-green-400" />
+                    )}
+                    {status === 'current' && (
+                      <span className="w-2 h-2 rounded-full bg-blue-400" />
+                    )}
+                    {status === 'upcoming' && (
+                      <span className="w-2 h-2 rounded-full bg-slate-600" />
+                    )}
+                  </span>
+                  <span className="truncate">{label}</span>
+                </button>
+              );
+            })}
+          </div>
+          {/* Completion status */}
+          <div className="mt-auto p-3 border-t border-slate-700/30">
+            <div className="text-[10px] text-slate-500 space-y-1">
+              <div className="flex justify-between">
+                <span>Quiz</span>
+                <span className={progress.quizCompleted ? 'text-green-400' : 'text-slate-600'}>
+                  {progress.quizCompleted ? '✓' : '—'}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span>Task</span>
+                <span className={progress.handsOnTaskCompleted ? 'text-green-400' : 'text-slate-600'}>
+                  {progress.handsOnTaskCompleted ? '✓' : '—'}
+                </span>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        {/* Right: lecture content */}
         <main className="flex-1 overflow-y-auto">
-          <div className="p-6 max-w-4xl mx-auto space-y-12">
-
-            {/* ── Data-driven sections ── */}
-            {lessonData.sections.map((section, i) => (
+          <div className="p-6 max-w-4xl mx-auto">
+            {/* ── Current page ── */}
+            {currentPage?.type === 'section' && (
               <LessonSection
-                key={section.id}
-                section={section}
-                index={i}
-                innerRef={setSectionRef(section.id)}
-                onPracticeAttempt={() => markPracticeAttempted(section.id)}
-                onPracticeComplete={() => markPracticeCompleted(section.id)}
+                section={lessonData.sections[currentPage.index]}
+                index={currentPage.index}
+                onPracticeAttempt={() => markPracticeAttempted(lessonData.sections[currentPage.index].id)}
+                onPracticeComplete={() => markPracticeCompleted(lessonData.sections[currentPage.index].id)}
               />
-            ))}
+            )}
 
-            {/* ── Quiz Section ── */}
-            {quiz.length > 0 && (
-              <section
-                id="section-quiz"
-                ref={setSectionRef('quiz') as any}
-              >
+            {currentPage?.type === 'quiz' && (
+              <section id="section-quiz">
                 <div className="space-y-5">
                   <h2 className="text-xl font-bold text-white flex items-center gap-3">
                     <span className="w-8 h-8 rounded-xl bg-blue-600/20 flex items-center justify-center text-sm font-bold text-blue-400">
@@ -223,7 +326,7 @@ export default function LecturePage() {
                   </h2>
                   {progress.quizCompleted && (
                     <div className="flex items-center gap-2 text-sm text-green-400 bg-green-900/20 border border-green-700/30 rounded-xl px-4 py-2">
-                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                      <CheckCircle size={16} />
                       Quiz completed — Score: {progress.quizScore}/{quiz.length}
                     </div>
                   )}
@@ -238,12 +341,8 @@ export default function LecturePage() {
               </section>
             )}
 
-            {/* ── Problems Section ── */}
-            {problems.length > 0 && (
-              <section
-                id="section-problems"
-                ref={setSectionRef('problems') as any}
-              >
+            {currentPage?.type === 'problems' && (
+              <section id="section-problems">
                 <div className="space-y-4">
                   <h2 className="text-xl font-bold text-white flex items-center gap-3">
                     <span className="w-8 h-8 rounded-xl bg-orange-600/20 flex items-center justify-center text-sm font-bold text-orange-400">
@@ -269,18 +368,16 @@ export default function LecturePage() {
                         onComplete={(id) => {
                           markProblemCompleted(id);
                           markSectionVisited('problems');
+                          markHandsOnTaskCompleted();
                         }}
                       />
                     ))}
                   </div>
-
-                  {/* Link to full project page for detailed problems */}
                   <div className="pt-2">
                     <button
                       onClick={() => navigate(`/course/${slug}/lecture/${lectureNumber}/project`)}
                       className="inline-flex items-center gap-2 text-sm font-medium text-orange-400 hover:text-orange-300 px-4 py-2 rounded-xl bg-orange-500/10 hover:bg-orange-500/15 border border-orange-500/20 transition-all"
                     >
-                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>
                       Open Full Problem Set
                     </button>
                   </div>
@@ -288,33 +385,50 @@ export default function LecturePage() {
               </section>
             )}
 
-            {/* ── Summary Section ── */}
-            {summary && (
-              <section
-                id="section-summary"
-                ref={setSectionRef('summary') as any}
-              >
-                <div className="space-y-5">
-                  <h2 className="text-xl font-bold text-white flex items-center gap-3">
-                    <span className="w-8 h-8 rounded-xl bg-green-600/20 flex items-center justify-center text-sm font-bold text-green-400">
-                      {lessonData.sections.length + (quiz.length > 0 ? 1 : 0) + (problems.length > 0 ? 1 : 0) + 1}
-                    </span>
-                    Summary
-                  </h2>
-                  <SummaryCard
-                    summary={summary}
-                    lectureTitle={lessonData.title}
-                    nextLectureTitle={nextLecture?.title}
-                    onNext={() => {
-                      markLectureCompleted();
-                      if (nextLecture) navigate(`/course/${slug}/lecture/${nextLecture.number}`);
-                    }}
-                  />
-                </div>
+            {currentPage?.type === 'summary' && (
+              <section id="section-summary">
+                <SummaryCard
+                  summary={summary!}
+                  lectureTitle={lessonData.title}
+                  nextLectureTitle={nextLecture?.title}
+                  onNext={() => {
+                    markLectureCompleted();
+                    if (nextLecture) navigate(`/course/${slug}/lecture/${nextLecture.number}`);
+                  }}
+                />
               </section>
             )}
 
-            <div className="h-16" />
+            {/* ── Navigation — Previous / Next ── */}
+            <div className="flex items-center justify-between mt-10 pt-6 border-t border-slate-700/20">
+              <div>
+                {!isFirstPage && (
+                  <button
+                    onClick={goPrev}
+                    className="inline-flex items-center gap-2 text-sm font-medium text-slate-300 hover:text-white px-4 py-2.5 rounded-xl bg-slate-800/50 hover:bg-slate-800/80 border border-slate-700/40 transition-all"
+                  >
+                    <ArrowLeft size={16} />
+                    Previous
+                  </button>
+                )}
+              </div>
+              <div className="text-xs text-slate-500">
+                {currentPageIdx + 1} / {pages.length}
+              </div>
+              <div>
+                {!isLastPage && (
+                  <button
+                    onClick={goNext}
+                    className="inline-flex items-center gap-2 text-sm font-semibold text-white px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 transition-all"
+                  >
+                    Next
+                    <ArrowRight size={16} />
+                  </button>
+                )}
+              </div>
+            </div>
+
+            <div className="h-8" />
           </div>
         </main>
       </div>

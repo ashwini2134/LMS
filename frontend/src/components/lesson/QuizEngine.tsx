@@ -1,3 +1,4 @@
+import { PartyPopper, Book } from 'lucide-react';
 import { useState } from 'react';
 import type { QuizQuestion } from '../../types/lesson';
 
@@ -86,7 +87,7 @@ export default function QuizEngine({ questions, onComplete }: QuizEngineProps) {
     return (
       <div className={`rounded-2xl border p-6 text-center space-y-5 ${passed ? 'border-green-500/25 bg-gradient-to-br from-green-600/10 to-slate-800/40' : 'border-orange-500/25 bg-gradient-to-br from-orange-600/10 to-slate-800/40'}`}>
         <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mx-auto ${passed ? 'bg-green-600/20' : 'bg-orange-600/20'}`}>
-          <span className="text-3xl">{passed ? '🎉' : '📖'}</span>
+          <span className="text-3xl">{passed ? <PartyPopper size={32} className="text-green-400" /> : <Book size={32} className="text-orange-400" />}</span>
         </div>
         <div>
           <p className="text-2xl font-bold text-white">{pct}%</p>

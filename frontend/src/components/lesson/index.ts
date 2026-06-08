@@ -8,4 +8,5 @@ export { default as ProblemCard } from './ProblemCard';
 export { default as SummaryCard } from './SummaryCard';
 export { default as ProgressWidget } from './ProgressWidget';
 export { default as LessonSidebar } from './LessonSidebar';
+export { default as VisualAidCard } from './VisualAidCard';
 export { default as LessonSection } from './LessonSection';

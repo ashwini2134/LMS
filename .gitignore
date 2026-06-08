@@ -41,3 +41,6 @@ yarn-error.log*
 .claude-flow/
 .mcp.json
 CLAUDE.md
+
+# Nested repo clone (local copy)
+LMS/

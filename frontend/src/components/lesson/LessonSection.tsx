@@ -1,5 +1,6 @@
 import type { LessonSection, ContentBlock } from '../../types/lesson';
 import ConceptVisualizationCard from './ConceptVisualizationCard';
+import VisualAidCard from './VisualAidCard';
 import CodeExampleCard from './CodeExampleCard';
 import ReflectionCard from './ReflectionCard';
 import PracticeCard from './PracticeCard';
@@ -83,6 +84,8 @@ function renderBlock(block: ContentBlock, _sectionId: string, onAttempt?: () => 
       return <AnalogyBlock block={block} />;
     case 'concept_visualization':
       return <ConceptVisualizationCard block={block} />;
+    case 'visual_aid':
+      return <VisualAidCard block={block} />;
     case 'code_example':
       return <CodeExampleCard block={block} />;
     case 'reflection':

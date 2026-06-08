@@ -1,30 +1,25 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "./auth";
-import { api, type Course, type Lecture } from "./api";
+import { api, type Course } from "./api";
 import {
-  ArrowLeft,
-  Award,
   BookOpen,
   ChevronDown,
-  ChevronRight,
-  FileText,
   LayoutDashboard,
-  Menu,
   Trophy,
-  User,
+  Menu,
   X,
 } from "lucide-react";
 
-function Logo() {
+function Logo({ expanded }: { expanded: boolean }) {
   return (
-    <NavLink to="/" className="flex items-center gap-2 flex-shrink-0 px-4 h-16 border-b border-slate-700/50">
+    <NavLink to="/" className="flex items-center gap-2 flex-shrink-0 px-4 h-16 border-b border-slate-700/50 overflow-hidden">
       <img
         src={`${import.meta.env.BASE_URL}logo.svg`}
         alt="Fraylon Academy"
-        className="h-8 w-auto object-contain"
+        className="h-8 w-auto object-contain flex-shrink-0"
       />
-      <span className="hidden sm:block font-bold text-slate-100 text-base tracking-wide">
+      <span className={`font-bold text-slate-100 text-base tracking-wide whitespace-nowrap transition-opacity duration-200 ${expanded ? 'opacity-100' : 'opacity-0'}`}>
         Fraylon
       </span>
     </NavLink>
@@ -40,126 +35,63 @@ const navLinkActive =
 const navLinkInactive =
   "text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 border-transparent hover:border-slate-700/50";
 
-interface NavItemProps {
-  to: string;
-  icon: React.ReactNode;
-  label: string;
-  end?: boolean;
-  onClick?: () => void;
-}
+const subLinkBase =
+  "flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 border";
 
-function NavItem({ to, icon, label, end, onClick }: NavItemProps) {
-  return (
-    <NavLink
-      to={to}
-      end={end}
-      onClick={onClick}
-      className={({ isActive }) =>
-        `${navLinkBase} ${isActive ? navLinkActive : navLinkInactive}`
-      }
-    >
-      <span className="w-5 h-5 flex items-center justify-center flex-shrink-0">
-        {icon}
-      </span>
-      <span className="truncate flex-1 text-left">{label}</span>
-    </NavLink>
-  );
-}
+const subLinkActive =
+  "text-blue-300 bg-blue-600/10 border-blue-500/20";
 
-function parseLocation(pathname: string): { courseSlug: string | null; lectureNumber: number | null } {
-  const parts = pathname.split("/").filter(Boolean);
-  // /course/:slug or /course/:slug/lecture/:number
-  if (parts[0] === "course" && parts[1]) {
-    const slug = parts[1];
-    const num = parts[2] === "lecture" ? Number(parts[3]) : null;
-    return { courseSlug: slug, lectureNumber: Number.isFinite(num) ? num : null };
-  }
-  return { courseSlug: null, lectureNumber: null };
-}
+const subLinkInactive =
+  "text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border-transparent";
 
 export default function Shell() {
   const { user, logout } = useAuth();
-  const [courses, setCourses] = useState<Course[]>([]);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [expandedSection, setExpandedSection] = useState<"courses" | null>(null);
-  const [selectedCourseSlug, setSelectedCourseSlug] = useState<string | null>(null);
-  const [lectureCache, setLectureCache] = useState<Record<string, Lecture[]>>({});
-  const [loadingLectures, setLoadingLectures] = useState(false);
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [coursesOpen, setCoursesOpen] = useState(false);
+  const [expanded, setExpanded] = useState(false);
   const location = useLocation();
-  const navigate = useNavigate();
+  const leaveTimer = useRef<number | null>(null);
 
   const isWorkspace = location.pathname.includes("/project/") && !location.pathname.endsWith("/project");
+  const onCoursePage = location.pathname.startsWith("/course/");
+  const courseSlug = onCoursePage ? location.pathname.split("/")[2] : null;
 
-  const { courseSlug: activeCourseSlug } = useMemo(
-    () => parseLocation(location.pathname),
-    [location.pathname]
-  );
-
-  // Auto-select course when navigating to a course page
-  useEffect(() => {
-    if (activeCourseSlug && activeCourseSlug !== selectedCourseSlug) {
-      setSelectedCourseSlug(activeCourseSlug);
-      setExpandedSection(null);
-    }
-  }, [activeCourseSlug, selectedCourseSlug]);
-
-  // Fetch courses on mount
   useEffect(() => {
     api.courses().then(setCourses).catch(() => {});
   }, []);
 
-  // Fetch lectures when a course is selected
   useEffect(() => {
-    if (!selectedCourseSlug) return;
-    if (lectureCache[selectedCourseSlug]) return;
-    setLoadingLectures(true);
-    api
-      .courseLectures(selectedCourseSlug)
-      .then((lectures) => {
-        setLectureCache((prev) => ({ ...prev, [selectedCourseSlug]: lectures }));
-      })
-      .catch(() => {})
-      .finally(() => setLoadingLectures(false));
-  }, [selectedCourseSlug, lectureCache]);
+    if (onCoursePage) setCoursesOpen(true);
+  }, [onCoursePage]);
 
-  const closeSidebar = useCallback(() => setSidebarOpen(false), []);
-
-  const handleCoursesClick = useCallback(() => {
-    if (selectedCourseSlug) {
-      setSelectedCourseSlug(null);
-      setExpandedSection("courses");
-    } else {
-      setExpandedSection((prev) => (prev === "courses" ? null : "courses"));
-    }
-  }, [selectedCourseSlug]);
-
-  const handleCourseClick = useCallback(
-    (slug: string) => {
-      setSelectedCourseSlug(slug);
-      setExpandedSection(null);
-      closeSidebar();
-      navigate(`/course/${slug}`);
-    },
-    [closeSidebar, navigate]
-  );
-
-  const handleBackToCourses = useCallback(() => {
-    setSelectedCourseSlug(null);
-    setExpandedSection("courses");
+  // Reset sidebar to collapsed state on route change
+  useEffect(() => {
+    return () => {
+      if (leaveTimer.current) clearTimeout(leaveTimer.current);
+    };
   }, []);
 
-  const topNavItems = [
-    { to: "/", icon: <LayoutDashboard size={18} />, label: "Dashboard", end: true },
-  ];
+  const handleMouseEnter = () => {
+    if (leaveTimer.current) {
+      clearTimeout(leaveTimer.current);
+      leaveTimer.current = null;
+    }
+    setExpanded(true);
+  };
 
-  const bottomNavItems = [
-    { to: "/", icon: <Trophy size={18} />, label: "Achievements" },
-    { to: "/", icon: <Award size={18} />, label: "Leaderboard" },
-    { to: "/", icon: <User size={18} />, label: "Profile" },
-  ];
+  const handleMouseLeave = () => {
+    leaveTimer.current = window.setTimeout(() => {
+      setExpanded(false);
+      setCoursesOpen(false);
+    }, 150);
+  };
 
-  const lectures = selectedCourseSlug ? lectureCache[selectedCourseSlug] ?? [] : [];
-  const selectedCourse = courses.find((c) => c.slug === selectedCourseSlug);
+  const handleCourseClick = () => {
+    setSidebarOpen(false);
+    // Collapse sidebar with a tiny delay so the navigation happens first
+    setTimeout(() => setExpanded(false), 100);
+  };
 
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-slate-900">
@@ -211,157 +143,115 @@ export default function Shell() {
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
         <aside
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
           className={`fixed inset-y-0 left-0 md:relative md:inset-auto
           flex-shrink-0 flex flex-col border-r border-slate-700/50
-          bg-slate-900/95 backdrop-blur-sm transition-transform duration-300 ease-in-out
-          z-40 w-64
+          bg-slate-900/95 backdrop-blur-sm transition-all duration-200 ease-in-out
+          z-40
+          ${expanded ? "w-64" : "w-16"}
           ${sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
           `}
         >
-          <Logo />
+          <div className="flex-shrink-0 overflow-hidden">
+            <Logo expanded={expanded} />
+          </div>
 
           <nav className="flex-1 overflow-y-auto p-3 space-y-1">
-            {/* Top nav items */}
-            {topNavItems.map((item) => (
-              <NavItem
-                key={item.to + (item.label)}
-                to={item.to}
-                icon={item.icon}
-                label={item.label}
-                end={item.end}
-                onClick={closeSidebar}
-              />
-            ))}
+            {/* Dashboard */}
+            <NavLink
+              to="/"
+              end
+              onClick={() => setSidebarOpen(false)}
+              className={({ isActive }) =>
+                `${navLinkBase} ${isActive ? navLinkActive : navLinkInactive} ${expanded ? '' : 'justify-center px-2'}`
+              }
+              title="Dashboard"
+            >
+              <span className="w-5 h-5 flex items-center justify-center flex-shrink-0">
+                <LayoutDashboard size={18} />
+              </span>
+              <span className={`truncate flex-1 text-left transition-opacity duration-200 ${expanded ? 'opacity-100' : 'opacity-0 w-0 overflow-hidden'}`}>
+                Dashboard
+              </span>
+            </NavLink>
 
-            {/* Courses section */}
+            {/* Courses dropdown */}
             <div>
               <button
-                onClick={handleCoursesClick}
-                className={`${navLinkBase} w-full ${
-                  expandedSection === "courses" || selectedCourseSlug
-                    ? navLinkActive
-                    : navLinkInactive
-                }`}
+                onClick={() => expanded && setCoursesOpen((o) => !o)}
+                onMouseEnter={() => !expanded && setExpanded(true)}
+                className={`${navLinkBase} ${expanded ? '' : 'justify-center px-2'} w-full ${navLinkInactive}`}
+                title="Courses"
               >
                 <span className="w-5 h-5 flex items-center justify-center flex-shrink-0">
-                  {selectedCourseSlug ? (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleBackToCourses();
-                      }}
-                      className="hover:text-blue-200 transition-colors"
-                      title="Back to courses"
-                    >
-                      <ArrowLeft size={18} />
-                    </button>
-                  ) : (
-                    <BookOpen size={18} />
-                  )}
+                  <BookOpen size={18} />
                 </span>
-                <span className="truncate flex-1 text-left">
-                  {selectedCourseSlug ? selectedCourse?.title ?? "Course" : "Courses"}
+                <span className={`truncate flex-1 text-left transition-opacity duration-200 ${expanded ? 'opacity-100' : 'opacity-0 w-0 overflow-hidden'}`}>
+                  Courses
                 </span>
-                {!selectedCourseSlug && (
-                  <span className="flex-shrink-0 text-slate-500 transition-transform duration-200">
-                    {expandedSection === "courses" ? (
-                      <ChevronDown size={16} />
-                    ) : (
-                      <ChevronRight size={16} />
-                    )}
-                  </span>
-                )}
+                <ChevronDown
+                  size={16}
+                  className={`text-slate-500 transition-all duration-200 flex-shrink-0 ${
+                    coursesOpen ? "rotate-0" : "-rotate-90"
+                  } ${expanded ? 'opacity-100' : 'opacity-0 w-0 overflow-hidden'}`}
+                />
               </button>
 
-              {/* Course lecture nav */}
-              {selectedCourseSlug && (
-                <div className="mt-1 ml-2 space-y-0.5 border-l border-slate-700/40 pl-2">
-                  {loadingLectures ? (
-                    <div className="py-3 px-3 text-xs text-slate-500 animate-pulse">
-                      Loading lectures...
-                    </div>
-                  ) : lectures.length === 0 ? (
-                    <div className="py-3 px-3 text-xs text-slate-500">
-                      No lectures available
+              <div
+                className={`overflow-hidden transition-all duration-200 ease-in-out ${
+                  expanded && coursesOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+                }`}
+              >
+                <div className="pt-1 pb-1 pl-3 space-y-0.5">
+                  {courses.length === 0 ? (
+                    <div className="px-3 py-2 text-xs text-slate-500 animate-pulse">
+                      Loading...
                     </div>
                   ) : (
-                    lectures.map((lecture) => {
-                      const lecturePath = `/course/${selectedCourseSlug}/lecture/${lecture.number}`;
-                      const isActive =
-                        location.pathname === lecturePath ||
-                        location.pathname.startsWith(lecturePath + "/");
+                    courses.map((course) => {
+                      const isActive = courseSlug === course.slug;
                       return (
                         <NavLink
-                          key={lecture.number}
-                          to={lecturePath}
-                          onClick={closeSidebar}
-                          className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-medium transition-all duration-200 ${
-                            isActive
-                              ? "bg-blue-600/12 text-blue-300"
-                              : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/40"
+                          key={course.id}
+                          to={`/course/${course.slug}`}
+                          onClick={handleCourseClick}
+                          className={`${subLinkBase} ${
+                            isActive ? subLinkActive : subLinkInactive
                           }`}
                         >
-                          <FileText
-                            size={14}
-                            className={
-                              isActive ? "text-blue-400" : "text-slate-500"
-                            }
-                          />
-                          <span className="truncate">{lecture.title}</span>
+                          <span className="w-5 h-5 flex items-center justify-center flex-shrink-0">
+                            {isActive ? (
+                              <span className="w-1.5 h-1.5 rounded-full bg-blue-400" />
+                            ) : (
+                              <span className="w-1.5 h-1.5 rounded-full bg-slate-600" />
+                            )}
+                          </span>
+                          <span className="truncate">{course.title}</span>
                         </NavLink>
                       );
                     })
                   )}
                 </div>
-              )}
-
-              {/* Expanded course list */}
-              {!selectedCourseSlug && expandedSection === "courses" && (
-                <div
-                  className="overflow-hidden transition-all duration-200"
-                  style={{ maxHeight: courses.length * 60 }}
-                >
-                  <div className="mt-1 ml-2 space-y-0.5 border-l border-slate-700/40 pl-2">
-                    {courses.map((course) => {
-                      const isActive = activeCourseSlug === course.slug;
-                      return (
-                        <button
-                          key={course.id}
-                          onClick={() => handleCourseClick(course.slug)}
-                          className={`flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-medium transition-all duration-200 ${
-                            isActive
-                              ? "bg-blue-600/12 text-blue-300"
-                              : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/40"
-                          }`}
-                        >
-                          <BookOpen
-                            size={14}
-                            className={
-                              isActive ? "text-blue-400" : "text-slate-500"
-                            }
-                          />
-                          <span className="truncate">{course.title}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
+              </div>
             </div>
 
-            {/* Separator */}
-            <div className="my-3 border-t border-slate-700/30" />
-
-            {/* Bottom nav items */}
-            {bottomNavItems.map((item) => (
-              <NavItem
-                key={item.label}
-                to={item.to}
-                icon={item.icon}
-                label={item.label}
-                onClick={closeSidebar}
-              />
-            ))}
+            {/* Leaderboard */}
+            <NavLink
+              to="/leaderboard"
+              onClick={() => setSidebarOpen(false)}
+              className={({ isActive }) =>
+                `${navLinkBase} ${isActive ? navLinkActive : navLinkInactive} ${expanded ? '' : 'justify-center px-2'}`
+              }
+              title="Leaderboard"
+            >
+              <span className="w-5 h-5 flex items-center justify-center flex-shrink-0">
+                <Trophy size={18} />
+              </span>
+              <span className={`truncate flex-1 text-left transition-opacity duration-200 ${expanded ? 'opacity-100' : 'opacity-0 w-0 overflow-hidden'}`}>
+                Leaderboard
+              </span>
+            </NavLink>
           </nav>
         </aside>
 

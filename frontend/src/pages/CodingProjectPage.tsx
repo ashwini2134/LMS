@@ -6,6 +6,11 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { api, type ChatMsg, saveCompletedProject, getProjectMetadata, type FailureAnalysisResult, type CodeReviewResult } from "../api";
 import { runPythonMock, type DebugStep } from "../interpreter";
+import {
+  Check, CheckCircle, X, XCircle, AlertTriangle, Gem, Clock,
+  FolderUp, Download, Monitor, Bot, Pencil, MessageSquare,
+  Search, Lightbulb, Bug, Unlock, Settings, RefreshCw,
+} from "lucide-react";
 
 
 export default function CodingProjectPage() {
@@ -139,7 +144,7 @@ export default function CodingProjectPage() {
       } catch (error) {
         console.error(error);
         setStatus("error");
-        setOutput("❌ Failed to load project files.");
+        setOutput("[Error] Failed to load project files.");
       }
     }
 
@@ -251,7 +256,7 @@ export default function CodingProjectPage() {
 
     if (!code.trim()) {
       setStatus("error");
-      setOutput("❌ Code cannot be empty.");
+      setOutput("[Error] Code cannot be empty.");
       setActiveTab("output");
       return;
     }
@@ -263,7 +268,7 @@ export default function CodingProjectPage() {
       const steps = runPythonMock(code, customInput);
       const lastStep = steps[steps.length - 1];
       if (lastStep?.error) {
-        setOutput(lastStep.outputs.join("\n") + "\n\n❌ Execution Error:\n" + lastStep.error);
+        setOutput(lastStep.outputs.join("\n") + "\n\n[Error] Execution Error:\n" + lastStep.error);
       } else {
         setOutput(lastStep ? lastStep.outputs.join("\n") : "Program ran successfully (no output).");
       }
@@ -283,11 +288,11 @@ export default function CodingProjectPage() {
         if (slug && projectId) {
           saveCompletedProject(slug, projectId, true);
         }
-        setOutput(result.message || "✅ All test cases passed!");
+        setOutput(result.message || "[OK] All test cases passed!");
         setFailureAnalysis(null);
       } else {
         setStatus("error");
-        setOutput(result.message || "❌ Test cases failed.");
+        setOutput(result.message || "[Error] Test cases failed.");
         if (projectId) {
           const fa = api.getFailureAnalysis(code, projectId);
           setFailureAnalysis(fa);
@@ -298,7 +303,7 @@ export default function CodingProjectPage() {
     } catch (e: any) {
       console.error(e);
       setStatus("error");
-      setOutput(`❌ Test execution failed.\n\n${e?.message || "Unknown error"}`);
+      setOutput(`[Error] Test execution failed.\n\n${e?.message || "Unknown error"}`);
     }
   }
 
@@ -309,7 +314,7 @@ export default function CodingProjectPage() {
 
     if (!code.trim()) {
       setStatus("error");
-      setOutput("❌ Code cannot be empty.");
+      setOutput("[Error] Code cannot be empty.");
       setActiveTab("output");
       return;
     }
@@ -326,11 +331,11 @@ export default function CodingProjectPage() {
         if (slug && projectId) {
           saveCompletedProject(slug, projectId, true);
         }
-        setOutput("✅ Submission Successful!\n\nAll hidden test cases passed.");
+        setOutput("[OK] Submission Successful!\n\nAll hidden test cases passed.");
         setFailureAnalysis(null);
       } else {
         setStatus("error");
-        setOutput(`❌ Submission Failed.\n\n${result.message || "Please review your logic."}`);
+        setOutput(`[Error] Submission Failed.\n\n${result.message || "Please review your logic."}`);
         if (projectId) {
           const fa = api.getFailureAnalysis(code, projectId);
           setFailureAnalysis(fa);
@@ -341,7 +346,7 @@ export default function CodingProjectPage() {
     } catch (e: any) {
       console.error(e);
       setStatus("error");
-      setOutput(`❌ Submission Failed.\n\n${e?.message || "Unknown error"}`);
+      setOutput(`[Error] Submission Failed.\n\n${e?.message || "Unknown error"}`);
     }
   }
 
@@ -351,7 +356,7 @@ export default function CodingProjectPage() {
       localStorage.setItem(`fa_code_${projectId}`, code);
       setDraftSaved(false);
       setStatus("success");
-      setOutput("✅ Code saved to local storage!");
+      setOutput("[OK] Code saved to local storage!");
       setActiveTab("results");
     }
   }
@@ -432,14 +437,14 @@ export default function CodingProjectPage() {
     if (!file) return;
 
     if (file.size > 50 * 1024) {
-      setToast({ message: "❌ File exceeds size limit (50KB).", type: "error" });
+      setToast({ message: "[Error] File exceeds size limit (50KB).", type: "error" });
       setTimeout(() => setToast(null), 3000);
       return;
     }
 
     const ext = file.name.split(".").pop()?.toLowerCase();
     if (ext !== "py" && ext !== "txt") {
-      setToast({ message: "❌ Only .py and .txt files are supported.", type: "error" });
+      setToast({ message: "[Error] Only .py and .txt files are supported.", type: "error" });
       setTimeout(() => setToast(null), 3000);
       return;
     }
@@ -452,7 +457,7 @@ export default function CodingProjectPage() {
         localStorage.setItem(`fa_code_${projectId}`, text);
         setDraftSaved(true);
       }
-      setToast({ message: "✅ File uploaded successfully!", type: "success" });
+      setToast({ message: "[OK] File uploaded successfully!", type: "success" });
       setTimeout(() => setToast(null), 3000);
     };
     reader.readAsText(file);
@@ -468,7 +473,7 @@ export default function CodingProjectPage() {
     element.click();
     document.body.removeChild(element);
     
-    setToast({ message: "✅ Code downloaded successfully!", type: "success" });
+    setToast({ message: "[OK] Code downloaded successfully!", type: "success" });
     setTimeout(() => setToast(null), 3000);
   };
 
@@ -547,10 +552,10 @@ export default function CodingProjectPage() {
               {metadata.difficulty}
             </span>
             <span className="text-[10px] font-semibold text-slate-400 bg-slate-850 border border-slate-800/80 px-2 py-0.5 rounded-lg">
-              💎 {metadata.xp} XP
+              <Gem className="w-3 h-3 inline" /> {metadata.xp} XP
             </span>
             <span className="text-[10px] font-semibold text-slate-400 bg-slate-850 border border-slate-800/80 px-2 py-0.5 rounded-lg">
-              🕒 {metadata.estimatedTime}
+              <Clock className="w-3 h-3 inline" /> {metadata.estimatedTime}
             </span>
           </div>
           
@@ -703,7 +708,7 @@ export default function CodingProjectPage() {
               onClick={() => fileInputRef.current?.click()}
               className="flex items-center gap-1 px-2.5 py-1 bg-slate-800 hover:bg-slate-750 border border-slate-700 rounded-lg text-[10px] font-bold text-slate-300 transition-colors cursor-pointer"
             >
-              📁 Upload File
+              <FolderUp className="w-3 h-3" /> Upload File
             </button>
             
             {/* Download Action */}
@@ -711,7 +716,7 @@ export default function CodingProjectPage() {
               onClick={handleDownloadCode}
               className="flex items-center gap-1 px-2.5 py-1 bg-slate-800 hover:bg-slate-750 border border-slate-700 rounded-lg text-[10px] font-bold text-slate-300 transition-colors cursor-pointer"
             >
-              📥 Download
+              <Download className="w-3 h-3" /> Download
             </button>
           </div>
 
@@ -778,7 +783,7 @@ export default function CodingProjectPage() {
             {/* Inline lint warnings */}
             {syntaxError && (
               <div className="absolute bottom-4 right-4 bg-red-900/90 text-red-200 px-3.5 py-1.5 rounded-lg shadow-xl border border-red-750/80 z-20 pointer-events-none text-[10px] font-semibold animate-pulse">
-                ⚠️ {syntaxError}
+                <AlertTriangle className="w-3 h-3 inline" /> {syntaxError}
               </div>
             )}
           </div>
@@ -800,7 +805,7 @@ export default function CodingProjectPage() {
                       : "bg-[#10141b]/80 border-t-transparent border-x-transparent text-slate-400 hover:text-slate-200"
                   }`}
                 >
-                  <span>{tab === "results" ? "✔️" : tab === "output" ? "💻" : tab === "mentor" ? "🤖" : "✏️"}</span>
+                  <span>{tab === "results" ? <Check className="w-3 h-3" /> : tab === "output" ? <Monitor className="w-3 h-3" /> : tab === "mentor" ? <Bot className="w-3 h-3" /> : <Pencil className="w-3 h-3" />}</span>
                   {tab === "results" ? "Test Results" : tab === "output" ? "Execution Output" : tab === "mentor" ? "AI Mentor" : "Custom Input"}
                 </button>
               ))}
@@ -815,7 +820,7 @@ export default function CodingProjectPage() {
               <div className="p-4 h-full overflow-y-auto space-y-3">
                 {status === "success" && (
                   <div className="p-3 bg-green-500/10 border border-green-500/20 rounded-xl flex items-start gap-2.5">
-                    <span className="text-sm">✅</span>
+                    <CheckCircle className="w-4 h-4 text-green-400" />
                     <div>
                       <h4 className="font-bold text-xs text-green-400">Success! All tests passed</h4>
                       <p className="text-[11px] text-slate-350 mt-1 whitespace-pre-wrap">{output}</p>
@@ -824,7 +829,7 @@ export default function CodingProjectPage() {
                 )}
                 {status === "error" && (
                   <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-xl flex items-start gap-2.5">
-                    <span className="text-sm">❌</span>
+                    <XCircle className="w-4 h-4 text-red-400" />
                     <div>
                       <h4 className="font-bold text-xs text-red-400">Test Run Failed</h4>
                       <p className="text-[11px] text-slate-350 mt-1 whitespace-pre-wrap font-mono">{output}</p>
@@ -844,7 +849,7 @@ export default function CodingProjectPage() {
               <div className="p-3.5 h-full font-mono text-[11px] overflow-auto bg-[#090d12]/50 text-slate-300 space-y-2">
                 {syntaxError && (
                   <div className="p-2.5 bg-yellow-500/10 border border-yellow-500/20 rounded-lg text-yellow-300 font-sans">
-                    <span className="font-bold text-xs">⚠️ Syntax Check warning:</span>
+                    <AlertTriangle className="w-3 h-3 inline" /><span className="font-bold text-xs"> Syntax Check warning:</span>
                     <div className="font-mono text-[10px] mt-1">{syntaxError}</div>
                   </div>
                 )}
@@ -868,7 +873,7 @@ export default function CodingProjectPage() {
                             : "border-b-transparent text-slate-400 hover:text-slate-200"
                         }`}
                       >
-                        {tab === "chat" ? "💬 Chat" : tab === "review" ? "🔍 Code Review" : tab === "hints" ? "💡 Hints" : "🐞 Visual Debugger"}
+                        {tab === "chat" ? <><MessageSquare className="w-3 h-3" /> Chat</> : tab === "review" ? <><Search className="w-3 h-3" /> Code Review</> : tab === "hints" ? <><Lightbulb className="w-3 h-3" /> Hints</> : <><Bug className="w-3 h-3" /> Visual Debugger</>}
                       </button>
                     ))}
                   </div>
@@ -913,7 +918,7 @@ export default function CodingProjectPage() {
                     <div className="space-y-3.5 pb-4">
                       {chatMessages.length === 0 ? (
                         <div className="flex flex-col items-center justify-center py-6 text-center p-4">
-                          <span className="text-3xl mb-2">🤖</span>
+                          <Bot className="w-8 h-8 mb-2 text-slate-400" />
                           <p className="text-slate-300 text-xs font-bold">I'm your progressive Socratic Mentor!</p>
                           <p className="text-slate-400 text-[10px] max-w-xs mt-1 leading-relaxed">
                             Ask me any question about the problem. I'll guide you step-by-step without giving away the direct solution.
@@ -965,7 +970,7 @@ export default function CodingProjectPage() {
                           disabled={isReviewing}
                           className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white text-xs font-bold px-4 py-2 rounded-xl shadow-md transition-all whitespace-nowrap"
                         >
-                          {isReviewing ? "Analyzing..." : "🔍 Review My Code"}
+                          {isReviewing ? "Analyzing..." : <><Search className="w-3 h-3" /> Review My Code</>}
                         </button>
                       </div>
 
@@ -991,7 +996,7 @@ export default function CodingProjectPage() {
                                     ? "bg-yellow-500/10 border border-yellow-500/20 text-yellow-400"
                                     : "bg-red-500/10 border border-red-500/20 text-red-400"
                                 }`}>
-                                  {check.status === "correct" ? "✓ Correct" : check.status === "warning" ? "⚠ Warning" : "✗ Error"}
+                                  {check.status === "correct" ? "✓ Correct" : check.status === "warning" ? "[!] Warning" : "✗ Error"}
                                 </span>
                               </div>
                             ))}
@@ -1008,7 +1013,7 @@ export default function CodingProjectPage() {
                               <ul className="space-y-2 list-none p-0 m-0">
                                 {codeReview.issues.map((issue: string, idx: number) => (
                                   <li key={idx} className="text-xs text-slate-350 flex items-start gap-2">
-                                    <span className="text-amber-500 mt-0.5">⚠️</span>
+                                    <AlertTriangle className="w-3 h-3 text-amber-500 mt-0.5" />
                                     <span>{issue}</span>
                                   </li>
                                 ))}
@@ -1066,7 +1071,7 @@ export default function CodingProjectPage() {
                                     onClick={() => setUnlockedHintLevel(1)}
                                     className="bg-slate-800 hover:bg-slate-750 text-slate-200 text-[10px] font-bold px-3 py-1 rounded-lg border border-slate-700 transition-all cursor-pointer"
                                   >
-                                    🔓 Unlock Hint 2
+                                    <Unlock className="w-3 h-3 inline" /> Unlock Hint 2
                                   </button>
                                 </div>
                               )}
@@ -1092,7 +1097,7 @@ export default function CodingProjectPage() {
                                     disabled={unlockedHintLevel < 1}
                                     className="bg-slate-800 hover:bg-slate-750 disabled:opacity-50 text-slate-200 text-[10px] font-bold px-3 py-1 rounded-lg border border-slate-700 transition-all cursor-pointer"
                                   >
-                                    🔓 Unlock Hint 3
+                                    <Unlock className="w-3 h-3 inline" /> Unlock Hint 3
                                   </button>
                                 </div>
                               )}
@@ -1108,7 +1113,7 @@ export default function CodingProjectPage() {
                     <div className="space-y-4 pb-4">
                       {debugSteps.length === 0 ? (
                         <div className="flex flex-col items-center justify-center py-6 text-center p-4">
-                          <span className="text-3xl mb-2">🐞</span>
+                          <Bug className="w-8 h-8 mb-2 text-slate-400" />
                           <p className="text-slate-300 text-xs font-bold">Interactive Visual Debugger</p>
                           <p className="text-slate-400 text-[10px] max-w-xs mt-1 leading-relaxed">
                             Step through your Python code line-by-line to watch variable assignments, conditionals, and outputs execute in real time.
@@ -1121,7 +1126,7 @@ export default function CodingProjectPage() {
                             }}
                             className="mt-4 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 py-2 rounded-xl shadow-md transition-all cursor-pointer"
                           >
-                            ⚙️ Initialize Debugger
+                            <Settings className="w-3 h-3 inline" /> Initialize Debugger
                           </button>
                         </div>
                       ) : (
@@ -1134,7 +1139,7 @@ export default function CodingProjectPage() {
                                 disabled={currentDebugIndex === 0}
                                 className="px-2.5 py-1 bg-slate-800 hover:bg-slate-750 disabled:opacity-40 border border-slate-700 rounded-lg text-[10px] font-bold text-slate-300 transition-colors cursor-pointer"
                               >
-                                ⏮ Start
+                                Start
                               </button>
                               <button
                                 onClick={() => setCurrentDebugIndex(prev => Math.max(0, prev - 1))}
@@ -1158,7 +1163,7 @@ export default function CodingProjectPage() {
                                 disabled={currentDebugIndex === debugSteps.length - 1}
                                 className="px-2.5 py-1 bg-slate-800 hover:bg-slate-750 disabled:opacity-40 border border-slate-700 rounded-lg text-[10px] font-bold text-slate-300 transition-colors cursor-pointer"
                               >
-                                End ⏭
+                                End
                               </button>
                             </div>
                             <button
@@ -1169,7 +1174,7 @@ export default function CodingProjectPage() {
                               }}
                               className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-bold rounded-lg transition-colors cursor-pointer"
                             >
-                              🔄 Restart / Reload Code
+                              <RefreshCw className="w-3 h-3 inline" /> Restart / Reload Code
                             </button>
                           </div>
 
@@ -1246,7 +1251,7 @@ export default function CodingProjectPage() {
                             </div>
                             {debugSteps[currentDebugIndex].error && (
                               <div className="mt-2 text-red-400 text-[10px] font-semibold bg-red-950/20 border border-red-900/40 p-2 rounded-lg">
-                                ❌ Error at step: {debugSteps[currentDebugIndex].error}
+                                <X className="w-3 h-3 inline" /> Error at step: {debugSteps[currentDebugIndex].error}
                               </div>
                             )}
                           </div>

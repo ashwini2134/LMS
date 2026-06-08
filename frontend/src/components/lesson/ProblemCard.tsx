@@ -139,7 +139,7 @@ export default function ProblemCard({ problem, index, completed, onComplete }: P
                 ))}
                 {allPassed && (
                   <div className="p-3 rounded-xl bg-green-900/20 border border-green-700/30 text-center">
-                    <p className="text-sm font-semibold text-green-400">🎉 All tests passed!</p>
+                    <p className="text-sm font-semibold text-green-400">All tests passed!</p>
                   </div>
                 )}
               </div>

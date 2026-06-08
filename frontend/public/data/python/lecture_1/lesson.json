@@ -1,0 +1,362 @@
+{
+  "id": "python-lecture-1",
+  "courseSlug": "python",
+  "number": 1,
+  "title": "Variables & Data Types",
+  "overview": "Every program works with data — numbers, text, true/false values. In this lecture you'll learn how to store data in variables and understand the different types of data Python can work with.",
+  "estimatedMinutes": 50,
+  "sections": [
+    {
+      "id": "variables",
+      "label": "Variables",
+      "blocks": [
+        {
+          "type": "explanation",
+          "accentColor": "blue",
+          "title": "What is a Variable?",
+          "body": "A **variable** is a named container that stores a value. Think of it like a labeled box where you can put information. You create a variable with the `=` sign.",
+          "bullets": [
+            "Variables store values like numbers, text, or true/false",
+            "Use the = sign to assign a value: name = \"Lakshanya\"",
+            "Once assigned, use the variable name anywhere to access the value",
+            "Variables can be updated — old value is replaced"
+          ]
+        },
+        {
+          "type": "analogy",
+          "title": "A Variable is a Labeled Jar",
+          "emoji": "📦",
+          "text": "Imagine jars with labels. One jar labeled 'sugar' contains sugar. Another labeled 'flour' contains flour. You look at the label to know what's inside. In Python, the label is the variable name and the contents is the value."
+        },
+        {
+          "type": "concept_visualization",
+          "title": "Variables Store Data",
+          "accentColor": "blue",
+          "leftPanel": {
+            "label": "Real Life",
+            "emoji": "📦",
+            "title": "Labeled Storage",
+            "description": "A box labeled 'age' stores the number 20 inside it."
+          },
+          "centerPanel": {
+            "label": "Variable",
+            "visualType": "storage_box",
+            "varName": "age",
+            "varValue": "20"
+          },
+          "rightPanel": {
+            "label": "Python Code",
+            "code": "age = 20\nprint(age)",
+            "language": "python",
+            "output": "20"
+          }
+        },
+        {
+          "type": "explanation",
+          "accentColor": "blue",
+          "title": "Naming Rules",
+          "body": "Variable names must follow clear rules.",
+          "bullets": [
+            "Start with a letter or underscore (_), not a number",
+            "Use only letters, numbers, and underscores",
+            "Case-sensitive: myVar and myvar are different",
+            "Cannot use Python keywords like if, else, while, for, print"
+          ]
+        },
+        {
+          "type": "code_example",
+          "title": "Creating Variables",
+          "language": "python",
+          "code": "name = \"Lakshanya\"\nage = 20\nheight = 5.6\n\nprint(name)\nprint(age)\nprint(height)",
+          "expectedOutput": "Lakshanya\n20\n5.6"
+        },
+        {
+          "type": "code_example",
+          "title": "Updating Variables",
+          "language": "python",
+          "code": "score = 0\nprint(score)\n\nscore = score + 10\nprint(score)\n\nscore = score + 5\nprint(score)",
+          "expectedOutput": "0\n10\n15"
+        },
+        {
+          "type": "reflection",
+          "question": "What would happen if you used a number as the first character of a variable name, like 1st_name = \"John\"?",
+          "answer": "Python would show a SyntaxError because variable names cannot start with a number."
+        },
+        {
+          "type": "practice",
+          "title": "Store Information",
+          "instructions": "Create three variables: your name, your age, and your college. Print each on a separate line.",
+          "starterCode": "# Store your information\nname = \"\"\nage = \ncollege = \"\"\n\n# Print each variable\n",
+          "solution": "name = \"Lakshanya\"\nage = 20\ncollege = \"SRM University\"\n\nprint(name)\nprint(age)\nprint(college)",
+          "hint": "Text values need quotes (\" \"), numbers don't. Use = to assign.",
+          "expectedOutput": "Lakshanya\n20\nSRM University"
+        }
+      ]
+    },
+    {
+      "id": "data-types",
+      "label": "Data Types",
+      "blocks": [
+        {
+          "type": "explanation",
+          "accentColor": "purple",
+          "title": "Every Value Has a Type",
+          "body": "In Python, every value belongs to a **type** that tells Python what kind of data it is and what you can do with it.",
+          "bullets": [
+            "int — whole numbers like 42, 0, -7",
+            "float — decimal numbers like 3.14, 2.5, -0.001",
+            "str — text/strings like \"hello\", \"Python\"",
+            "bool — True or False values",
+            "Use type() to check the type of any value"
+          ]
+        },
+        {
+          "type": "visual_aid",
+          "kind": "comparison_grid",
+          "title": "Data Type Comparison",
+          "accentColor": "purple",
+          "columns": [
+            {
+              "header": "🔢 int (Integer)",
+              "items": [
+                {
+                  "emoji": "✅",
+                  "label": "Whole numbers",
+                  "desc": "42, -7, 0"
+                },
+                {
+                  "emoji": "➗",
+                  "label": "Math operations",
+                  "desc": "+ - * / // %"
+                },
+                {
+                  "emoji": "📏",
+                  "label": "No decimal point"
+                },
+                {
+                  "emoji": "⚡",
+                  "label": "Fast computation"
+                }
+              ]
+            },
+            {
+              "header": "⚖️ float (Float)",
+              "items": [
+                {
+                  "emoji": "✅",
+                  "label": "Decimal numbers",
+                  "desc": "3.14, -0.5"
+                },
+                {
+                  "emoji": "🎯",
+                  "label": "Precision matters",
+                  "desc": "For measurements"
+                },
+                {
+                  "emoji": "🔬",
+                  "label": "Scientific notation",
+                  "desc": "1.5e10"
+                },
+                {
+                  "emoji": "⚠️",
+                  "label": "Rounding quirks",
+                  "desc": "0.1 + 0.2 ≠ 0.3"
+                }
+              ]
+            },
+            {
+              "header": "📝 str & ✅ bool",
+              "items": [
+                {
+                  "emoji": "💬",
+                  "label": "str = text",
+                  "desc": "\"Hello\", 'Python'"
+                },
+                {
+                  "emoji": "🔗",
+                  "label": "String concatenation",
+                  "desc": "+ joins strings"
+                },
+                {
+                  "emoji": "✅",
+                  "label": "bool = True/False",
+                  "desc": "For decisions"
+                },
+                {
+                  "emoji": "🔀",
+                  "label": "Logical operations",
+                  "desc": "and, or, not"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "concept_visualization",
+          "title": "The Four Basic Data Types",
+          "accentColor": "purple",
+          "leftPanel": {
+            "label": "int",
+            "emoji": "🔢",
+            "title": "Whole Numbers",
+            "description": "42, 0, -7, 1000 — no decimal point"
+          },
+          "centerPanel": {
+            "label": "float",
+            "emoji": "⚖️",
+            "title": "Decimal Numbers",
+            "description": "3.14, 2.5, -0.001, 99.9"
+          },
+          "rightPanel": {
+            "label": "str & bool",
+            "emoji": "📝",
+            "title": "Text & Logic",
+            "description": "str: \"hello\", \"Python\", \"42\"\nbool: True, False"
+          }
+        },
+        {
+          "type": "code_example",
+          "title": "Checking Types with type()",
+          "language": "python",
+          "code": "print(type(42))\nprint(type(3.14))\nprint(type(\"Hello\"))\nprint(type(True))",
+          "expectedOutput": "<class 'int'>\n<class 'float'>\n<class 'str'>\n<class 'bool'>"
+        },
+        {
+          "type": "explanation",
+          "accentColor": "purple",
+          "title": "Type Conversion",
+          "body": "Sometimes you need to convert between types — turn a string into a number or a number into a string.",
+          "bullets": [
+            "int(\"5\") converts string \"5\" to integer 5",
+            "str(42) converts integer 42 to string \"42\"",
+            "float(\"3.14\") converts string to float 3.14",
+            "Be careful: int(\"hello\") causes an error because \"hello\" is not a number"
+          ]
+        },
+        {
+          "type": "code_example",
+          "title": "Type Conversion in Action",
+          "language": "python",
+          "code": "age_str = \"20\"\nprint(age_str + \"5\")  # string concatenation\n\nage_int = int(age_str)\nprint(age_int + 5)   # integer addition\n\npi = 3.14159\nprint(\"Pi is \" + str(pi))",
+          "expectedOutput": "205\n25\nPi is 3.14159"
+        },
+        {
+          "type": "code_example",
+          "title": "Common Type Errors",
+          "language": "python",
+          "code": "# This causes an error:\n# print(\"Age: \" + 20)\n\n# This works:\nprint(\"Age: \" + str(20))\n\n# So does this:\nprint(f\"Age: {20}\")",
+          "expectedOutput": "Age: 20\nAge: 20"
+        },
+        {
+          "type": "reflection",
+          "question": "What do you think happens when you add string \"10\" and integer 10 together? Try: \"10\" + 10",
+          "answer": "Python gives a TypeError. You cannot add a string and an integer directly. You must convert one to the other's type first using int() or str()."
+        },
+        {
+          "type": "practice",
+          "title": "Age After 5 Years",
+          "instructions": "Store your current age in a variable. Add 5 to it. Print the result using an f-string.",
+          "starterCode": "# Store current age\nage = \n\n# Calculate age after 5 years\nfuture_age = \n\n# Print the result\n",
+          "solution": "age = 20\nfuture_age = age + 5\nprint(f\"After 5 years, I will be {future_age} years old.\")",
+          "hint": "Use + to add numbers. Use f-strings with {} to insert variables into text.",
+          "expectedOutput": "After 5 years, I will be 25 years old."
+        }
+      ]
+    },
+    {
+      "id": "strings-basics",
+      "label": "Strings",
+      "blocks": [
+        {
+          "type": "explanation",
+          "accentColor": "green",
+          "title": "Working with Strings",
+          "body": "A **string** is a sequence of characters — letters, numbers, spaces, symbols — enclosed in quotes.",
+          "bullets": [
+            "Use single quotes: 'Hello' or double quotes: \"Hello\"",
+            "Both work the same way — choose what you prefer",
+            "Strings can contain spaces, punctuation, and special characters",
+            "Add strings together with + (concatenation)"
+          ]
+        },
+        {
+          "type": "visual_aid",
+          "kind": "transformation_demo",
+          "title": "String Operations",
+          "accentColor": "green",
+          "items": [
+            {
+              "label": "\"Hello\" + \" World\"",
+              "desc": "\"Hello World\" (Concatenation)"
+            },
+            {
+              "label": "\"Ha! \" * 3",
+              "desc": "\"Ha! Ha! Ha! \" (Repeat)"
+            },
+            {
+              "label": "len(\"Python\")",
+              "desc": "6 (Length)"
+            },
+            {
+              "label": "\"Python\"[0]",
+              "desc": "\"P\" (First character)"
+            }
+          ]
+        },
+        {
+          "type": "code_example",
+          "title": "String Operations",
+          "language": "python",
+          "code": "first = \"Lakshanya\"\nlast = \"Krishna\"\n\n# Concatenation\nfull = first + \" \" + last\nprint(full)\n\n# Repeat string\nprint(\"Ha! \" * 3)\n\n# Length\nprint(len(first))",
+          "expectedOutput": "Lakshanya Krishna\nHa! Ha! Ha! \n9"
+        },
+        {
+          "type": "practice",
+          "title": "Profile Card",
+          "instructions": "Create variables for name, age, and college. Print them in this format: \"Name: [name], Age: [age], College: [college]\"",
+          "starterCode": "name = \"\"\nage = \ncollege = \"\"\n\n# Print profile card\n",
+          "solution": "name = \"Lakshanya\"\nage = 20\ncollege = \"SRM University\"\n\nprint(\"Name: \" + name + \", Age: \" + str(age) + \", College: \" + college)",
+          "hint": "Use + to join strings. Convert numbers to strings with str() before concatenating.",
+          "expectedOutput": "Name: Lakshanya, Age: 20, College: SRM University"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "keyTakeaways": [
+      {
+        "emoji": "📦",
+        "text": "Variables store values using the = operator"
+      },
+      {
+        "emoji": "🔢",
+        "text": "int is for whole numbers, float is for decimals"
+      },
+      {
+        "emoji": "📝",
+        "text": "str is for text, always in quotes"
+      },
+      {
+        "emoji": "✅",
+        "text": "bool is for True/False values"
+      },
+      {
+        "emoji": "🔍",
+        "text": "type() tells you the type of any value"
+      },
+      {
+        "emoji": "🔄",
+        "text": "Use int(), str(), float() to convert between types"
+      }
+    ],
+    "whatYouLearned": [
+      "How to create and update variables",
+      "The four basic data types: int, float, str, bool",
+      "How to check types with type()",
+      "How to convert between types safely",
+      "How to concatenate strings with +",
+      "Why type errors happen and how to fix them"
+    ],
+    "nextUp": "Input & Output"
+  }
+}

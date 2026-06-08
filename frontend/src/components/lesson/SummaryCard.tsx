@@ -1,3 +1,4 @@
+import { GraduationCap } from 'lucide-react';
 import type { SummaryData } from '../../types/lesson';
 
 interface SummaryCardProps {
@@ -50,7 +51,7 @@ export default function SummaryCard({ summary, lectureTitle, nextLectureTitle, o
 
       {/* Completed + Next */}
       <div className="rounded-2xl border border-blue-500/20 bg-gradient-to-br from-blue-600/10 to-slate-800/40 p-6 text-center space-y-4">
-        <div className="text-4xl">🎓</div>
+        <div className="text-4xl"><GraduationCap size={48} className="text-blue-400 inline-block" /></div>
         <div>
           <p className="text-lg font-bold text-white">Lecture Complete!</p>
           <p className="text-sm text-slate-400 mt-1">You've finished "{lectureTitle}"</p>

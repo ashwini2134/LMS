@@ -1,15 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { Star, Crown } from 'lucide-react';
 import { api, type Lecture, getCompletedProjects } from "../api";
-import { getCourseProgress } from "../hooks/useProgress";
+import { getCourseProgress, isLectureUnlocked, subscribeToProgressChanges, getCourseStats } from "../hooks/useProgress";
 
 type LectureStatus = "completed" | "in-progress" | "locked";
-
-const LECTURE_DURATIONS: Record<number, string> = {
-  0: "45 min", 1: "52 min", 2: "48 min", 3: "38 min",
-  4: "55 min", 5: "41 min", 6: "47 min", 7: "43 min",
-  8: "58 min", 9: "36 min",
-};
 
 function ProgressCircle({ percent, size = 96 }: { percent: number; size?: number }) {
   const strokeWidth = 6;
@@ -33,19 +28,28 @@ export default function CoursePage() {
   const navigate = useNavigate();
   const [lectures, setLectures] = useState<Lecture[] | null>(null);
   const [err, setErr] = useState<string | null>(null);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const courseTitle = slug === "cs50p" ? "CS50 Python" : slug === "cs50ai" ? "CS50 AI" : slug?.toUpperCase() ?? "";
   const lectureCount = lectures?.length ?? 0;
 
-  // ── Lesson-system progress integration ──────────────────────────────────────
-  const courseProgress = getCourseProgress(slug ?? "");
-  const completedProjects = getCompletedProjects();
+  // Subscribe to progress changes for real-time UI updates
+  useEffect(() => {
+    const unsub = subscribeToProgressChanges(() => setRefreshKey(k => k + 1));
+    return unsub;
+  }, []);
+
+  // ── All progress computed fresh every render via refreshKey ──
+  const courseProgress = useMemo(() => getCourseProgress(slug ?? ""), [slug, refreshKey]);
+  const completedProjects = useMemo(() => getCompletedProjects(), [refreshKey]);
+
+  const stats = useMemo(() => getCourseStats(slug ?? "", lectureCount), [slug, lectureCount, refreshKey]);
 
   const getLectureStatus = (lecture: Lecture): LectureStatus => {
     const p = courseProgress[lecture.number];
     if (p?.lectureCompleted) return "completed";
-    if (p?.quizCompleted || (p?.sections && Object.keys(p.sections).length > 0)) return "in-progress";
-    if (lecture.number <= 2) return "in-progress";
+    if (p && (p.quizCompleted || Object.keys(p.sections).length > 0)) return "in-progress";
+    if (isLectureUnlocked(lecture.number, courseProgress)) return "in-progress";
     return "locked";
   };
 
@@ -188,7 +192,6 @@ export default function CoursePage() {
                 {lectures.map((lecture) => {
                   const status = getLectureStatus(lecture);
                   const isLocked = status === "locked";
-                  const duration = LECTURE_DURATIONS[lecture.number] || "30 min";
 
                   return (
                     <button
@@ -225,7 +228,10 @@ export default function CoursePage() {
                             <span className="text-[11px] text-slate-500 flex-shrink-0">Week {lecture.number}</span>
                           </div>
                           <p className={`text-xs mt-0.5 ${isLocked ? "text-slate-600" : "text-slate-400"}`}>
-                            Lecture {lecture.number + 1} ⋅ {duration}
+                            Lecture {lecture.number + 1}
+                            {isLocked && lecture.number > 0 && (
+                              <span className="ml-2 text-slate-500">— Complete Lecture {lecture.number} to unlock</span>
+                            )}
                           </p>
                         </div>
 
@@ -257,8 +263,8 @@ export default function CoursePage() {
             </h3>
             <div className="space-y-4">
               {[
-                { icon: "★", title: "First Steps", desc: "Complete your first lecture", done: completedCount >= 1, gradient: "from-yellow-400 to-orange-500" },
-                { icon: "♛", title: "Quiz Master", desc: quizzesPassed >= 1 ? `Passed ${quizzesPassed} quiz${quizzesPassed > 1 ? 'zes' : ''}` : "Pass your first quiz", done: quizzesPassed >= 1, gradient: "from-purple-400 to-pink-500" },
+                { icon: <Star size={20} className="text-white" />, title: "First Steps", desc: "Complete your first lecture", done: completedCount >= 1, gradient: "from-yellow-400 to-orange-500" },
+                { icon: <Crown size={20} className="text-white" />, title: "Quiz Master", desc: quizzesPassed >= 1 ? `Passed ${quizzesPassed} quiz${quizzesPassed > 1 ? 'zes' : ''}` : "Pass your first quiz", done: quizzesPassed >= 1, gradient: "from-purple-400 to-pink-500" },
                 { icon: "◆", title: "Project Solver", desc: projectsSubmitted >= 1 ? `Solved ${projectsSubmitted} project${projectsSubmitted > 1 ? 's' : ''}` : "Solve your first project", done: projectsSubmitted >= 1, gradient: "from-red-400 to-orange-500" },
                 { icon: "●", title: "Halfway There", desc: completedCount >= Math.ceil(lectureCount / 2) ? `${completedCount}/${lectureCount} complete` : `Complete ${Math.ceil(lectureCount / 2)} lectures`, done: completedCount >= Math.ceil(lectureCount / 2), gradient: "from-blue-400 to-cyan-500" },
               ].map((a) => (
@@ -272,8 +278,11 @@ export default function CoursePage() {
                 </div>
               ))}
             </div>
-            <button className="mt-4 w-full text-center text-xs font-medium text-blue-400 hover:text-blue-300 py-2.5 rounded-xl bg-blue-500/8 hover:bg-blue-500/15 border border-blue-500/15 hover:border-blue-500/30 transition-all duration-200">
-              View All Achievements →
+            <button
+              onClick={() => navigate('/leaderboard')}
+              className="mt-4 w-full text-center text-xs font-medium text-blue-400 hover:text-blue-300 py-2.5 rounded-xl bg-blue-500/8 hover:bg-blue-500/15 border border-blue-500/15 hover:border-blue-500/30 transition-all duration-200"
+            >
+              View Leaderboard →
             </button>
           </div>
         </aside>
