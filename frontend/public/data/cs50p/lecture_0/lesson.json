@@ -43,7 +43,7 @@
         {
           "type": "analogy",
           "title": "Think of a Variable as a Labeled Storage Box",
-          "emoji": "📦",
+          "emoji": "",
           "text": "Imagine a physical storage box with a label on it. The label is the variable name. What's inside the box is the value. You can open the box to look inside, replace what's stored, or use its contents in a recipe — all by referring to the label."
         },
         {
@@ -52,7 +52,7 @@
           "accentColor": "blue",
           "leftPanel": {
             "label": "Real Life Analogy",
-            "emoji": "📦",
+            "emoji": "",
             "title": "A Labeled Storage Box",
             "description": "You put something inside and give it a name so you can find it later."
           },
@@ -106,7 +106,7 @@
           "type": "practice",
           "title": "Store Your Name",
           "instructions": "Create a variable called name and assign your name to it. Then print a greeting using that variable.",
-          "starterCode": "# Create a variable with your name\n# Then print: Hello, [name]!\n",
+          "starterCode": "# Create a variable with your name\n# Then print: Hello, [name]!",
           "solution": "name = \"Lakshanya\"\nprint(f\"Hello, {name}!\")",
           "hint": "Use name = \"YourName\" to create the variable. Then use print(f\"Hello, {name}!\") to display a greeting.",
           "expectedOutput": "Hello, Lakshanya!"
@@ -126,7 +126,7 @@
         {
           "type": "analogy",
           "title": "Think of a Function as a Recipe",
-          "emoji": "📖",
+          "emoji": "",
           "text": "A recipe is a set of steps written once that you can follow many times to make the same dish. You don't rewrite the recipe each time — you just say 'make pasta' and follow the steps. Functions work exactly the same way."
         },
         {
@@ -135,7 +135,7 @@
           "accentColor": "purple",
           "leftPanel": {
             "label": "Real Life Analogy",
-            "emoji": "📖",
+            "emoji": "",
             "title": "A Recipe Book",
             "description": "A recipe is a set of steps you write once and follow many times — just like a function."
           },
@@ -188,7 +188,7 @@
           "type": "practice",
           "title": "Write a Greeting Function",
           "instructions": "Define a function called say_hello that takes a name parameter and prints a greeting. Then call it twice with different names.",
-          "starterCode": "# Define say_hello(name) here\n\n# Call it twice\n",
+          "starterCode": "# Define say_hello(name) here\n\n# Call it twice",
           "solution": "def say_hello(name):\n    print(f\"Hello, {name}!\")\n\nsay_hello(\"Lakshanya\")\nsay_hello(\"David\")",
           "hint": "Use def say_hello(name): on the first line, then indent the print statement. Don't forget to call the function after defining it.",
           "expectedOutput": "Hello, Lakshanya!\nHello, David!"
@@ -222,7 +222,7 @@
           "type": "practice",
           "title": "Build a Profile",
           "instructions": "Create two variables: name (your name) and city (your city). Then use an f-string to print: \"[name] lives in [city].\"",
-          "starterCode": "name = \"\"\ncity = \"\"\n\n# Print using f-string\n",
+          "starterCode": "name = \"\"\ncity = \"\"\n\n# Print using f-string",
           "solution": "name = \"Lakshanya\"\ncity = \"Chennai\"\n\nprint(f\"{name} lives in {city}.\")",
           "hint": "Use f\"{name} lives in {city}.\" inside print(). Make sure your variables have values assigned first.",
           "expectedOutput": "Lakshanya lives in Chennai."
@@ -232,12 +232,30 @@
   ],
   "summary": {
     "keyTakeaways": [
-      { "emoji": "📦", "text": "Variables store values using the = operator" },
-      { "emoji": "✅", "text": "Use = for assignment (not == which checks equality)" },
-      { "emoji": "♻️", "text": "Functions package code for reuse with def" },
-      { "emoji": "🔁", "text": "Functions can be called as many times as needed" },
-      { "emoji": "🏷️", "text": "f-strings embed variable values in text with {}" },
-      { "emoji": "📝", "text": "Variables must be defined before you use them" }
+      {
+        "emoji": "",
+        "text": "Variables store values using the = operator"
+      },
+      {
+        "emoji": "",
+        "text": "Use = for assignment (not == which checks equality)"
+      },
+      {
+        "emoji": "",
+        "text": "Functions package code for reuse with def"
+      },
+      {
+        "emoji": "",
+        "text": "Functions can be called as many times as needed"
+      },
+      {
+        "emoji": "",
+        "text": "f-strings embed variable values in text with {}"
+      },
+      {
+        "emoji": "",
+        "text": "Variables must be defined before you use them"
+      }
     ],
     "whatYouLearned": [
       "How to create a variable and assign it a value",

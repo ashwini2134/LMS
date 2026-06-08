@@ -25,7 +25,7 @@
         {
           "type": "analogy",
           "title": "A Variable is a Labeled Jar",
-          "emoji": "[Package]",
+          "emoji": "",
           "text": "Imagine jars with labels. One jar labeled 'sugar' contains sugar. Another labeled 'flour' contains flour. You look at the label to know what's inside. In Python, the label is the variable name and the contents is the value."
         },
         {
@@ -34,7 +34,7 @@
           "accentColor": "blue",
           "leftPanel": {
             "label": "Real Life",
-            "emoji": "[Package]",
+            "emoji": "",
             "title": "Labeled Storage",
             "description": "A box labeled 'age' stores the number 20 inside it."
           },
@@ -86,7 +86,7 @@
           "type": "practice",
           "title": "Store Information",
           "instructions": "Create three variables: your name, your age, and your college. Print each on a separate line.",
-          "starterCode": "# Store your information\nname = \"\"\nage = \ncollege = \"\"\n\n# Print each variable\n",
+          "starterCode": "# Store your information\nname = \"\"\nage = \ncollege = \"\"\n\n# Print each variable",
           "solution": "name = \"Lakshanya\"\nage = 20\ncollege = \"SRM University\"\n\nprint(name)\nprint(age)\nprint(college)",
           "hint": "Text values need quotes (\" \"), numbers don't. Use = to assign.",
           "expectedOutput": "Lakshanya\n20\nSRM University"
@@ -111,105 +111,24 @@
           ]
         },
         {
-          "type": "visual_aid",
-          "kind": "comparison_grid",
-          "title": "Data Type Comparison",
-          "accentColor": "purple",
-          "columns": [
-            {
-              "header": "[INPUT] int (Integer)",
-              "items": [
-                {
-                  "emoji": "[WHITE]",
-                  "label": "Whole numbers",
-                  "desc": "42, -7, 0"
-                },
-                {
-                  "emoji": "[HEAVY]",
-                  "label": "Math operations",
-                  "desc": "+ - * / // %"
-                },
-                {
-                  "emoji": "[STRAIGHT]",
-                  "label": "No decimal point"
-                },
-                {
-                  "emoji": "[Zap]",
-                  "label": "Fast computation"
-                }
-              ]
-            },
-            {
-              "header": "[SCALES]️ float (Float)",
-              "items": [
-                {
-                  "emoji": "[WHITE]",
-                  "label": "Decimal numbers",
-                  "desc": "3.14, -0.5"
-                },
-                {
-                  "emoji": "[Target]",
-                  "label": "Precision matters",
-                  "desc": "For measurements"
-                },
-                {
-                  "emoji": "[MICROSCOPE]",
-                  "label": "Scientific notation",
-                  "desc": "1.5e10"
-                },
-                {
-                  "emoji": "[WARNING]️",
-                  "label": "Rounding quirks",
-                  "desc": "0.1 + 0.2 ≠ 0.3"
-                }
-              ]
-            },
-            {
-              "header": "[Note] str & [WHITE] bool",
-              "items": [
-                {
-                  "emoji": "[SPEECH]",
-                  "label": "str = text",
-                  "desc": "\"Hello\", 'Python'"
-                },
-                {
-                  "emoji": "[Link]",
-                  "label": "String concatenation",
-                  "desc": "+ joins strings"
-                },
-                {
-                  "emoji": "[WHITE]",
-                  "label": "bool = True/False",
-                  "desc": "For decisions"
-                },
-                {
-                  "emoji": "[TWISTED]",
-                  "label": "Logical operations",
-                  "desc": "and, or, not"
-                }
-              ]
-            }
-          ]
-        },
-        {
           "type": "concept_visualization",
           "title": "The Four Basic Data Types",
           "accentColor": "purple",
           "leftPanel": {
             "label": "int",
-            "emoji": "[INPUT]",
+            "emoji": "",
             "title": "Whole Numbers",
             "description": "42, 0, -7, 1000 — no decimal point"
           },
           "centerPanel": {
             "label": "float",
-            "emoji": "[SCALES]️",
+            "emoji": "",
             "title": "Decimal Numbers",
             "description": "3.14, 2.5, -0.001, 99.9"
           },
           "rightPanel": {
             "label": "str & bool",
-            "emoji": "[Note]",
+            "emoji": "",
             "title": "Text & Logic",
             "description": "str: \"hello\", \"Python\", \"42\"\nbool: True, False"
           }
@@ -256,7 +175,7 @@
           "type": "practice",
           "title": "Age After 5 Years",
           "instructions": "Store your current age in a variable. Add 5 to it. Print the result using an f-string.",
-          "starterCode": "# Store current age\nage = \n\n# Calculate age after 5 years\nfuture_age = \n\n# Print the result\n",
+          "starterCode": "# Store current age\nage = \n\n# Calculate age after 5 years\nfuture_age = \n\n# Print the result",
           "solution": "age = 20\nfuture_age = age + 5\nprint(f\"After 5 years, I will be {future_age} years old.\")",
           "hint": "Use + to add numbers. Use f-strings with {} to insert variables into text.",
           "expectedOutput": "After 5 years, I will be 25 years old."
@@ -280,30 +199,6 @@
           ]
         },
         {
-          "type": "visual_aid",
-          "kind": "transformation_demo",
-          "title": "String Operations",
-          "accentColor": "green",
-          "items": [
-            {
-              "label": "\"Hello\" + \" World\"",
-              "desc": "\"Hello World\" (Concatenation)"
-            },
-            {
-              "label": "\"Ha! \" * 3",
-              "desc": "\"Ha! Ha! Ha! \" (Repeat)"
-            },
-            {
-              "label": "len(\"Python\")",
-              "desc": "6 (Length)"
-            },
-            {
-              "label": "\"Python\"[0]",
-              "desc": "\"P\" (First character)"
-            }
-          ]
-        },
-        {
           "type": "code_example",
           "title": "String Operations",
           "language": "python",
@@ -314,7 +209,7 @@
           "type": "practice",
           "title": "Profile Card",
           "instructions": "Create variables for name, age, and college. Print them in this format: \"Name: [name], Age: [age], College: [college]\"",
-          "starterCode": "name = \"\"\nage = \ncollege = \"\"\n\n# Print profile card\n",
+          "starterCode": "name = \"\"\nage = \ncollege = \"\"\n\n# Print profile card",
           "solution": "name = \"Lakshanya\"\nage = 20\ncollege = \"SRM University\"\n\nprint(\"Name: \" + name + \", Age: \" + str(age) + \", College: \" + college)",
           "hint": "Use + to join strings. Convert numbers to strings with str() before concatenating.",
           "expectedOutput": "Name: Lakshanya, Age: 20, College: SRM University"
@@ -325,27 +220,27 @@
   "summary": {
     "keyTakeaways": [
       {
-        "emoji": "[Package]",
+        "emoji": "",
         "text": "Variables store values using the = operator"
       },
       {
-        "emoji": "[INPUT]",
+        "emoji": "",
         "text": "int is for whole numbers, float is for decimals"
       },
       {
-        "emoji": "[Note]",
+        "emoji": "",
         "text": "str is for text, always in quotes"
       },
       {
-        "emoji": "[WHITE]",
+        "emoji": "",
         "text": "bool is for True/False values"
       },
       {
-        "emoji": "[LEFT-POINTING]",
+        "emoji": "",
         "text": "type() tells you the type of any value"
       },
       {
-        "emoji": "[Sync]",
+        "emoji": "",
         "text": "Use int(), str(), float() to convert between types"
       }
     ],

@@ -4,7 +4,7 @@
     "title": "Average Calculator",
     "description": "Ask the user for three test scores. Calculate the average and print it formatted to 2 decimal places.",
     "difficulty": "easy",
-    "starterCode": "s1 = int(input(\"Score 1: \"))\ns2 = int(input(\"Score 2: \"))\ns3 = int(input(\"Score 3: \"))\n\n# Calculate and print average\n",
+    "starterCode": "s1 = int(input(\"Score 1: \"))\ns2 = int(input(\"Score 2: \"))\ns3 = int(input(\"Score 3: \"))\n\n# Calculate and print average",
     "solution": "s1 = int(input(\"Score 1: \"))\ns2 = int(input(\"Score 2: \"))\ns3 = int(input(\"Score 3: \"))\navg = (s1 + s2 + s3) / 3\nprint(f\"Average: {avg:.2f}\")",
     "testCases": [
       {
@@ -19,7 +19,7 @@
     "title": "Even or Odd",
     "description": "Ask the user for a number. Use the modulo operator to check if it's even or odd. Print 'Even' or 'Odd'.",
     "difficulty": "medium",
-    "starterCode": "num = int(input(\"Enter a number: \"))\n\n# Check even or odd\n",
+    "starterCode": "num = int(input(\"Enter a number: \"))\n\n# Check even or odd",
     "solution": "num = int(input(\"Enter a number: \"))\nif num % 2 == 0:\n    print(\"Even\")\nelse:\n    print(\"Odd\")",
     "testCases": [
       {

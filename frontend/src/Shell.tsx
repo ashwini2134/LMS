@@ -62,15 +62,11 @@ export default function Shell() {
   }, []);
 
   useEffect(() => {
-    if (onCoursePage) setCoursesOpen(true);
+    if (onCoursePage) {
+      setCoursesOpen(false);
+      setExpanded(false);
+    }
   }, [onCoursePage]);
-
-  // Reset sidebar to collapsed state on route change
-  useEffect(() => {
-    return () => {
-      if (leaveTimer.current) clearTimeout(leaveTimer.current);
-    };
-  }, []);
 
   const handleMouseEnter = () => {
     if (leaveTimer.current) {

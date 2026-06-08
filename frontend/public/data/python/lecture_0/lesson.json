@@ -23,37 +23,9 @@
           ]
         },
         {
-          "type": "visual_aid",
-          "kind": "process_flow",
-          "title": "How Programming Works",
-          "accentColor": "blue",
-          "flow": [
-            {
-              "emoji": "[Person]‍[PERSONAL]",
-              "text": "You Write Code"
-            },
-            {
-              "emoji": "[SNAKE]",
-              "text": "Python Reads It"
-            },
-            {
-              "emoji": "[GEAR]️",
-              "text": "Interpreter Translates"
-            },
-            {
-              "emoji": "[PERSONAL]",
-              "text": "Computer Executes"
-            },
-            {
-              "emoji": "[Target]",
-              "text": "See Output"
-            }
-          ]
-        },
-        {
           "type": "analogy",
           "title": "Think of a Program as a Cooking Recipe",
-          "emoji": "[OPEN]",
+          "emoji": "",
           "text": "A recipe lists ingredients and steps: chop onions, boil water, cook for 10 minutes. A program does the same thing — it lists steps like 'store this value,' 'add these two numbers,' 'print the result.' The computer follows the recipe just like you follow cooking instructions."
         },
         {
@@ -90,7 +62,7 @@
           "type": "practice",
           "title": "Print Your Name",
           "instructions": "Write a program that prints your name on the first line and your college name on the second line.",
-          "starterCode": "# Print your name\nprint(\"\")\n# Print your college\n",
+          "starterCode": "# Print your name\nprint(\"\")\n# Print your college",
           "solution": "print(\"Lakshanya\")\nprint(\"SRM University\")",
           "hint": "Use print(\"YourName\") for the first line and print(\"YourCollege\") for the second. Put quotes around text.",
           "expectedOutput": "Lakshanya\nSRM University"
@@ -128,7 +100,7 @@
         {
           "type": "analogy",
           "title": "Think of Python as a Swiss Army Knife",
-          "emoji": "[WRENCH]",
+          "emoji": "",
           "text": "A Swiss Army knife has many tools — blade, scissors, screwdriver — all in one device. Python is the same: you can build websites, analyze data, make games, or automate tasks, all with the same language."
         },
         {
@@ -152,30 +124,6 @@
             "Run the installer and check 'Add Python to PATH'",
             "After installation, open Terminal (Mac/Linux) or Command Prompt (Windows)",
             "Type python --version to verify it installed correctly"
-          ]
-        },
-        {
-          "type": "visual_aid",
-          "kind": "process_flow",
-          "title": "How a .py File Runs",
-          "accentColor": "green",
-          "flow": [
-            {
-              "emoji": "[Note]",
-              "text": "Write hello.py"
-            },
-            {
-              "emoji": "[FLOPPY]",
-              "text": "Save the file"
-            },
-            {
-              "emoji": "▶️",
-              "text": "python hello.py"
-            },
-            {
-              "emoji": "[Printer]️",
-              "text": "Output appears"
-            }
           ]
         },
         {
@@ -208,7 +156,7 @@
           "accentColor": "green",
           "leftPanel": {
             "label": "Step 1",
-            "emoji": "[Note]",
+            "emoji": "",
             "title": "Write Code",
             "description": "You write Python instructions in a .py file using a text editor."
           },
@@ -224,7 +172,7 @@
           },
           "rightPanel": {
             "label": "Step 3",
-            "emoji": "[Target]",
+            "emoji": "",
             "title": "See Output",
             "description": "The result appears on your screen. If there's an error, Python shows what went wrong."
           }
@@ -257,7 +205,7 @@
           "type": "practice",
           "title": "Run Your First Python Program",
           "instructions": "Write a program that prints your name and your college on separate lines, then prints 'I am learning Python!' on a third line.",
-          "starterCode": "# My first Python program\nprint(\"\")\n",
+          "starterCode": "# My first Python program\nprint(\"\")",
           "solution": "print(\"Lakshanya\")\nprint(\"SRM University\")\nprint(\"I am learning Python!\")",
           "hint": "Use print() three times, once for each line. Each print() outputs text on a new line.",
           "expectedOutput": "Lakshanya\nSRM University\nI am learning Python!"
@@ -268,27 +216,27 @@
   "summary": {
     "keyTakeaways": [
       {
-        "emoji": "[OPEN]",
+        "emoji": "",
         "text": "A program is a sequence of instructions for a computer"
       },
       {
-        "emoji": "[SNAKE]",
+        "emoji": "",
         "text": "Python is beginner-friendly, readable, and used worldwide"
       },
       {
-        "emoji": "[Printer]️",
+        "emoji": "",
         "text": "print() displays text on the screen"
       },
       {
-        "emoji": "[WRENCH]",
+        "emoji": "",
         "text": "Python is interpreted — runs line by line, no compile step"
       },
       {
-        "emoji": "[FILE]",
+        "emoji": "",
         "text": ".py files store Python programs; run them with python filename.py"
       },
       {
-        "emoji": "[PERSONAL]",
+        "emoji": "",
         "text": "The Python shell lets you test code interactively"
       }
     ],

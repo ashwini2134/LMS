@@ -22,41 +22,9 @@
           ]
         },
         {
-          "type": "visual_aid",
-          "kind": "iteration_diagram",
-          "title": "For Loop Iteration",
-          "accentColor": "blue",
-          "steps": [
-            {
-              "emoji": "1️⃣",
-              "label": "Get first item"
-            },
-            {
-              "emoji": "▶️",
-              "label": "Run code block"
-            },
-            {
-              "emoji": "2️⃣",
-              "label": "Get next item"
-            },
-            {
-              "emoji": "▶️",
-              "label": "Run code block"
-            },
-            {
-              "emoji": "3️⃣",
-              "label": "Get next item..."
-            },
-            {
-              "emoji": "[CheckeredFlag]",
-              "label": "No more items → Stop"
-            }
-          ]
-        },
-        {
           "type": "analogy",
           "title": "A Loop is Like a Washing Machine Cycle",
-          "emoji": "[CYCLONE]",
+          "emoji": "",
           "text": "You load clothes, set the timer, and the machine repeats the cycle until time runs out. A for loop processes each item in a list automatically."
         },
         {
@@ -70,7 +38,7 @@
           "type": "practice",
           "title": "Iterate a List",
           "instructions": "Create a list of three colors. Use a for loop to print each color.",
-          "starterCode": "colors = [\"red\", \"blue\", \"green\"]\nfor color in colors:\n    ",
+          "starterCode": "colors = [\"red\", \"blue\", \"green\"]\nfor color in colors:",
           "solution": "colors = [\"red\", \"blue\", \"green\"]\nfor color in colors:\n    print(f\"Color: {color}\")",
           "hint": "Use for color in colors: and indent the print() statement.",
           "expectedOutput": "Color: red\nColor: blue\nColor: green"
@@ -90,29 +58,6 @@
             "range(stop) — numbers from 0 to stop-1",
             "range(start, stop) — numbers from start to stop-1",
             "range(start, stop, step) — numbers with custom step"
-          ]
-        },
-        {
-          "type": "visual_aid",
-          "kind": "index_visual",
-          "title": "range() Visualization",
-          "accentColor": "purple",
-          "items": [
-            {
-              "label": "0"
-            },
-            {
-              "label": "1"
-            },
-            {
-              "label": "2"
-            },
-            {
-              "label": "3"
-            },
-            {
-              "label": "4"
-            }
           ]
         },
         {
@@ -177,23 +122,23 @@
   "summary": {
     "keyTakeaways": [
       {
-        "emoji": "[Sync]",
+        "emoji": "",
         "text": "Loops repeat code without writing it multiple times"
       },
       {
-        "emoji": "[Clipboard]",
+        "emoji": "",
         "text": "For loops iterate over each item in a sequence"
       },
       {
-        "emoji": "[INPUT]",
+        "emoji": "",
         "text": "range(n) generates 0 to n-1"
       },
       {
-        "emoji": "[BAR]",
+        "emoji": "",
         "text": "Nested loops are useful for tables and patterns"
       },
       {
-        "emoji": "[WARNING]️",
+        "emoji": "",
         "text": "range(stop) excludes stop — range(5) gives 0-4"
       }
     ],

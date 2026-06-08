@@ -1538,6 +1538,24 @@ def generate_problems_json(n):
     }
     return problems.get(n, problems[0])
 
+# ── Emoji cleanup ─────────────────────────────────────────────────────────────
+import unicodedata
+
+def _strip_emojis(obj):
+    if isinstance(obj, str):
+        result = []
+        for ch in obj:
+            cp = ord(ch)
+            is_emoji = (0x1F300 <= cp <= 0x1FAFF) or (0x2600 <= cp <= 0x27BF) or (0x2700 <= cp <= 0x27BF) or (0xFE00 <= cp <= 0xFE0F) or (0x200D == cp) or (0x1F000 <= cp <= 0x1F02F)
+            if not is_emoji:
+                result.append(ch)
+        return ''.join(result).strip()
+    elif isinstance(obj, dict):
+        return {k: _strip_emojis(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [_strip_emojis(item) for item in obj]
+    return obj
+
 # ── Write all files ─────────────────────────────────────────────────────────
 for lect in LECTURES:
     n = lect["number"]
@@ -1546,15 +1564,15 @@ for lect in LECTURES:
 
     # Write lesson.json
     with open(os.path.join(dir_path, "lesson.json"), "w") as f:
-        json.dump(generate_lesson_json(lect), f, indent=2, ensure_ascii=False)
+        json.dump(_strip_emojis(generate_lesson_json(lect)), f, indent=2, ensure_ascii=False)
 
     # Write quiz.json
     with open(os.path.join(dir_path, "quiz.json"), "w") as f:
-        json.dump(generate_quiz_json(n), f, indent=2, ensure_ascii=False)
+        json.dump(_strip_emojis(generate_quiz_json(n)), f, indent=2, ensure_ascii=False)
 
     # Write problems.json
     with open(os.path.join(dir_path, "problems.json"), "w") as f:
-        json.dump(generate_problems_json(n), f, indent=2, ensure_ascii=False)
+        json.dump(_strip_emojis(generate_problems_json(n)), f, indent=2, ensure_ascii=False)
 
     print(f"  ✓ Lecture {n}: {lect['title']}")
 

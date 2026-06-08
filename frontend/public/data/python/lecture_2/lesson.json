@@ -71,29 +71,9 @@
           ]
         },
         {
-          "type": "visual_aid",
-          "kind": "process_flow",
-          "title": "Input → Processing → Output",
-          "accentColor": "purple",
-          "flow": [
-            {
-              "emoji": "⌨️",
-              "text": "User Input"
-            },
-            {
-              "emoji": "[GEAR]️",
-              "text": "Process Data"
-            },
-            {
-              "emoji": "[Printer]️",
-              "text": "Display Output"
-            }
-          ]
-        },
-        {
           "type": "analogy",
           "title": "input() is Like a Receptionist",
-          "emoji": "[MICROPHONE]",
+          "emoji": "",
           "text": "You ask a question (the prompt), then wait for the person to answer (type and press Enter). The receptionist (input()) hands you the answer on a piece of paper (a string). If you need it as a number, you must convert it yourself."
         },
         {
@@ -126,7 +106,7 @@
           "type": "practice",
           "title": "Student Details Form",
           "instructions": "Ask the user for their name (string), age (integer), and city (string). Then print all details in a formatted card using f-strings.",
-          "starterCode": "# Get student details\nname = input(\"Enter your name: \")\nage = \ncity = \n\n# Print details card\n",
+          "starterCode": "# Get student details\nname = input(\"Enter your name: \")\nage = \ncity = \n\n# Print details card",
           "solution": "name = input(\"Enter your name: \")\nage = int(input(\"Enter your age: \"))\ncity = input(\"Enter your city: \")\n\nprint(f\"--- Student Card ---\")\nprint(f\"Name: {name}\")\nprint(f\"Age: {age}\")\nprint(f\"City: {city}\")",
           "hint": "Use int(input()) for numbers. Use f-strings to format the output nicely.",
           "expectedOutput": "--- Student Card ---\nName: Lakshanya\nAge: 20\nCity: Chennai"
@@ -167,7 +147,7 @@
           "type": "practice",
           "title": "Simple Calculator",
           "instructions": "Ask the user for two numbers. Convert them to integers. Print the sum, difference, and product using f-strings.",
-          "starterCode": "# Get two numbers\nnum1 = int(input(\"Enter first number: \"))\nnum2 = \n\n# Calculate and print\n",
+          "starterCode": "# Get two numbers\nnum1 = int(input(\"Enter first number: \"))\nnum2 = \n\n# Calculate and print",
           "solution": "num1 = int(input(\"Enter first number: \"))\nnum2 = int(input(\"Enter second number: \"))\n\nprint(f\"Sum: {num1 + num2}\")\nprint(f\"Difference: {num1 - num2}\")\nprint(f\"Product: {num1 * num2}\")",
           "hint": "Use int(input()) for both numbers. Use f-strings with {} to show calculations.",
           "expectedOutput": "Enter first number: 10\nEnter second number: 5\nSum: 15\nDifference: 5\nProduct: 50"
@@ -178,27 +158,27 @@
   "summary": {
     "keyTakeaways": [
       {
-        "emoji": "[Printer]️",
+        "emoji": "",
         "text": "print() can take multiple items, sep changes separator, end changes line ending"
       },
       {
-        "emoji": "⌨️",
+        "emoji": "⌨",
         "text": "input() gets text from the user, always returns a string"
       },
       {
-        "emoji": "[Sync]",
+        "emoji": "",
         "text": "Use int(input()) to get numbers from user input"
       },
       {
-        "emoji": "[LABEL]️",
+        "emoji": "",
         "text": "f-strings embed variables with {} and are cleaner than concatenation"
       },
       {
-        "emoji": "[WARNING]️",
+        "emoji": "",
         "text": "int() fails with ValueError if the input is not a valid number"
       },
       {
-        "emoji": "[JIGSAW]",
+        "emoji": "",
         "text": "Combine input, conversion, and f-strings for interactive programs"
       }
     ],

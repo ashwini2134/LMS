@@ -23,37 +23,9 @@
           ]
         },
         {
-          "type": "visual_aid",
-          "kind": "mapping_visual",
-          "title": "Key → Value Mapping",
-          "accentColor": "blue",
-          "items": [
-            {
-              "emoji": "[User]",
-              "label": "\"name\"",
-              "desc": "\"Lakshanya\""
-            },
-            {
-              "emoji": "[BIRTHDAY]",
-              "label": "\"age\"",
-              "desc": "20"
-            },
-            {
-              "emoji": "[SCHOOL]",
-              "label": "\"college\"",
-              "desc": "\"SRM University\""
-            },
-            {
-              "emoji": "[CITYSCAPE]️",
-              "label": "\"city\"",
-              "desc": "\"Chennai\""
-            }
-          ]
-        },
-        {
           "type": "analogy",
           "title": "A Dictionary is Like a Phone Book",
-          "emoji": "[TELEPHONE]",
+          "emoji": "",
           "text": "You look up a person's name (the key) to find their phone number (the value). Each name is unique. You search by name directly — that's how Python dictionaries work."
         },
         {
@@ -67,7 +39,7 @@
           "type": "practice",
           "title": "Create Your Profile",
           "instructions": "Create a dictionary with keys: name, age, city, hobby. Print each value.",
-          "starterCode": "profile = {\n    \"name\": \"\",\n    \"age\": ,\n    \"city\": \"\",\n    \"hobby\": \"\"\n}\nprint(f\"Name: {profile['name']}\")\n",
+          "starterCode": "profile = {\n    \"name\": \"\",\n    \"age\": ,\n    \"city\": \"\",\n    \"hobby\": \"\"\n}\nprint(f\"Name: {profile['name']}\")",
           "solution": "profile = {\"name\": \"Lakshanya\", \"age\": 20, \"city\": \"Chennai\", \"hobby\": \"coding\"}\nprint(f\"Name: {profile['name']}\")\nprint(f\"Age: {profile['age']}\")\nprint(f\"City: {profile['city']}\")\nprint(f\"Hobby: {profile['hobby']}\")",
           "hint": "Use profile[\"key_name\"] to access each value.",
           "expectedOutput": "Name: Lakshanya\nAge: 20\nCity: Chennai\nHobby: coding"
@@ -131,23 +103,23 @@
   "summary": {
     "keyTakeaways": [
       {
-        "emoji": "[OPEN]",
+        "emoji": "",
         "text": "Dictionaries store key-value pairs with {key: value}"
       },
       {
-        "emoji": "[Key]",
+        "emoji": "",
         "text": "Keys must be unique and immutable"
       },
       {
-        "emoji": "[PENCIL]️",
+        "emoji": "",
         "text": "Add/update with dict[key] = value; delete with del"
       },
       {
-        "emoji": "[LEFT-POINTING]",
+        "emoji": "",
         "text": ".get(key, default) safely accesses values"
       },
       {
-        "emoji": "[Sync]",
+        "emoji": "",
         "text": ".keys(), .values(), .items() iterate dictionary data"
       }
     ],

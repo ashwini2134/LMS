@@ -23,32 +23,6 @@
           ]
         },
         {
-          "type": "visual_aid",
-          "kind": "index_visual",
-          "title": "String Index Visualization",
-          "accentColor": "blue",
-          "items": [
-            {
-              "label": "P"
-            },
-            {
-              "label": "y"
-            },
-            {
-              "label": "t"
-            },
-            {
-              "label": "h"
-            },
-            {
-              "label": "o"
-            },
-            {
-              "label": "n"
-            }
-          ]
-        },
-        {
           "type": "code_example",
           "title": "String Indexing and Slicing",
           "language": "python",
@@ -84,39 +58,11 @@
           ]
         },
         {
-          "type": "visual_aid",
-          "kind": "transformation_demo",
-          "title": "String Method Transformations",
-          "accentColor": "purple",
-          "items": [
-            {
-              "label": "\"hello\".upper()",
-              "desc": "\"HELLO\""
-            },
-            {
-              "label": "\"  Hi  \".strip()",
-              "desc": "\"Hi\""
-            },
-            {
-              "label": "\"a,b,c\".split(\",\")",
-              "desc": "[\"a\", \"b\", \"c\"]"
-            },
-            {
-              "label": "[\"a\", \"b\"].join(\"-\")",
-              "desc": "\"a-b\""
-            },
-            {
-              "label": "\"Hello World\".replace(\"World\", \"Python\")",
-              "desc": "\"Hello Python\""
-            }
-          ]
-        },
-        {
           "type": "code_example",
           "title": "Case Methods and Cleanup",
           "language": "python",
           "code": "text = \"  Hello, World!  \"\nprint(text.upper())\nprint(text.lower())\nprint(text.strip())\nprint(text.strip().replace(\"World\", \"Python\"))\n\nmsg = \"hello.txt\"\nprint(msg.endswith(\".txt\"))",
-          "expectedOutput": "  HELLO, WORLD!  \n  hello, world!  \nHello, World!\nHello, Python!\nTrue"
+          "expectedOutput": "HELLO, WORLD!  \n  hello, world!  \nHello, World!\nHello, Python!\nTrue"
         },
         {
           "type": "code_example",
@@ -158,23 +104,23 @@
   "summary": {
     "keyTakeaways": [
       {
-        "emoji": "[ABC]",
+        "emoji": "",
         "text": "Strings are sequences — index, slice, and measure with len()"
       },
       {
-        "emoji": "[INPUT]",
+        "emoji": "",
         "text": "upper(), lower(), strip() change and clean strings"
       },
       {
-        "emoji": "[LEFT-POINTING]",
+        "emoji": "",
         "text": "find(), startswith(), endswith(), count() search strings"
       },
       {
-        "emoji": "[BLACK]️",
+        "emoji": "",
         "text": "split() breaks strings into lists; join() combines them"
       },
       {
-        "emoji": "[Sync]",
+        "emoji": "",
         "text": "String reversal with [::-1] is useful for palindrome checks"
       }
     ],

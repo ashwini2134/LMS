@@ -25,7 +25,7 @@
         {
           "type": "analogy",
           "title": "if is Like a Traffic Light",
-          "emoji": "[TrafficLight]",
+          "emoji": "",
           "text": "Green light (True) → you go. Red light (False) → you stop. The if statement checks the condition and decides whether to run the code or skip it."
         },
         {
@@ -39,7 +39,7 @@
           "type": "practice",
           "title": "Voting Eligibility",
           "instructions": "Ask for age. If 18+, print \"You are eligible to vote!\"",
-          "starterCode": "age = int(input(\"Enter your age: \"))\nif age >= 18:\n    ",
+          "starterCode": "age = int(input(\"Enter your age: \"))\nif age >= 18:",
           "solution": "age = int(input(\"Enter your age: \"))\nif age >= 18:\n    print(\"You are eligible to vote!\")",
           "hint": "Use if age >= 18: followed by an indented print() statement.",
           "expectedOutput": "Enter your age: 20\nYou are eligible to vote!"
@@ -59,38 +59,6 @@
             "if condition: — runs when True",
             "else: — runs when False",
             "Only ONE of the two blocks runs, never both"
-          ]
-        },
-        {
-          "type": "visual_aid",
-          "kind": "decision_tree",
-          "title": "if / elif / else Flowchart",
-          "accentColor": "purple",
-          "steps": [
-            {
-              "emoji": "[TWISTED]",
-              "label": "Start: Check Condition"
-            },
-            {
-              "emoji": "[WHITE]",
-              "label": "if True → Run if Block"
-            },
-            {
-              "emoji": "[CROSS]",
-              "label": "if False → Check elif"
-            },
-            {
-              "emoji": "[WHITE]",
-              "label": "elif True → Run elif Block"
-            },
-            {
-              "emoji": "[CROSS]",
-              "label": "elif False → Check Next"
-            },
-            {
-              "emoji": "[CheckeredFlag]",
-              "label": "else → Run else Block (default)"
-            }
           ]
         },
         {
@@ -140,7 +108,7 @@
           "type": "practice",
           "title": "Grade Calculator",
           "instructions": "Ask for marks. Print grade: 90+ = A, 80-89 = B, 70-79 = C, 60-69 = D, below 60 = F.",
-          "starterCode": "marks = int(input(\"Enter marks: \"))\nif marks >= 90:\n    \nelif \nelif \nelif \nelse:\n    ",
+          "starterCode": "marks = int(input(\"Enter marks: \"))\nif marks >= 90:\n    \nelif \nelif \nelif \nelse:",
           "solution": "marks = int(input(\"Enter marks: \"))\nif marks >= 90:\n    print(\"Grade: A\")\nelif marks >= 80:\n    print(\"Grade: B\")\nelif marks >= 70:\n    print(\"Grade: C\")\nelif marks >= 60:\n    print(\"Grade: D\")\nelse:\n    print(\"Grade: F\")",
           "hint": "Check the highest grade first (>= 90), then work down.",
           "expectedOutput": "Enter marks: 85\nGrade: B"
@@ -151,23 +119,23 @@
   "summary": {
     "keyTakeaways": [
       {
-        "emoji": "[TWISTED]",
+        "emoji": "",
         "text": "if runs code only when a condition is True"
       },
       {
-        "emoji": "[Sync]",
+        "emoji": "",
         "text": "if-else provides two paths: one for True, one for False"
       },
       {
-        "emoji": "[Link]",
+        "emoji": "",
         "text": "elif chains multiple conditions in sequence"
       },
       {
-        "emoji": "[WHITE]",
+        "emoji": "",
         "text": "Truthy values: non-zero numbers, non-empty strings"
       },
       {
-        "emoji": "[CROSS]",
+        "emoji": "",
         "text": "Falsy values: 0, None, empty strings, empty lists"
       }
     ],

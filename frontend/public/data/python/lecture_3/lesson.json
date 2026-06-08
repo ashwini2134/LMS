@@ -23,102 +23,6 @@
           ]
         },
         {
-          "type": "visual_aid",
-          "kind": "process_flow",
-          "title": "PEMDAS Order of Operations",
-          "accentColor": "purple",
-          "flow": [
-            {
-              "emoji": "[Ruler]",
-              "text": "1. Parentheses ()"
-            },
-            {
-              "emoji": "[INPUT]",
-              "text": "2. Exponents **"
-            },
-            {
-              "emoji": "[HEAVY]️",
-              "text": "3. Multiply / Divide"
-            },
-            {
-              "emoji": "[HEAVY]",
-              "text": "4. Add / Subtract"
-            }
-          ]
-        },
-        {
-          "type": "visual_aid",
-          "kind": "comparison_chart",
-          "title": "Operator Quick Reference",
-          "accentColor": "blue",
-          "comparison": {
-            "headers": [
-              "Operator",
-              "Name",
-              "Example",
-              "Result"
-            ],
-            "rows": [
-              {
-                "label": "+",
-                "values": [
-                  "Addition",
-                  "5 + 3",
-                  "8"
-                ]
-              },
-              {
-                "label": "-",
-                "values": [
-                  "Subtraction",
-                  "5 - 3",
-                  "2"
-                ]
-              },
-              {
-                "label": "*",
-                "values": [
-                  "Multiplication",
-                  "5 * 3",
-                  "15"
-                ]
-              },
-              {
-                "label": "/",
-                "values": [
-                  "Division",
-                  "5 / 2",
-                  "2.5"
-                ]
-              },
-              {
-                "label": "//",
-                "values": [
-                  "Floor Div",
-                  "5 // 2",
-                  "2"
-                ]
-              },
-              {
-                "label": "%",
-                "values": [
-                  "Modulo",
-                  "5 % 2",
-                  "1"
-                ]
-              },
-              {
-                "label": "**",
-                "values": [
-                  "Power",
-                  "5 ** 2",
-                  "25"
-                ]
-              }
-            ]
-          }
-        },
-        {
           "type": "code_example",
           "title": "Basic Arithmetic",
           "language": "python",
@@ -238,7 +142,7 @@
         {
           "type": "analogy",
           "title": "Think of and/or as Gatekeepers",
-          "emoji": "[DOOR]",
+          "emoji": "",
           "text": "Two guards at a door. With and: both must say yes. With or: if either says yes, you enter. With not: the guard says the opposite."
         },
         {
@@ -263,23 +167,23 @@
   "summary": {
     "keyTakeaways": [
       {
-        "emoji": "[HEAVY]",
+        "emoji": "",
         "text": "Arithmetic operators: +, -, *, /, //, %, **"
       },
       {
-        "emoji": "[Ruler]",
+        "emoji": "",
         "text": "PEMDAS rules apply — parentheses first, then exponents, etc."
       },
       {
-        "emoji": "[SCALES]️",
+        "emoji": "",
         "text": "Comparison operators: ==, !=, <, >, <=, >="
       },
       {
-        "emoji": "[Link]",
+        "emoji": "",
         "text": "Logical operators: and, or, not combine conditions"
       },
       {
-        "emoji": "[WARNING]️",
+        "emoji": "",
         "text": "= is assignment, == is comparison — don't mix them up"
       }
     ],

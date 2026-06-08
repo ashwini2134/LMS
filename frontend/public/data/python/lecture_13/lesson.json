@@ -23,69 +23,9 @@
           ]
         },
         {
-          "type": "visual_aid",
-          "kind": "process_flow",
-          "title": "Project Flow",
-          "accentColor": "purple",
-          "flow": [
-            {
-              "emoji": "[Wave]",
-              "text": "Show Menu"
-            },
-            {
-              "emoji": "⌨️",
-              "text": "Get User Choice"
-            },
-            {
-              "emoji": "[GEAR]️",
-              "text": "Process Request"
-            },
-            {
-              "emoji": "[Target]",
-              "text": "Show Result"
-            },
-            {
-              "emoji": "[Sync]",
-              "text": "Repeat until Exit"
-            }
-          ]
-        },
-        {
-          "type": "visual_aid",
-          "kind": "architecture_diagram",
-          "title": "Project Architecture",
-          "accentColor": "blue",
-          "steps": [
-            {
-              "emoji": "[Clipboard]",
-              "label": "Plan: Choose project + features"
-            },
-            {
-              "emoji": "[BUILDING]️",
-              "label": "Structure: Functions + Data"
-            },
-            {
-              "emoji": "[GEAR]️",
-              "label": "Logic: Loops + Conditionals"
-            },
-            {
-              "emoji": "[FLOPPY]",
-              "label": "Storage: List/Dict + File I/O"
-            },
-            {
-              "emoji": "[ARTIST]",
-              "label": "UI: Menu + Input + Output"
-            },
-            {
-              "emoji": "[ROCKET]",
-              "label": "Run & Test everything"
-            }
-          ]
-        },
-        {
           "type": "analogy",
           "title": "This is Your Graduation Project",
-          "emoji": "[GRADUATION]",
+          "emoji": "",
           "text": "Just like a chef who learns all the techniques before cooking their signature dish, you've learned all the Python ingredients. Now put them together to create something amazing!"
         }
       ]
@@ -117,7 +57,7 @@
           "title": "Project Template — Student Management System",
           "language": "python",
           "code": "# Student Management System\n\ndef add_student(students):\n    name = input(\"Enter student name: \")\n    grade = int(input(\"Enter grade: \"))\n    students[name] = grade\n    print(f\"Added {name}\")\n\ndef view_all(students):\n    if not students:\n        print(\"No students yet\")\n        return\n    for name, grade in students.items():\n        print(f\"{name}: {grade}\")\n\ndef main():\n    students = {}\n    while True:\n        print(\"\\n1. Add Student\")\n        print(\"2. View All\")\n        print(\"3. Exit\")\n        choice = input(\"Choose: \")\n        if choice == \"1\":\n            add_student(students)\n        elif choice == \"2\":\n            view_all(students)\n        elif choice == \"3\":\n            break\n        else:\n            print(\"Invalid choice\")\n\nmain()",
-          "expectedOutput": "1. Add Student\n2. View All\n3. Exit\nChoose: "
+          "expectedOutput": "1. Add Student\n2. View All\n3. Exit\nChoose:"
         },
         {
           "type": "reflection",
@@ -128,7 +68,7 @@
           "type": "practice",
           "title": "Project Menu",
           "instructions": "Write a menu program showing 4 project options. Let the user pick one (1-4) and print a confirmation.",
-          "starterCode": "print(\"1. Student Management System\")\nprint(\"2. Expense Tracker\")\nprint(\"3. Quiz Application\")\nprint(\"4. To-Do List\")\nchoice = int(input(\"Choose (1-4): \"))\nprojects = [\"\", \"Student Management System\", \"Expense Tracker\", \"Quiz Application\", \"To-Do List\"]\n",
+          "starterCode": "print(\"1. Student Management System\")\nprint(\"2. Expense Tracker\")\nprint(\"3. Quiz Application\")\nprint(\"4. To-Do List\")\nchoice = int(input(\"Choose (1-4): \"))\nprojects = [\"\", \"Student Management System\", \"Expense Tracker\", \"Quiz Application\", \"To-Do List\"]",
           "solution": "print(\"1. Student Management System\")\nprint(\"2. Expense Tracker\")\nprint(\"3. Quiz Application\")\nprint(\"4. To-Do List\")\nchoice = int(input(\"Choose (1-4): \"))\nprojects = [\"\", \"Student Management System\", \"Expense Tracker\", \"Quiz Application\", \"To-Do List\"]\nprint(f\"You selected: {projects[choice]}\")",
           "hint": "Use a list to map choice numbers to project names.",
           "expectedOutput": "1. Student Management System\n2. Expense Tracker\n3. Quiz Application\n4. To-Do List\nChoose (1-4): 3\nYou selected: Quiz Application"
@@ -139,23 +79,23 @@
   "summary": {
     "keyTakeaways": [
       {
-        "emoji": "[GRADUATION]",
+        "emoji": "",
         "text": "You've learned all Python fundamentals — now apply them!"
       },
       {
-        "emoji": "[Clipboard]",
+        "emoji": "",
         "text": "Plan your project before coding"
       },
       {
-        "emoji": "[JIGSAW]",
+        "emoji": "",
         "text": "Use functions to organize code into clear sections"
       },
       {
-        "emoji": "[FLOPPY]",
+        "emoji": "",
         "text": "Bonus: add file saving/loading for data persistence"
       },
       {
-        "emoji": "[ROCKET]",
+        "emoji": "",
         "text": "Build something YOU want to use — that's the best motivation"
       }
     ],

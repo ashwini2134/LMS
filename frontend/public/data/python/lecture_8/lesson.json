@@ -23,80 +23,9 @@
           ]
         },
         {
-          "type": "visual_aid",
-          "kind": "comparison_grid",
-          "title": "List vs Tuple vs Set",
-          "accentColor": "purple",
-          "columns": [
-            {
-              "header": "[Clipboard] List []",
-              "items": [
-                {
-                  "emoji": "[WHITE]",
-                  "label": "Mutable (changeable)"
-                },
-                {
-                  "emoji": "[WHITE]",
-                  "label": "Ordered (indexed)"
-                },
-                {
-                  "emoji": "[WHITE]",
-                  "label": "Duplicates allowed"
-                },
-                {
-                  "emoji": "[WHITE]",
-                  "label": "append(), remove(), sort()"
-                }
-              ]
-            },
-            {
-              "header": "[Package] Tuple ()",
-              "items": [
-                {
-                  "emoji": "[CROSS]",
-                  "label": "Immutable (fixed)"
-                },
-                {
-                  "emoji": "[WHITE]",
-                  "label": "Ordered (indexed)"
-                },
-                {
-                  "emoji": "[WHITE]",
-                  "label": "Duplicates allowed"
-                },
-                {
-                  "emoji": "[Zap]",
-                  "label": "Faster than lists"
-                }
-              ]
-            },
-            {
-              "header": "[INPUT] Set {}",
-              "items": [
-                {
-                  "emoji": "[WHITE]",
-                  "label": "Mutable (changeable)"
-                },
-                {
-                  "emoji": "[CROSS]",
-                  "label": "Unordered (no index)"
-                },
-                {
-                  "emoji": "[CROSS]",
-                  "label": "No duplicates"
-                },
-                {
-                  "emoji": "[TWISTED]",
-                  "label": "Union, Intersection, Diff"
-                }
-              ]
-            }
-          ]
-        },
-        {
           "type": "analogy",
           "title": "A Tuple is Like a Sealed Envelope",
-          "emoji": "[ENVELOPE]️",
+          "emoji": "",
           "text": "Once sealed with coordinates inside, you can read them but not change them. Tuples work the same — great for fixed data like RGB colors or dates."
         },
         {
@@ -129,7 +58,7 @@
           "type": "practice",
           "title": "Work with Tuples",
           "instructions": "Create a tuple with your name, age, and city. Unpack it and print each value.",
-          "starterCode": "my_info = (\"\", , \"\")\nname, age, city = my_info\n",
+          "starterCode": "my_info = (\"\", , \"\")\nname, age, city = my_info",
           "solution": "my_info = (\"Lakshanya\", 20, \"Chennai\")\nname, age, city = my_info\nprint(f\"Name: {name}\")\nprint(f\"Age: {age}\")\nprint(f\"City: {city}\")",
           "hint": "Unpack by putting variable names separated by commas on the left.",
           "expectedOutput": "Name: Lakshanya\nAge: 20\nCity: Chennai"
@@ -192,23 +121,23 @@
   "summary": {
     "keyTakeaways": [
       {
-        "emoji": "[Package]",
+        "emoji": "",
         "text": "Tuples are immutable ordered collections with ()"
       },
       {
-        "emoji": "[OUTBOX]",
+        "emoji": "",
         "text": "Tuple packing groups values; unpacking extracts them"
       },
       {
-        "emoji": "[Sync]",
+        "emoji": "",
         "text": "Use tuples for swapping: a, b = b, a"
       },
       {
-        "emoji": "[INPUT]",
+        "emoji": "",
         "text": "Sets store unique items only"
       },
       {
-        "emoji": "[TWISTED]",
+        "emoji": "",
         "text": "Set operations: | union, & intersection, - difference"
       }
     ],

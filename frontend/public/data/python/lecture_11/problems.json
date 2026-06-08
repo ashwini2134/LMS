@@ -4,7 +4,7 @@
     "title": "Palindrome Checker",
     "description": "Ask the user for a word. Check if it's a palindrome (reads same forward and backward). Ignore case.",
     "difficulty": "medium",
-    "starterCode": "word = input(\"Enter a word: \")\n\n# Check palindrome\n",
+    "starterCode": "word = input(\"Enter a word: \")\n\n# Check palindrome",
     "solution": "word = input(\"Enter a word: \")\ncleaned = word.lower().strip()\nif cleaned == cleaned[::-1]:\n    print(\"Palindrome\")\nelse:\n    print(\"Not a palindrome\")",
     "testCases": [
       {
@@ -24,7 +24,7 @@
     "title": "Email Extractor",
     "description": "Given 'Name: Alice, Email: alice@example.com; Name: Bob, Email: bob@test.com', extract all email addresses.",
     "difficulty": "medium",
-    "starterCode": "data = \"Name: Alice, Email: alice@example.com; Name: Bob, Email: bob@test.com\"\n\n# Extract and print emails\n",
+    "starterCode": "data = \"Name: Alice, Email: alice@example.com; Name: Bob, Email: bob@test.com\"\n\n# Extract and print emails",
     "solution": "data = \"Name: Alice, Email: alice@example.com; Name: Bob, Email: bob@test.com\"\nentries = data.split(\"; \")\nfor entry in entries:\n    parts = entry.split(\", \")\n    email = parts[1].split(\": \")[1]\n    print(email)",
     "testCases": [
       {
