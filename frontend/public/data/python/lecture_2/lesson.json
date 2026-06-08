@@ -81,11 +81,11 @@
               "text": "User Input"
             },
             {
-              "emoji": "⚙️",
+              "emoji": "[GEAR]️",
               "text": "Process Data"
             },
             {
-              "emoji": "🖨️",
+              "emoji": "[Printer]️",
               "text": "Display Output"
             }
           ]
@@ -93,7 +93,7 @@
         {
           "type": "analogy",
           "title": "input() is Like a Receptionist",
-          "emoji": "🎤",
+          "emoji": "[MICROPHONE]",
           "text": "You ask a question (the prompt), then wait for the person to answer (type and press Enter). The receptionist (input()) hands you the answer on a piece of paper (a string). If you need it as a number, you must convert it yourself."
         },
         {
@@ -178,7 +178,7 @@
   "summary": {
     "keyTakeaways": [
       {
-        "emoji": "🖨️",
+        "emoji": "[Printer]️",
         "text": "print() can take multiple items, sep changes separator, end changes line ending"
       },
       {
@@ -186,19 +186,19 @@
         "text": "input() gets text from the user, always returns a string"
       },
       {
-        "emoji": "🔄",
+        "emoji": "[Sync]",
         "text": "Use int(input()) to get numbers from user input"
       },
       {
-        "emoji": "🏷️",
+        "emoji": "[LABEL]️",
         "text": "f-strings embed variables with {} and are cleaner than concatenation"
       },
       {
-        "emoji": "⚠️",
+        "emoji": "[WARNING]️",
         "text": "int() fails with ValueError if the input is not a valid number"
       },
       {
-        "emoji": "🧩",
+        "emoji": "[JIGSAW]",
         "text": "Combine input, conversion, and f-strings for interactive programs"
       }
     ],

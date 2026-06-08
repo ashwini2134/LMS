@@ -158,23 +158,23 @@
   "summary": {
     "keyTakeaways": [
       {
-        "emoji": "🔤",
+        "emoji": "[ABC]",
         "text": "Strings are sequences — index, slice, and measure with len()"
       },
       {
-        "emoji": "🔠",
+        "emoji": "[INPUT]",
         "text": "upper(), lower(), strip() change and clean strings"
       },
       {
-        "emoji": "🔍",
+        "emoji": "[LEFT-POINTING]",
         "text": "find(), startswith(), endswith(), count() search strings"
       },
       {
-        "emoji": "✂️",
+        "emoji": "[BLACK]️",
         "text": "split() breaks strings into lists; join() combines them"
       },
       {
-        "emoji": "🔄",
+        "emoji": "[Sync]",
         "text": "String reversal with [::-1] is useful for palindrome checks"
       }
     ],

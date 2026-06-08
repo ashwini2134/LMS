@@ -29,64 +29,64 @@
           "accentColor": "purple",
           "columns": [
             {
-              "header": "📋 List []",
+              "header": "[Clipboard] List []",
               "items": [
                 {
-                  "emoji": "✅",
+                  "emoji": "[WHITE]",
                   "label": "Mutable (changeable)"
                 },
                 {
-                  "emoji": "✅",
+                  "emoji": "[WHITE]",
                   "label": "Ordered (indexed)"
                 },
                 {
-                  "emoji": "✅",
+                  "emoji": "[WHITE]",
                   "label": "Duplicates allowed"
                 },
                 {
-                  "emoji": "✅",
+                  "emoji": "[WHITE]",
                   "label": "append(), remove(), sort()"
                 }
               ]
             },
             {
-              "header": "📦 Tuple ()",
+              "header": "[Package] Tuple ()",
               "items": [
                 {
-                  "emoji": "❌",
+                  "emoji": "[CROSS]",
                   "label": "Immutable (fixed)"
                 },
                 {
-                  "emoji": "✅",
+                  "emoji": "[WHITE]",
                   "label": "Ordered (indexed)"
                 },
                 {
-                  "emoji": "✅",
+                  "emoji": "[WHITE]",
                   "label": "Duplicates allowed"
                 },
                 {
-                  "emoji": "⚡",
+                  "emoji": "[Zap]",
                   "label": "Faster than lists"
                 }
               ]
             },
             {
-              "header": "🔢 Set {}",
+              "header": "[INPUT] Set {}",
               "items": [
                 {
-                  "emoji": "✅",
+                  "emoji": "[WHITE]",
                   "label": "Mutable (changeable)"
                 },
                 {
-                  "emoji": "❌",
+                  "emoji": "[CROSS]",
                   "label": "Unordered (no index)"
                 },
                 {
-                  "emoji": "❌",
+                  "emoji": "[CROSS]",
                   "label": "No duplicates"
                 },
                 {
-                  "emoji": "🔀",
+                  "emoji": "[TWISTED]",
                   "label": "Union, Intersection, Diff"
                 }
               ]
@@ -96,7 +96,7 @@
         {
           "type": "analogy",
           "title": "A Tuple is Like a Sealed Envelope",
-          "emoji": "✉️",
+          "emoji": "[ENVELOPE]️",
           "text": "Once sealed with coordinates inside, you can read them but not change them. Tuples work the same — great for fixed data like RGB colors or dates."
         },
         {
@@ -192,23 +192,23 @@
   "summary": {
     "keyTakeaways": [
       {
-        "emoji": "📦",
+        "emoji": "[Package]",
         "text": "Tuples are immutable ordered collections with ()"
       },
       {
-        "emoji": "📤",
+        "emoji": "[OUTBOX]",
         "text": "Tuple packing groups values; unpacking extracts them"
       },
       {
-        "emoji": "🔄",
+        "emoji": "[Sync]",
         "text": "Use tuples for swapping: a, b = b, a"
       },
       {
-        "emoji": "🔢",
+        "emoji": "[INPUT]",
         "text": "Sets store unique items only"
       },
       {
-        "emoji": "🔀",
+        "emoji": "[TWISTED]",
         "text": "Set operations: | union, & intersection, - difference"
       }
     ],

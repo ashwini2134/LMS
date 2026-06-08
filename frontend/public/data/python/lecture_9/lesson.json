@@ -29,22 +29,22 @@
           "accentColor": "blue",
           "items": [
             {
-              "emoji": "👤",
+              "emoji": "[User]",
               "label": "\"name\"",
               "desc": "\"Lakshanya\""
             },
             {
-              "emoji": "🎂",
+              "emoji": "[BIRTHDAY]",
               "label": "\"age\"",
               "desc": "20"
             },
             {
-              "emoji": "🏫",
+              "emoji": "[SCHOOL]",
               "label": "\"college\"",
               "desc": "\"SRM University\""
             },
             {
-              "emoji": "🏙️",
+              "emoji": "[CITYSCAPE]️",
               "label": "\"city\"",
               "desc": "\"Chennai\""
             }
@@ -53,7 +53,7 @@
         {
           "type": "analogy",
           "title": "A Dictionary is Like a Phone Book",
-          "emoji": "📞",
+          "emoji": "[TELEPHONE]",
           "text": "You look up a person's name (the key) to find their phone number (the value). Each name is unique. You search by name directly — that's how Python dictionaries work."
         },
         {
@@ -131,23 +131,23 @@
   "summary": {
     "keyTakeaways": [
       {
-        "emoji": "📖",
+        "emoji": "[OPEN]",
         "text": "Dictionaries store key-value pairs with {key: value}"
       },
       {
-        "emoji": "🔑",
+        "emoji": "[Key]",
         "text": "Keys must be unique and immutable"
       },
       {
-        "emoji": "✏️",
+        "emoji": "[PENCIL]️",
         "text": "Add/update with dict[key] = value; delete with del"
       },
       {
-        "emoji": "🔍",
+        "emoji": "[LEFT-POINTING]",
         "text": ".get(key, default) safely accesses values"
       },
       {
-        "emoji": "🔄",
+        "emoji": "[Sync]",
         "text": ".keys(), .values(), .items() iterate dictionary data"
       }
     ],

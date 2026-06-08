@@ -29,23 +29,23 @@
           "accentColor": "blue",
           "flow": [
             {
-              "emoji": "🧑‍💻",
+              "emoji": "[Person]‍[PERSONAL]",
               "text": "You Write Code"
             },
             {
-              "emoji": "🐍",
+              "emoji": "[SNAKE]",
               "text": "Python Reads It"
             },
             {
-              "emoji": "⚙️",
+              "emoji": "[GEAR]️",
               "text": "Interpreter Translates"
             },
             {
-              "emoji": "💻",
+              "emoji": "[PERSONAL]",
               "text": "Computer Executes"
             },
             {
-              "emoji": "🎯",
+              "emoji": "[Target]",
               "text": "See Output"
             }
           ]
@@ -53,7 +53,7 @@
         {
           "type": "analogy",
           "title": "Think of a Program as a Cooking Recipe",
-          "emoji": "📖",
+          "emoji": "[OPEN]",
           "text": "A recipe lists ingredients and steps: chop onions, boil water, cook for 10 minutes. A program does the same thing — it lists steps like 'store this value,' 'add these two numbers,' 'print the result.' The computer follows the recipe just like you follow cooking instructions."
         },
         {
@@ -128,7 +128,7 @@
         {
           "type": "analogy",
           "title": "Think of Python as a Swiss Army Knife",
-          "emoji": "🔧",
+          "emoji": "[WRENCH]",
           "text": "A Swiss Army knife has many tools — blade, scissors, screwdriver — all in one device. Python is the same: you can build websites, analyze data, make games, or automate tasks, all with the same language."
         },
         {
@@ -161,11 +161,11 @@
           "accentColor": "green",
           "flow": [
             {
-              "emoji": "📝",
+              "emoji": "[Note]",
               "text": "Write hello.py"
             },
             {
-              "emoji": "💾",
+              "emoji": "[FLOPPY]",
               "text": "Save the file"
             },
             {
@@ -173,7 +173,7 @@
               "text": "python hello.py"
             },
             {
-              "emoji": "🖨️",
+              "emoji": "[Printer]️",
               "text": "Output appears"
             }
           ]
@@ -208,7 +208,7 @@
           "accentColor": "green",
           "leftPanel": {
             "label": "Step 1",
-            "emoji": "📝",
+            "emoji": "[Note]",
             "title": "Write Code",
             "description": "You write Python instructions in a .py file using a text editor."
           },
@@ -224,7 +224,7 @@
           },
           "rightPanel": {
             "label": "Step 3",
-            "emoji": "🎯",
+            "emoji": "[Target]",
             "title": "See Output",
             "description": "The result appears on your screen. If there's an error, Python shows what went wrong."
           }
@@ -268,27 +268,27 @@
   "summary": {
     "keyTakeaways": [
       {
-        "emoji": "📖",
+        "emoji": "[OPEN]",
         "text": "A program is a sequence of instructions for a computer"
       },
       {
-        "emoji": "🐍",
+        "emoji": "[SNAKE]",
         "text": "Python is beginner-friendly, readable, and used worldwide"
       },
       {
-        "emoji": "🖨️",
+        "emoji": "[Printer]️",
         "text": "print() displays text on the screen"
       },
       {
-        "emoji": "🔧",
+        "emoji": "[WRENCH]",
         "text": "Python is interpreted — runs line by line, no compile step"
       },
       {
-        "emoji": "📁",
+        "emoji": "[FILE]",
         "text": ".py files store Python programs; run them with python filename.py"
       },
       {
-        "emoji": "💻",
+        "emoji": "[PERSONAL]",
         "text": "The Python shell lets you test code interactively"
       }
     ],

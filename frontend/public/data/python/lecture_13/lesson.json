@@ -29,7 +29,7 @@
           "accentColor": "purple",
           "flow": [
             {
-              "emoji": "👋",
+              "emoji": "[Wave]",
               "text": "Show Menu"
             },
             {
@@ -37,15 +37,15 @@
               "text": "Get User Choice"
             },
             {
-              "emoji": "⚙️",
+              "emoji": "[GEAR]️",
               "text": "Process Request"
             },
             {
-              "emoji": "🎯",
+              "emoji": "[Target]",
               "text": "Show Result"
             },
             {
-              "emoji": "🔄",
+              "emoji": "[Sync]",
               "text": "Repeat until Exit"
             }
           ]
@@ -57,27 +57,27 @@
           "accentColor": "blue",
           "steps": [
             {
-              "emoji": "📋",
+              "emoji": "[Clipboard]",
               "label": "Plan: Choose project + features"
             },
             {
-              "emoji": "🏗️",
+              "emoji": "[BUILDING]️",
               "label": "Structure: Functions + Data"
             },
             {
-              "emoji": "⚙️",
+              "emoji": "[GEAR]️",
               "label": "Logic: Loops + Conditionals"
             },
             {
-              "emoji": "💾",
+              "emoji": "[FLOPPY]",
               "label": "Storage: List/Dict + File I/O"
             },
             {
-              "emoji": "🎨",
+              "emoji": "[ARTIST]",
               "label": "UI: Menu + Input + Output"
             },
             {
-              "emoji": "🚀",
+              "emoji": "[ROCKET]",
               "label": "Run & Test everything"
             }
           ]
@@ -85,7 +85,7 @@
         {
           "type": "analogy",
           "title": "This is Your Graduation Project",
-          "emoji": "🎓",
+          "emoji": "[GRADUATION]",
           "text": "Just like a chef who learns all the techniques before cooking their signature dish, you've learned all the Python ingredients. Now put them together to create something amazing!"
         }
       ]
@@ -139,23 +139,23 @@
   "summary": {
     "keyTakeaways": [
       {
-        "emoji": "🎓",
+        "emoji": "[GRADUATION]",
         "text": "You've learned all Python fundamentals — now apply them!"
       },
       {
-        "emoji": "📋",
+        "emoji": "[Clipboard]",
         "text": "Plan your project before coding"
       },
       {
-        "emoji": "🧩",
+        "emoji": "[JIGSAW]",
         "text": "Use functions to organize code into clear sections"
       },
       {
-        "emoji": "💾",
+        "emoji": "[FLOPPY]",
         "text": "Bonus: add file saving/loading for data persistence"
       },
       {
-        "emoji": "🚀",
+        "emoji": "[ROCKET]",
         "text": "Build something YOU want to use — that's the best motivation"
       }
     ],

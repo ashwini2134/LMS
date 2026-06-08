@@ -25,7 +25,7 @@
         {
           "type": "analogy",
           "title": "A Function is Like a Vending Machine",
-          "emoji": "🏪",
+          "emoji": "[Store]",
           "text": "You press A3 (parameters), the machine runs its code (function body), and out comes a snack (return value). You don't care HOW it works inside — just press the button and get the result."
         },
         {
@@ -60,15 +60,15 @@
           "accentColor": "blue",
           "flow": [
             {
-              "emoji": "📦",
+              "emoji": "[Package]",
               "text": "Parameters (Inputs)"
             },
             {
-              "emoji": "⚙️",
+              "emoji": "[GEAR]️",
               "text": "Function (Process)"
             },
             {
-              "emoji": "🎁",
+              "emoji": "[WRAPPED]",
               "text": "Return (Output)"
             }
           ]
@@ -80,19 +80,19 @@
           "accentColor": "purple",
           "flow": [
             {
-              "emoji": "📞",
+              "emoji": "[TELEPHONE]",
               "text": "Call greet(\"Alice\")"
             },
             {
-              "emoji": "📥",
+              "emoji": "[INBOX]",
               "text": "Parameter: name = \"Alice\""
             },
             {
-              "emoji": "⚙️",
+              "emoji": "[GEAR]️",
               "text": "Function body runs"
             },
             {
-              "emoji": "📤",
+              "emoji": "[OUTBOX]",
               "text": "Return value / Output"
             }
           ]
@@ -149,23 +149,23 @@
   "summary": {
     "keyTakeaways": [
       {
-        "emoji": "♻️",
+        "emoji": "[BLACK]️",
         "text": "Functions let you write code once and reuse it"
       },
       {
-        "emoji": "📝",
+        "emoji": "[Note]",
         "text": "Use def to define, return to send back a value"
       },
       {
-        "emoji": "📦",
+        "emoji": "[Package]",
         "text": "Parameters are inputs; return values are outputs"
       },
       {
-        "emoji": "⚙️",
+        "emoji": "[GEAR]️",
         "text": "Default parameters make functions flexible"
       },
       {
-        "emoji": "🧩",
+        "emoji": "[JIGSAW]",
         "text": "Break complex programs into small, reusable functions"
       }
     ],

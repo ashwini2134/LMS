@@ -25,7 +25,7 @@
         {
           "type": "analogy",
           "title": "File Handling is Like a Notebook",
-          "emoji": "📓",
+          "emoji": "[Notebook]",
           "text": "Writing in a notebook saves information even after you close it. Open it tomorrow and the information is still there. File handling does the same for your programs."
         }
       ]
@@ -53,19 +53,19 @@
           "accentColor": "purple",
           "steps": [
             {
-              "emoji": "📂",
+              "emoji": "[OPEN]",
               "label": "Open file (open())"
             },
             {
-              "emoji": "📖",
+              "emoji": "[OPEN]",
               "label": "Read content (.read())"
             },
             {
-              "emoji": "🔄",
+              "emoji": "[Sync]",
               "label": "Process data"
             },
             {
-              "emoji": "🔒",
+              "emoji": "[LOCK]",
               "label": "Close file (.close())"
             }
           ]
@@ -129,19 +129,19 @@
           "accentColor": "green",
           "steps": [
             {
-              "emoji": "📂",
+              "emoji": "[OPEN]",
               "label": "Open file mode 'w'"
             },
             {
-              "emoji": "✏️",
+              "emoji": "[PENCIL]️",
               "label": "Write data (.write())"
             },
             {
-              "emoji": "💾",
+              "emoji": "[FLOPPY]",
               "label": "Data saved to disk"
             },
             {
-              "emoji": "🔒",
+              "emoji": "[LOCK]",
               "label": "Close file (.close())"
             }
           ]
@@ -168,23 +168,23 @@
   "summary": {
     "keyTakeaways": [
       {
-        "emoji": "📁",
+        "emoji": "[FILE]",
         "text": "Files persist data beyond program execution"
       },
       {
-        "emoji": "📖",
+        "emoji": "[OPEN]",
         "text": "Use open(\"file\", \"r\") to read, \"w\" to write, \"a\" to append"
       },
       {
-        "emoji": "🔒",
+        "emoji": "[LOCK]",
         "text": "Always close files — use with open() for automatic closing"
       },
       {
-        "emoji": "⚠️",
+        "emoji": "[WARNING]️",
         "text": "\"w\" mode overwrites existing files — use carefully!"
       },
       {
-        "emoji": "➕",
+        "emoji": "[HEAVY]",
         "text": "Append mode (\"a\") adds to the end without deleting"
       }
     ],

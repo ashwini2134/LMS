@@ -29,19 +29,19 @@
           "accentColor": "purple",
           "flow": [
             {
-              "emoji": "📐",
+              "emoji": "[Ruler]",
               "text": "1. Parentheses ()"
             },
             {
-              "emoji": "🔢",
+              "emoji": "[INPUT]",
               "text": "2. Exponents **"
             },
             {
-              "emoji": "✖️",
+              "emoji": "[HEAVY]️",
               "text": "3. Multiply / Divide"
             },
             {
-              "emoji": "➕",
+              "emoji": "[HEAVY]",
               "text": "4. Add / Subtract"
             }
           ]
@@ -238,7 +238,7 @@
         {
           "type": "analogy",
           "title": "Think of and/or as Gatekeepers",
-          "emoji": "🚪",
+          "emoji": "[DOOR]",
           "text": "Two guards at a door. With and: both must say yes. With or: if either says yes, you enter. With not: the guard says the opposite."
         },
         {
@@ -263,23 +263,23 @@
   "summary": {
     "keyTakeaways": [
       {
-        "emoji": "➕",
+        "emoji": "[HEAVY]",
         "text": "Arithmetic operators: +, -, *, /, //, %, **"
       },
       {
-        "emoji": "📐",
+        "emoji": "[Ruler]",
         "text": "PEMDAS rules apply — parentheses first, then exponents, etc."
       },
       {
-        "emoji": "⚖️",
+        "emoji": "[SCALES]️",
         "text": "Comparison operators: ==, !=, <, >, <=, >="
       },
       {
-        "emoji": "🔗",
+        "emoji": "[Link]",
         "text": "Logical operators: and, or, not combine conditions"
       },
       {
-        "emoji": "⚠️",
+        "emoji": "[WARNING]️",
         "text": "= is assignment, == is comparison — don't mix them up"
       }
     ],

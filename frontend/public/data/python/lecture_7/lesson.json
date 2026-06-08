@@ -25,7 +25,7 @@
         {
           "type": "analogy",
           "title": "A List is Like a Shopping List",
-          "emoji": "🛒",
+          "emoji": "[Cart]",
           "text": "You write items in order: first eggs, then milk, then bread. You can add items, remove items, or check what's at position 2. Python lists work exactly the same way."
         },
         {
@@ -92,23 +92,23 @@
           "accentColor": "purple",
           "items": [
             {
-              "label": "🍎",
+              "label": "[RED]",
               "value": "apple"
             },
             {
-              "label": "🍌",
+              "label": "[BANANA]",
               "value": "banana"
             },
             {
-              "label": "🍒",
+              "label": "[CHERRIES]",
               "value": "cherry"
             },
             {
-              "label": "📅",
+              "label": "[CALENDAR]",
               "value": "date"
             },
             {
-              "label": "🫐",
+              "label": "[BLUEBERRIES]",
               "value": "elderberry"
             }
           ]
@@ -176,23 +176,23 @@
   "summary": {
     "keyTakeaways": [
       {
-        "emoji": "📋",
+        "emoji": "[Clipboard]",
         "text": "Lists are ordered collections in square brackets []"
       },
       {
-        "emoji": "🔢",
+        "emoji": "[INPUT]",
         "text": "Index starts at 0; negative indices count from end"
       },
       {
-        "emoji": "✂️",
+        "emoji": "[BLACK]️",
         "text": "Slicing [start:stop:step] extracts portions"
       },
       {
-        "emoji": "➕",
+        "emoji": "[HEAVY]",
         "text": "append() adds items, remove() deletes items"
       },
       {
-        "emoji": "📐",
+        "emoji": "[Ruler]",
         "text": "sort() orders lists, len() counts items"
       }
     ],

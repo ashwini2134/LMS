@@ -25,7 +25,7 @@
         {
           "type": "analogy",
           "title": "if is Like a Traffic Light",
-          "emoji": "🚦",
+          "emoji": "[TrafficLight]",
           "text": "Green light (True) → you go. Red light (False) → you stop. The if statement checks the condition and decides whether to run the code or skip it."
         },
         {
@@ -68,27 +68,27 @@
           "accentColor": "purple",
           "steps": [
             {
-              "emoji": "🔀",
+              "emoji": "[TWISTED]",
               "label": "Start: Check Condition"
             },
             {
-              "emoji": "✅",
+              "emoji": "[WHITE]",
               "label": "if True → Run if Block"
             },
             {
-              "emoji": "❌",
+              "emoji": "[CROSS]",
               "label": "if False → Check elif"
             },
             {
-              "emoji": "✅",
+              "emoji": "[WHITE]",
               "label": "elif True → Run elif Block"
             },
             {
-              "emoji": "❌",
+              "emoji": "[CROSS]",
               "label": "elif False → Check Next"
             },
             {
-              "emoji": "🏁",
+              "emoji": "[CheckeredFlag]",
               "label": "else → Run else Block (default)"
             }
           ]
@@ -151,23 +151,23 @@
   "summary": {
     "keyTakeaways": [
       {
-        "emoji": "🔀",
+        "emoji": "[TWISTED]",
         "text": "if runs code only when a condition is True"
       },
       {
-        "emoji": "🔄",
+        "emoji": "[Sync]",
         "text": "if-else provides two paths: one for True, one for False"
       },
       {
-        "emoji": "🔗",
+        "emoji": "[Link]",
         "text": "elif chains multiple conditions in sequence"
       },
       {
-        "emoji": "✅",
+        "emoji": "[WHITE]",
         "text": "Truthy values: non-zero numbers, non-empty strings"
       },
       {
-        "emoji": "❌",
+        "emoji": "[CROSS]",
         "text": "Falsy values: 0, None, empty strings, empty lists"
       }
     ],

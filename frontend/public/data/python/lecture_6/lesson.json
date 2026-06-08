@@ -28,7 +28,7 @@
           "accentColor": "blue",
           "steps": [
             {
-              "emoji": "❓",
+              "emoji": "[BLACK]",
               "label": "Check condition"
             },
             {
@@ -36,11 +36,11 @@
               "label": "Run body"
             },
             {
-              "emoji": "🔄",
+              "emoji": "[Sync]",
               "label": "Update counter"
             },
             {
-              "emoji": "❓",
+              "emoji": "[BLACK]",
               "label": "Check condition..."
             },
             {
@@ -52,7 +52,7 @@
         {
           "type": "analogy",
           "title": "while is Like Checking Your Phone",
-          "emoji": "📱",
+          "emoji": "[MOBILE]",
           "text": "While waiting for a friend: check for messages. No message → wait. Message arrives → stop. The while loop checks a condition and keeps going until it changes."
         },
         {
@@ -116,11 +116,11 @@
               "header": "⏹️ break",
               "items": [
                 {
-                  "emoji": "🚪",
+                  "emoji": "[DOOR]",
                   "label": "Exits loop immediately"
                 },
                 {
-                  "emoji": "🎯",
+                  "emoji": "[Target]",
                   "label": "Used for \"found it!\""
                 },
                 {
@@ -128,7 +128,7 @@
                   "label": "Skips remaining iterations"
                 },
                 {
-                  "emoji": "📝",
+                  "emoji": "[Note]",
                   "label": "Code continues after loop"
                 }
               ]
@@ -141,21 +141,21 @@
                   "label": "Skips current iteration"
                 },
                 {
-                  "emoji": "🚫",
+                  "emoji": "[NO]",
                   "label": "Skips to next iteration"
                 },
                 {
-                  "emoji": "🔂",
+                  "emoji": "[CLOCKWISE]",
                   "label": "Loop keeps running"
                 },
                 {
-                  "emoji": "📝",
+                  "emoji": "[Note]",
                   "label": "Only current iteration skips"
                 }
               ]
             },
             {
-              "header": "🔑 Key Difference",
+              "header": "[Key] Key Difference",
               "items": [
                 {
                   "emoji": "⏹️",
@@ -166,7 +166,7 @@
                   "label": "continue → One iteration skipped"
                 },
                 {
-                  "emoji": "🔄",
+                  "emoji": "[Sync]",
                   "label": "break ends; continue continues"
                 }
               ]
@@ -213,11 +213,11 @@
   "summary": {
     "keyTakeaways": [
       {
-        "emoji": "🔄",
+        "emoji": "[Sync]",
         "text": "while loops run as long as the condition is True"
       },
       {
-        "emoji": "⚠️",
+        "emoji": "[WARNING]️",
         "text": "Always update the condition variable to avoid infinite loops"
       },
       {
@@ -229,7 +229,7 @@
         "text": "continue skips to the next iteration"
       },
       {
-        "emoji": "🔀",
+        "emoji": "[TWISTED]",
         "text": "Use for when you know the count, while when you don't"
       }
     ],

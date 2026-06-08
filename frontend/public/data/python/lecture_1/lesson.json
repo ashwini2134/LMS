@@ -25,7 +25,7 @@
         {
           "type": "analogy",
           "title": "A Variable is a Labeled Jar",
-          "emoji": "📦",
+          "emoji": "[Package]",
           "text": "Imagine jars with labels. One jar labeled 'sugar' contains sugar. Another labeled 'flour' contains flour. You look at the label to know what's inside. In Python, the label is the variable name and the contents is the value."
         },
         {
@@ -34,7 +34,7 @@
           "accentColor": "blue",
           "leftPanel": {
             "label": "Real Life",
-            "emoji": "📦",
+            "emoji": "[Package]",
             "title": "Labeled Storage",
             "description": "A box labeled 'age' stores the number 20 inside it."
           },
@@ -117,73 +117,73 @@
           "accentColor": "purple",
           "columns": [
             {
-              "header": "🔢 int (Integer)",
+              "header": "[INPUT] int (Integer)",
               "items": [
                 {
-                  "emoji": "✅",
+                  "emoji": "[WHITE]",
                   "label": "Whole numbers",
                   "desc": "42, -7, 0"
                 },
                 {
-                  "emoji": "➗",
+                  "emoji": "[HEAVY]",
                   "label": "Math operations",
                   "desc": "+ - * / // %"
                 },
                 {
-                  "emoji": "📏",
+                  "emoji": "[STRAIGHT]",
                   "label": "No decimal point"
                 },
                 {
-                  "emoji": "⚡",
+                  "emoji": "[Zap]",
                   "label": "Fast computation"
                 }
               ]
             },
             {
-              "header": "⚖️ float (Float)",
+              "header": "[SCALES]️ float (Float)",
               "items": [
                 {
-                  "emoji": "✅",
+                  "emoji": "[WHITE]",
                   "label": "Decimal numbers",
                   "desc": "3.14, -0.5"
                 },
                 {
-                  "emoji": "🎯",
+                  "emoji": "[Target]",
                   "label": "Precision matters",
                   "desc": "For measurements"
                 },
                 {
-                  "emoji": "🔬",
+                  "emoji": "[MICROSCOPE]",
                   "label": "Scientific notation",
                   "desc": "1.5e10"
                 },
                 {
-                  "emoji": "⚠️",
+                  "emoji": "[WARNING]️",
                   "label": "Rounding quirks",
                   "desc": "0.1 + 0.2 ≠ 0.3"
                 }
               ]
             },
             {
-              "header": "📝 str & ✅ bool",
+              "header": "[Note] str & [WHITE] bool",
               "items": [
                 {
-                  "emoji": "💬",
+                  "emoji": "[SPEECH]",
                   "label": "str = text",
                   "desc": "\"Hello\", 'Python'"
                 },
                 {
-                  "emoji": "🔗",
+                  "emoji": "[Link]",
                   "label": "String concatenation",
                   "desc": "+ joins strings"
                 },
                 {
-                  "emoji": "✅",
+                  "emoji": "[WHITE]",
                   "label": "bool = True/False",
                   "desc": "For decisions"
                 },
                 {
-                  "emoji": "🔀",
+                  "emoji": "[TWISTED]",
                   "label": "Logical operations",
                   "desc": "and, or, not"
                 }
@@ -197,19 +197,19 @@
           "accentColor": "purple",
           "leftPanel": {
             "label": "int",
-            "emoji": "🔢",
+            "emoji": "[INPUT]",
             "title": "Whole Numbers",
             "description": "42, 0, -7, 1000 — no decimal point"
           },
           "centerPanel": {
             "label": "float",
-            "emoji": "⚖️",
+            "emoji": "[SCALES]️",
             "title": "Decimal Numbers",
             "description": "3.14, 2.5, -0.001, 99.9"
           },
           "rightPanel": {
             "label": "str & bool",
-            "emoji": "📝",
+            "emoji": "[Note]",
             "title": "Text & Logic",
             "description": "str: \"hello\", \"Python\", \"42\"\nbool: True, False"
           }
@@ -325,27 +325,27 @@
   "summary": {
     "keyTakeaways": [
       {
-        "emoji": "📦",
+        "emoji": "[Package]",
         "text": "Variables store values using the = operator"
       },
       {
-        "emoji": "🔢",
+        "emoji": "[INPUT]",
         "text": "int is for whole numbers, float is for decimals"
       },
       {
-        "emoji": "📝",
+        "emoji": "[Note]",
         "text": "str is for text, always in quotes"
       },
       {
-        "emoji": "✅",
+        "emoji": "[WHITE]",
         "text": "bool is for True/False values"
       },
       {
-        "emoji": "🔍",
+        "emoji": "[LEFT-POINTING]",
         "text": "type() tells you the type of any value"
       },
       {
-        "emoji": "🔄",
+        "emoji": "[Sync]",
         "text": "Use int(), str(), float() to convert between types"
       }
     ],
