@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api, type Course } from "../api";
+import { CourseSearchFilters, NoResultsState } from "../components";
 
 export default function CoursesPage() {
   const [courses, setCourses] = useState<Course[] | null>(null);
+  const [filteredCourses, setFilteredCourses] = useState<Course[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const [err, setErr] = useState<string | null>(null);
 
   useEffect(() => {
@@ -22,35 +25,62 @@ export default function CoursesPage() {
           </div>
         )}
 
+        {courses !== null && (
+          <CourseSearchFilters
+            courses={courses}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            onFilteredCoursesChange={setFilteredCourses}
+          />
+        )}
+
         {courses === null ? (
           <div className="grid gap-4 sm:grid-cols-2">
             {[1, 2].map((i) => (
               <div key={i} className="h-40 rounded-2xl bg-slate-800/40 animate-pulse border border-slate-700/20" />
             ))}
           </div>
-        ) : courses.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-slate-400">No courses available</p>
-          </div>
+        ) : filteredCourses.length === 0 ? (
+          <NoResultsState query={searchQuery} onSelectSuggestion={setSearchQuery} />
         ) : (
           <div className="grid gap-4 sm:grid-cols-2">
-            {courses.map((course) => (
+            {filteredCourses.map((course) => (
               <Link
                 key={course.id}
                 to={`/course/${course.slug}`}
-                className="group rounded-2xl border border-slate-700/30 bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm p-6 hover:border-blue-500/30 hover:bg-slate-800/60 hover:shadow-[0_0_24px_rgba(59,130,246,0.06)] transition-all duration-200"
+                className="group flex flex-col justify-between rounded-2xl border border-slate-700/30 bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm p-6 hover:border-blue-500/30 hover:bg-slate-800/60 hover:shadow-[0_0_24px_rgba(59,130,246,0.06)] transition-all duration-200"
               >
-                <div className="w-12 h-12 rounded-xl bg-blue-600/15 flex items-center justify-center mb-4 group-hover:bg-blue-600/25 transition-colors">
-                  <svg className="w-6 h-6 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C6.228 6.228 2 10.692 2 16s4.228 9.772 10 9.772 10-4.692 10-9.772c0-5.308-4.228-9.747-10-9.747z" />
-                  </svg>
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-12 h-12 rounded-xl bg-blue-600/15 flex items-center justify-center group-hover:bg-blue-600/25 transition-colors">
+                      <svg className="w-6 h-6 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C6.228 6.228 2 10.692 2 16s4.228 9.772 10 9.772 10-4.692 10-9.772c0-5.308-4.228-9.747-10-9.747z" />
+                      </svg>
+                    </div>
+
+                    {/* Metadata Badges */}
+                    <div className="flex gap-1.5">
+                      <span className="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-blue-500/10 border border-blue-500/20 text-blue-400">
+                        {course.level}
+                      </span>
+                      <span className="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-slate-800 border border-slate-700 text-slate-300">
+                        {course.category}
+                      </span>
+                    </div>
+                  </div>
+
+                  <h2 className="text-lg font-bold text-white group-hover:text-blue-300 transition-colors mb-1">
+                    {course.title}
+                  </h2>
+                  <p className="text-sm text-slate-400 leading-relaxed">
+                    {course.description}
+                  </p>
                 </div>
-                <h2 className="text-lg font-bold text-white group-hover:text-blue-300 transition-colors mb-1">
-                  {course.title}
-                </h2>
-                <p className="text-sm text-slate-400 leading-relaxed">
-                  {course.description}
-                </p>
+
+                <div className="mt-4 flex items-center gap-1.5 text-xs text-slate-500 font-medium">
+                  <span>Language:</span>
+                  <span className="text-slate-300 font-semibold">{course.language}</span>
+                </div>
               </Link>
             ))}
           </div>

@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { api, type Course, getSubmissionHistory } from "../api";
+import { api, type Course, getSubmissionHistory, getEarnedCertificates, type Certificate } from "../api";
 import { useAuth } from "../auth";
-import { Card, LoadingCard } from "../components";
+import { Card, LoadingCard, CourseSearchFilters, NoResultsState } from "../components";
 import { getCourseStats, subscribeToProgressChanges } from "../hooks/useProgress";
 import { useGamification, ACHIEVEMENTS, updateOverallProgress } from "../progress";
+import { CertificateModal } from "../components/CertificateModal";
 
 const IconBook = () => (
   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -84,11 +85,24 @@ const IconSolved = () => (
   </svg>
 );
 
+const IconAward = () => (
+  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M12 15a3 3 0 100-6 3 3 0 000 6z" />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 110-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 114 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 110 4h-.09a1.65 1.65 0 00-1.51 1z" />
+  </svg>
+);
+
 export default function Dashboard() {
   const { user } = useAuth();
   const [courses, setCourses] = useState<Course[] | null>(null);
   const [err, setErr] = useState<string | null>(null);
   const [submissionHistory, setSubmissionHistory] = useState<Record<string, number>>({});
+  const [filteredCourses, setFilteredCourses] = useState<Course[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [earnedCertificates, setEarnedCertificates] = useState<Record<string, Certificate>>({});
+  const [sortBy, setSortBy] = useState<"Latest" | "Oldest" | "Name">("Latest");
+  const [isCertModalOpen, setIsCertModalOpen] = useState(false);
+  const [selectedCertInfo, setSelectedCertInfo] = useState<{ slug: string; title: string; studentName: string } | null>(null);
   
   // Use our centralized Gamification hook
   const { xp, achievements: unlockedAchievements, streak, stats, overallProgress } = useGamification();
@@ -120,6 +134,12 @@ export default function Dashboard() {
 
   useEffect(() => {
     setSubmissionHistory(getSubmissionHistory());
+    setEarnedCertificates(getEarnedCertificates());
+    const handler = () => {
+      setEarnedCertificates(getEarnedCertificates());
+    };
+    window.addEventListener("storage", handler);
+    return () => window.removeEventListener("storage", handler);
   }, []);
 
   const [courseStatsMap, setCourseStatsMap] = useState<Record<string, { completed: number; total: number; lecturesCompleted: number }>>({});
@@ -156,6 +176,17 @@ export default function Dashboard() {
       .then(setCourses)
       .catch((e: Error) => setErr(e.message));
   }, []);
+
+  const sortedCerts = useMemo(() => {
+    const certList = Object.values(earnedCertificates);
+    if (sortBy === "Latest") {
+      return certList.sort((a, b) => new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime());
+    } else if (sortBy === "Oldest") {
+      return certList.sort((a, b) => new Date(a.completedAt).getTime() - new Date(b.completedAt).getTime());
+    } else {
+      return certList.sort((a, b) => a.courseTitle.localeCompare(b.courseTitle));
+    }
+  }, [earnedCertificates, sortBy]);
 
   const totalCompleted = stats.tasksSubmitted + stats.projectsSolved;
 
@@ -408,12 +439,29 @@ export default function Dashboard() {
 
               {/* Courses section */}
               <div>
-                <div className="flex items-center gap-2 mb-6">
-                  <div className="text-white">
-                    <IconBook />
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-2">
+                    <div className="text-white">
+                      <IconBook />
+                    </div>
+                    <h2 className="text-xl font-bold text-white tracking-tight">Your Courses</h2>
                   </div>
-                  <h2 className="text-xl font-bold text-white tracking-tight">Your Courses</h2>
+                  <Link
+                    to="/courses"
+                    className="text-xs font-semibold text-blue-400 hover:text-blue-300 transition-colors"
+                  >
+                    View Catalog →
+                  </Link>
                 </div>
+
+                {courses !== null && (
+                  <CourseSearchFilters
+                    courses={courses}
+                    searchQuery={searchQuery}
+                    setSearchQuery={setSearchQuery}
+                    onFilteredCoursesChange={setFilteredCourses}
+                  />
+                )}
 
                 {courses === null ? (
                   <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
@@ -421,13 +469,11 @@ export default function Dashboard() {
                       <LoadingCard key={i} lines={3} />
                     ))}
                   </div>
-                ) : courses.length === 0 ? (
-                  <div className="text-center py-12 bg-slate-900/40 border border-slate-800 rounded-2xl">
-                    <p className="text-slate-400">No courses available at this time.</p>
-                  </div>
+                ) : filteredCourses.length === 0 ? (
+                  <NoResultsState query={searchQuery} onSelectSuggestion={setSearchQuery} />
                 ) : (
                   <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
-                    {courses.map((c) => {
+                    {filteredCourses.map((c) => {
                       const progress = courseStatsMap[c.slug] || { completed: 0, total: 0, lecturesCompleted: 0 };
                       const percent = progress.total > 0 ? Math.round((progress.completed / progress.total) * 100) : 0;
                       const isCourseActive = activeCourseId === c.slug;
@@ -442,17 +488,28 @@ export default function Dashboard() {
                             }`}
                           >
                             <div className="flex flex-col gap-4">
-                              <div className="relative w-10 h-10 rounded-xl bg-slate-900/60 border border-slate-800/80 flex items-center justify-center self-start mb-2">
-                                {c.slug === 'cs50p' ? (
-                                  <span className="font-bold text-xs text-cyan-400">Py</span>
-                                ) : (
-                                  <span className="text-slate-400">
-                                    <IconCourseCard />
+                              <div className="flex items-center justify-between">
+                                <div className="relative w-10 h-10 rounded-xl bg-slate-900/60 border border-slate-800/80 flex items-center justify-center flex-shrink-0">
+                                  {c.slug === 'cs50p' ? (
+                                    <span className="font-bold text-xs text-cyan-400">Py</span>
+                                  ) : (
+                                    <span className="text-slate-400">
+                                      <IconCourseCard />
+                                    </span>
+                                  )}
+                                  {isCourseActive && (
+                                    <span className="absolute inset-0 rounded-xl bg-cyan-400/20 animate-ping pointer-events-none" />
+                                  )}
+                                </div>
+                                {/* Metadata Badges */}
+                                <div className="flex gap-1.5">
+                                  <span className="px-2 py-0.5 rounded-md text-[9px] font-semibold bg-blue-500/10 border border-blue-500/20 text-blue-400">
+                                    {c.level}
                                   </span>
-                                )}
-                                {isCourseActive && (
-                                  <span className="absolute inset-0 rounded-xl bg-cyan-400/20 animate-ping pointer-events-none" />
-                                )}
+                                  <span className="px-2 py-0.5 rounded-md text-[9px] font-semibold bg-slate-800 border border-slate-700 text-slate-300">
+                                    {c.category}
+                                  </span>
+                                </div>
                               </div>
                               <div>
                                 <h3 className="text-lg font-bold text-white group-hover:text-cyan-400 transition-colors">{c.title}</h3>
@@ -472,6 +529,79 @@ export default function Dashboard() {
                         </Link>
                       );
                     })}
+                  </div>
+                )}
+              </div>
+
+              {/* My Certificates Section */}
+              <div className="mt-10 border-t border-slate-800/60 pt-8">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+                  <div className="flex items-center gap-2">
+                    <div className="text-amber-500">
+                      <IconAward />
+                    </div>
+                    <h2 className="text-xl font-bold text-white tracking-tight">My Certificates</h2>
+                  </div>
+
+                  {/* Sorting Controls */}
+                  {Object.keys(earnedCertificates).length > 0 && (
+                    <div className="flex items-center gap-2 text-xs">
+                      <span className="text-slate-400">Sort by:</span>
+                      <select
+                        value={sortBy}
+                        onChange={(e) => setSortBy(e.target.value as "Latest" | "Oldest" | "Name")}
+                        className="px-3 py-1.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-300 focus:outline-none focus:border-blue-500/50 cursor-pointer"
+                      >
+                        <option value="Latest">Latest Earned</option>
+                        <option value="Oldest">Oldest Earned</option>
+                        <option value="Name">Course Name</option>
+                      </select>
+                    </div>
+                  )}
+                </div>
+
+                {/* List of Earned Certificates */}
+                {Object.keys(earnedCertificates).length === 0 ? (
+                  <div className="text-center py-8 px-6 bg-slate-950/20 border border-slate-900/50 rounded-3xl">
+                    <p className="text-sm text-slate-400">No certificates earned yet.</p>
+                    <p className="text-xs text-slate-500 mt-1">Complete 100% of any course to unlock and download your certificate.</p>
+                  </div>
+                ) : (
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    {sortedCerts.map((cert) => (
+                      <div
+                        key={cert.courseSlug}
+                        onClick={() => {
+                          setSelectedCertInfo({
+                            slug: cert.courseSlug,
+                            title: cert.courseTitle,
+                            studentName: cert.studentName
+                          });
+                          setIsCertModalOpen(true);
+                        }}
+                        className="group relative p-5 bg-slate-950/40 border border-slate-800/60 rounded-3xl hover:border-amber-500/30 hover:bg-slate-900/20 transition-all duration-300 cursor-pointer flex flex-col justify-between"
+                      >
+                        <div className="flex items-start gap-4 mb-4">
+                          <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-500 flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+                            <IconAward />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <h3 className="text-sm font-bold text-white group-hover:text-amber-400 transition-colors truncate">
+                              {cert.courseTitle}
+                            </h3>
+                            <p className="text-xs text-slate-400 mt-1">
+                              Completed on: <span className="text-slate-300 font-medium">{new Date(cert.completedAt).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                            </p>
+                            <p className="text-[10px] text-slate-500 font-mono mt-1.5 truncate">
+                              ID: {cert.certificateId}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="self-end text-[10px] font-bold text-amber-500 bg-amber-500/10 px-2.5 py-1 rounded-lg border border-amber-500/20 group-hover:bg-amber-500 group-hover:text-slate-950 transition-all duration-200">
+                          View Certificate
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 )}
               </div>
@@ -589,6 +719,17 @@ export default function Dashboard() {
           </Card>
         </div>
       </div>
+      {isCertModalOpen && selectedCertInfo && (
+        <CertificateModal
+          courseSlug={selectedCertInfo.slug}
+          courseTitle={selectedCertInfo.title}
+          studentName={selectedCertInfo.studentName}
+          onClose={() => {
+            setIsCertModalOpen(false);
+            setSelectedCertInfo(null);
+          }}
+        />
+      )}
     </div>
   );
 }
