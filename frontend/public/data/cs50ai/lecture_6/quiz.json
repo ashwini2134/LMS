@@ -1,42 +1,57 @@
 [
   {
-    "question": "Which sentences can be derived from the grammar?",
+    "question": "Neural networks are inspired by?",
     "options": [
-      "Sentence 1 only",
-      "Sentence 1 and Sentence 3",
-      "Sentence 1, Sentence 3, and Sentence 4",
-      "All sentences"
+      "The human brain",
+      "Search algorithms",
+      "Logic rules",
+      "Probability"
     ],
-    "answer": "Sentence 1, Sentence 3, and Sentence 4"
+    "answer": "The human brain",
+    "explanation": "The correct answer is The human brain."
   },
   {
-    "question": "Which statement is NOT true?",
+    "question": "What does the input layer do?",
     "options": [
-      "Attention mechanisms can determine important parts of sequences.",
-      "One-hot representations better represent meaning than distributed representations.",
-      "Transformers are easier to parallelize.",
-      "Naive Bayes assumes word order does not matter."
+      "Receives the data",
+      "Produces the answer",
+      "Adjusts weights",
+      "Stores rules"
     ],
-    "answer": "One-hot representations better represent meaning than distributed representations."
+    "answer": "Receives the data",
+    "explanation": "The correct answer is Receives the data."
   },
   {
-    "question": "Why is smoothing useful in Naive Bayes?",
+    "question": "Weights control?",
     "options": [
-      "Helps handle unseen evidence",
-      "Helps with many categories",
-      "Removes conditional independence assumption",
-      "Converts conditional probabilities"
+      "How much each input matters",
+      "The number of layers",
+      "The training speed",
+      "The data size"
     ],
-    "answer": "Helps handle unseen evidence"
+    "answer": "How much each input matters",
+    "explanation": "The correct answer is How much each input matters."
   },
   {
-    "question": "From the phrase “must be the truth”, how many 2-grams can be extracted?",
+    "question": "Deep Learning uses?",
     "options": [
-      "2",
-      "3",
-      "4",
-      "5"
+      "Many hidden layers",
+      "One layer only",
+      "No layers",
+      "Search trees"
     ],
-    "answer": "3"
+    "answer": "Many hidden layers",
+    "explanation": "The correct answer is Many hidden layers."
+  },
+  {
+    "question": "CNNs are best for?",
+    "options": [
+      "Image recognition",
+      "Text generation",
+      "Route planning",
+      "Logic problems"
+    ],
+    "answer": "Image recognition",
+    "explanation": "The correct answer is Image recognition."
   }
 ]

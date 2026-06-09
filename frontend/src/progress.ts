@@ -1,0 +1,306 @@
+import { useEffect, useState } from 'react';
+
+// ── Constants & Keys ─────────────────────────────────────────────────────────
+const EVENT_NAME = 'fraylon:progress:update';
+const KEYS = {
+  xp: 'fraylon_xp',
+  xpHistory: 'fraylon_xp_history',
+  completedActions: 'fraylon_completed_actions',
+  achievements: 'fraylon_achievements',
+  streak: 'fraylon_streak',
+  stats: 'fraylon_stats',
+  overallProgress: 'fraylon_overall_progress',
+};
+
+// ── Types ────────────────────────────────────────────────────────────────────
+export type AchievementDef = {
+  id: string;
+  title: string;
+  icon: string;
+  description: string;
+};
+
+export const ACHIEVEMENTS: AchievementDef[] = [
+  { id: 'first_lecture', title: 'First Steps', icon: '🎯', description: 'Complete your first lecture' },
+  { id: 'first_quiz', title: 'Quiz Master', icon: '🧠', description: 'Pass your first quiz' },
+  { id: 'first_problem', title: 'Project Solver', icon: '🔥', description: 'Submit your first problem' },
+  { id: 'five_lectures', title: 'Halfway There', icon: '⚡', description: 'Complete 5 lectures' },
+  { id: 'ten_lectures', title: '10 Lectures Done', icon: '🏆', description: 'Complete 10 lectures' },
+  { id: 'first_project', title: 'First Project Submitted', icon: '💎', description: 'Submit your first hands-on task' },
+  { id: 'course_completed', title: 'Course Completed', icon: '🎓', description: 'Complete an entire course' },
+];
+
+export type StreakData = {
+  currentStreak: number;
+  lastLoginDate: string | null;
+  longestStreak: number;
+};
+
+export type StatsData = {
+  coursesStarted: number;
+  coursesCompleted: number;
+  lecturesCompleted: number;
+  quizzesPassed: number;
+  tasksSubmitted: number;
+  projectsSolved: number; // capstone submissions
+};
+
+// ── Core Helpers ─────────────────────────────────────────────────────────────
+function emit() {
+  window.dispatchEvent(new CustomEvent(EVENT_NAME));
+}
+
+function safeGet<T>(key: string, fallback: T): T {
+  try {
+    const val = localStorage.getItem(key);
+    return val ? JSON.parse(val) : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function safeSet(key: string, val: any) {
+  localStorage.setItem(key, JSON.stringify(val));
+}
+
+// ── Toast Queue System ───────────────────────────────────────────────────────
+// We append a single container to body and manage queue items manually to avoid dependency.
+let toastQueue: Array<{ text: string; type: 'xp' | 'achievement' | 'streak'; duration: number }> = [];
+let isToastRunning = false;
+
+function showToastNext() {
+  if (isToastRunning || toastQueue.length === 0) return;
+  isToastRunning = true;
+  const toast = toastQueue.shift()!;
+  
+  let container = document.getElementById('fraylon-toast-container');
+  if (!container) {
+    container = document.createElement('div');
+    container.id = 'fraylon-toast-container';
+    container.className = 'fixed bottom-4 right-4 z-[9999] flex flex-col gap-2 items-end pointer-events-none';
+    document.body.appendChild(container);
+  }
+
+  const el = document.createElement('div');
+  el.className = `transform transition-all duration-300 translate-y-4 opacity-0 flex items-center gap-3 px-5 py-3 rounded-2xl shadow-xl border backdrop-blur-md text-white font-medium text-sm`;
+  
+  if (toast.type === 'xp') {
+    el.classList.add('bg-cyan-950/90', 'border-cyan-500/50', 'shadow-cyan-500/20');
+  } else if (toast.type === 'achievement') {
+    el.classList.add('bg-amber-950/90', 'border-amber-500/50', 'shadow-amber-500/20');
+  } else {
+    el.classList.add('bg-orange-950/90', 'border-orange-500/50', 'shadow-orange-500/20');
+  }
+
+  el.innerHTML = `<span>${toast.text}</span>`;
+  container.appendChild(el);
+
+  // animate in
+  requestAnimationFrame(() => {
+    el.classList.remove('translate-y-4', 'opacity-0');
+  });
+
+  setTimeout(() => {
+    // animate out
+    el.classList.add('opacity-0', 'translate-x-4');
+    setTimeout(() => {
+      el.remove();
+      isToastRunning = false;
+      showToastNext();
+    }, 300);
+  }, toast.duration);
+}
+
+function queueToast(text: string, type: 'xp' | 'achievement' | 'streak', duration = 3000) {
+  toastQueue.push({ text, type, duration });
+  showToastNext();
+}
+
+// ── Data Accessors ───────────────────────────────────────────────────────────
+
+export function getTotalXp(): number {
+  return safeGet(KEYS.xp, 0);
+}
+
+export function getUnlockedAchievements(): string[] {
+  return safeGet<string[]>(KEYS.achievements, []);
+}
+
+export function getStreakData(): StreakData {
+  return safeGet<StreakData>(KEYS.streak, { currentStreak: 0, lastLoginDate: null, longestStreak: 0 });
+}
+
+export function getStats(): StatsData {
+  return safeGet<StatsData>(KEYS.stats, {
+    coursesStarted: 0,
+    coursesCompleted: 0,
+    lecturesCompleted: 0,
+    quizzesPassed: 0,
+    tasksSubmitted: 0,
+    projectsSolved: 0,
+  });
+}
+
+// ── Gamification Actions ─────────────────────────────────────────────────────
+
+function awardXp(amount: number, reason: string) {
+  const current = getTotalXp();
+  safeSet(KEYS.xp, current + amount);
+  
+  const history = safeGet<any[]>(KEYS.xpHistory, []);
+  history.push({ action: reason, xp: amount, timestamp: new Date().toISOString() });
+  safeSet(KEYS.xpHistory, history);
+  
+  queueToast(`+${amount} XP — ${reason}`, 'xp', 2000);
+}
+
+export function handleDailyLogin() {
+  const data = getStreakData();
+  const today = new Date().toISOString().split('T')[0];
+  
+  if (data.lastLoginDate === today) return; // already logged in today
+
+  let newStreak = 1;
+  if (data.lastLoginDate) {
+    const last = new Date(data.lastLoginDate);
+    const curr = new Date(today);
+    const diffDays = Math.round((curr.getTime() - last.getTime()) / (1000 * 60 * 60 * 24));
+    
+    if (diffDays === 1) {
+      newStreak = data.currentStreak + 1;
+    }
+  }
+
+  const longest = Math.max(newStreak, data.longestStreak);
+  safeSet(KEYS.streak, { currentStreak: newStreak, lastLoginDate: today, longestStreak: longest });
+
+  // Award daily login XP
+  awardXp(5, 'Daily Login');
+  
+  if (newStreak === 7) {
+    queueToast(`7 Day Streak! Keep going!`, 'streak', 4000);
+  }
+
+  emit();
+}
+
+function unlockAchievement(id: string) {
+  const unlocked = getUnlockedAchievements();
+  if (unlocked.includes(id)) return;
+  unlocked.push(id);
+  safeSet(KEYS.achievements, unlocked);
+  
+  const ach = ACHIEVEMENTS.find(a => a.id === id);
+  if (ach) {
+    queueToast(`Achievement Unlocked — ${ach.title}!`, 'achievement', 3000);
+  }
+}
+
+export function checkAchievements() {
+  const stats = getStats();
+  const unlocked = getUnlockedAchievements();
+
+  if (stats.lecturesCompleted >= 1 && !unlocked.includes('first_lecture')) unlockAchievement('first_lecture');
+  if (stats.quizzesPassed >= 1 && !unlocked.includes('first_quiz')) unlockAchievement('first_quiz');
+  if (stats.tasksSubmitted >= 1 && !unlocked.includes('first_problem')) unlockAchievement('first_problem');
+  if (stats.tasksSubmitted >= 1 && !unlocked.includes('first_project')) unlockAchievement('first_project'); // first hands on task
+  if (stats.lecturesCompleted >= 5 && !unlocked.includes('five_lectures')) unlockAchievement('five_lectures');
+  if (stats.lecturesCompleted >= 10 && !unlocked.includes('ten_lectures')) unlockAchievement('ten_lectures');
+  if (stats.coursesCompleted >= 1 && !unlocked.includes('course_completed')) unlockAchievement('course_completed');
+}
+
+// Single entry point for completing actions to avoid duplicates
+export function completeAction(
+  actionType: 'section' | 'lecture' | 'quiz' | 'problem' | 'course_start' | 'course_complete' | 'project',
+  actionId: string
+) {
+  const completed = safeGet<string[]>(KEYS.completedActions, []);
+  const fullId = `${actionType}:${actionId}`;
+  
+  if (completed.includes(fullId)) return; // Already awarded
+
+  completed.push(fullId);
+  safeSet(KEYS.completedActions, completed);
+
+  const stats = getStats();
+
+  switch (actionType) {
+    case 'section':
+      awardXp(10, 'Section Completed');
+      break;
+    case 'lecture':
+      awardXp(50, 'Full Lecture Completed');
+      stats.lecturesCompleted += 1;
+      break;
+    case 'quiz':
+      awardXp(30, 'Quiz Passed');
+      stats.quizzesPassed += 1;
+      break;
+    case 'problem':
+      awardXp(20, 'Problem Solved');
+      stats.tasksSubmitted += 1;
+      break;
+    case 'project':
+      awardXp(100, 'Capstone Project Solved');
+      stats.projectsSolved += 1;
+      break;
+    case 'course_start':
+      stats.coursesStarted += 1;
+      break;
+    case 'course_complete':
+      awardXp(200, 'Course Completed');
+      stats.coursesCompleted += 1;
+      break;
+  }
+
+  safeSet(KEYS.stats, stats);
+  checkAchievements();
+  emit();
+}
+
+export function updateOverallProgress(totalLecturesAvailable: number) {
+  const stats = getStats();
+  if (totalLecturesAvailable === 0) return 0;
+  const pct = Math.min(100, Math.round((stats.lecturesCompleted / totalLecturesAvailable) * 100));
+  safeSet(KEYS.overallProgress, pct);
+  emit();
+  return pct;
+}
+
+export function getOverallProgress(): number {
+  return safeGet(KEYS.overallProgress, 0);
+}
+
+// ── React Hooks ──────────────────────────────────────────────────────────────
+
+export function useGamification() {
+  const [data, setData] = useState({
+    xp: getTotalXp(),
+    achievements: getUnlockedAchievements(),
+    streak: getStreakData(),
+    stats: getStats(),
+    overallProgress: getOverallProgress()
+  });
+
+  useEffect(() => {
+    const handler = () => {
+      setData({
+        xp: getTotalXp(),
+        achievements: getUnlockedAchievements(),
+        streak: getStreakData(),
+        stats: getStats(),
+        overallProgress: getOverallProgress()
+      });
+    };
+    window.addEventListener(EVENT_NAME, handler);
+    return () => window.removeEventListener(EVENT_NAME, handler);
+  }, []);
+
+  return data;
+}
+
+// ── Initialization ───────────────────────────────────────────────────────────
+// Run once on load to handle login streak
+if (typeof window !== 'undefined') {
+  setTimeout(() => handleDailyLogin(), 500); // delay slightly to let UI render first
+}

@@ -1,16 +1,23 @@
 [
   {
-    "id": "knights",
-    "title": "Knights",
-    "description": "Write a program to solve \"Knights and Knaves\" logic puzzles. A knight always tells the truth; a knave always lies. Given a set of statements spoken by each character, determine for each character whether they are a knight or a knave.\n\nIn `puzzle.py`, add knowledge to the knowledge bases `knowledge0`, `knowledge1`, `knowledge2`, and `knowledge3` (using the `Symbol`, `And`, `Or`, `Not`, `Implication`, and `Biconditional` classes from the provided `logic.py`) so that the `model_check` algorithm can solve each of the four puzzles. You should not modify `logic.py`.\n\nNote: you must get Knights 100% correct to pass (an exception to the usual 70% threshold).",
-    "check50_slug": "ai50/projects/2024/x/knights",
-    "difficulty": "medium"
+    "id": "maze_bfs_trace",
+    "title": "Trace BFS Through a Maze",
+    "description": "Given this grid maze, trace the path that BFS would take — mark each cell in the order visited.\n\nMaze (S = start, G = goal, # = wall, . = open path):\nS . . # .\n# . # . .\n. . . . G\n\nYour task: Mark each cell in the order BFS would visit it.\nHint: BFS uses a queue (FIFO). Process nodes in discovery order, level by level.",
+    "difficulty": "easy",
+    "starterCode": "# Activity: Trace BFS visit order\n# Write the visit order for each cell\n# Example format: S=1, then neighbors=2,3...\n\n# Your answer:",
+    "solution": "# BFS visits level by level from S\n# Order depends on neighbor expansion order\n# Key: BFS guarantees shortest path to G",
+    "testCases": []
   },
   {
-    "id": "minesweeper",
-    "title": "Minesweeper",
-    "description": "Write an AI to play Minesweeper. Each logical sentence is represented as a set of `cells` and a `count` of how many of those cells are mines. The AI gathers knowledge as safe cells are revealed and infers which cells are safe or mines.\n\nIn `minesweeper.py`, complete the `Sentence` methods (`known_mines`, `known_safes`, `mark_mine`, `mark_safe`) and the `MinesweeperAI` methods (`add_knowledge`, `make_safe_move`, `make_random_move`). `add_knowledge` should mark the cell safe, add a new sentence for its undetermined neighbors, mark any newly known safes/mines, and infer new sentences via the subset rule (`set2 - set1 = count2 - count1`).",
-    "check50_slug": "ai50/projects/2024/x/minesweeper",
-    "difficulty": "hard"
+    "id": "graph_neighbors",
+    "title": "Graph Representation",
+    "description": "Write Python code to represent a simple graph as a dictionary and print all neighbors of a given node.\n\nExample graph:\ngraph = {'A': ['B', 'C'], 'B': ['A', 'D'], 'C': ['A'], 'D': ['B']}\n\nYour program should:\n1. Define a graph\n2. Ask for a node name\n3. Print all neighbors\n\nSample Input: B\nSample Output: Neighbors of B: ['A', 'D']",
+    "difficulty": "easy",
+    "starterCode": "# Represent a graph as a dictionary\ngraph = {\n    'A': ['B', 'C'],\n    'B': ['A', 'D'],\n    'C': ['A'],\n    'D': ['B']\n}\n\nnode = input()\n# Print neighbors of the node",
+    "solution": "graph = {'A': ['B', 'C'], 'B': ['A', 'D'], 'C': ['A'], 'D': ['B']}\nnode = input()\nprint(f'Neighbors of {node}: {graph[node]}')",
+    "testCases": [
+      {"label": "Neighbors of B", "input": "B", "expectedOutput": "Neighbors of B: ['A', 'D']\n"},
+      {"label": "Neighbors of A", "input": "A", "expectedOutput": "Neighbors of A: ['B', 'C']\n"}
+    ]
   }
 ]

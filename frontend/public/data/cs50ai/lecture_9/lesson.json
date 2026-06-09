@@ -1,0 +1,207 @@
+{
+  "id": "cs50ai-lecture-9",
+  "courseSlug": "cs50ai",
+  "number": 9,
+  "title": "Final Project",
+  "overview": "You have completed the full CS50 AI journey. This week you will apply everything to build a real project.",
+  "estimatedMinutes": 60,
+  "nextUp": null,
+  "sections": [
+    {
+      "id": "what-learned",
+      "label": "What You Have Learned",
+      "blocks": [
+        {
+          "type": "explanation",
+          "accentColor": "blue",
+          "title": "What You Have Learned",
+          "body": "You have completed the full CS50 AI journey — from Search to Language. This week you will apply everything to build a real project.",
+          "bullets": [
+            "Week 0: Search — BFS, DFS, A* — AI finding paths and solutions",
+            "Week 1: Knowledge & Logic — IF-THEN rules, inference, knowledge base",
+            "Week 2: Uncertainty — probability, Bayes Theorem, spam filters",
+            "Week 3: Optimization — Hill Climbing, Simulated Annealing, CSP",
+            "Week 4: Machine Learning — supervised, unsupervised, reinforcement",
+            "Week 5: Neural Networks — layers, weights, deep learning, CNNs",
+            "Week 6: NLP — tokenization, embeddings, LLMs, transformers",
+            "Week 7: Ethics — bias, privacy, hallucinations, accountability"
+          ]
+        },
+        {
+          "type": "concept_visualization",
+          "title": "CS50 AI Journey",
+          "accentColor": "blue",
+          "leftPanel": {
+            "label": "Real Life Analogy",
+            "emoji": "👨‍🍳",
+            "title": "Cooking a meal",
+            "description": "You have learned all the ingredients — now it is time to cook a full meal"
+          },
+          "centerPanel": {
+            "label": "Programming Concept",
+            "visualType": "text",
+            "flowSteps": null,
+            "textContent": "All 8 weeks of AI concepts → Applied in one real project"
+          },
+          "rightPanel": {
+            "label": "Code Example",
+            "code": "# Your project will use at least one AI concept from this course",
+            "language": "python",
+            "output": ""
+          }
+        },
+        {
+          "type": "reflection",
+          "question": "Is the final project a chance to apply what you have learned to a real problem?",
+          "answer": "Yes, it combines the theories into an actual application."
+        }
+      ]
+    },
+    {
+      "id": "choose-project",
+      "label": "Choose Your Project",
+      "blocks": [
+        {
+          "type": "explanation",
+          "accentColor": "blue",
+          "title": "Choose Your Project",
+          "body": "Choose one of the 4 project options. Each uses a different AI concept from the course.",
+          "bullets": [
+            "Option 1: AI Chatbot — uses NLP and prompt engineering to answer questions on a topic",
+            "Option 2: AI Story Generator — user gives characters and setting; AI generates a short story",
+            "Option 3: AI Resume Builder — user inputs details; AI formats and generates a professional resume",
+            "Option 4: Search Visualizer — a diagram or slide showing how BFS and DFS solve the same maze differently"
+          ]
+        },
+        {
+          "type": "concept_visualization",
+          "title": "Project Options",
+          "accentColor": "purple",
+          "leftPanel": {
+            "label": "Real Life Analogy",
+            "emoji": "🎓",
+            "title": "Final exam project",
+            "description": "pick the one that interests you most"
+          },
+          "centerPanel": {
+            "label": "Programming Concept",
+            "visualType": "text",
+            "flowSteps": null,
+            "textContent": "Choose concept → Define input/output → Build → Reflect → Present"
+          },
+          "rightPanel": {
+            "label": "Code Example",
+            "code": "# Chatbot: input = user question, output = AI answer",
+            "language": "python",
+            "output": ""
+          }
+        },
+        {
+          "type": "reflection",
+          "question": "Should your project clearly show which AI concept from the course it uses?",
+          "answer": "Yes, clearly identifying the AI mechanism is a key requirement."
+        }
+      ]
+    },
+    {
+      "id": "getting-started",
+      "label": "Getting Started",
+      "blocks": [
+        {
+          "type": "explanation",
+          "accentColor": "blue",
+          "title": "Project Steps",
+          "body": "Follow these steps to complete the project.",
+          "bullets": [
+            "Step 1: Choose your project from the 4 options",
+            "Step 2: Identify which AI concept it uses (search, ML, NLP, etc.)",
+            "Step 3: Define input — what does the user provide?",
+            "Step 4: Define output — what does the AI produce?",
+            "Step 5: Identify one ethical consideration relevant to your project",
+            "Step 6: Write a short reflection — what surprised you about how AI actually works?"
+          ]
+        },
+        {
+          "type": "concept_visualization",
+          "title": "Project Workflow",
+          "accentColor": "green",
+          "leftPanel": {
+            "label": "Real Life Analogy",
+            "emoji": "🚀",
+            "title": "Building phase",
+            "description": "Executing your plan"
+          },
+          "centerPanel": {
+            "label": "Flow Diagram",
+            "visualType": "flow_diagram",
+            "flowSteps": [
+              "Choose Project",
+              "↓",
+              "Define Input/Output",
+              "↓",
+              "Build",
+              "↓",
+              "Add Ethical Consideration",
+              "↓",
+              "Reflect",
+              "↓",
+              "Submit"
+            ],
+            "textContent": null
+          },
+          "rightPanel": {
+            "label": "Code Example",
+            "code": "# See example above",
+            "language": "python",
+            "output": ""
+          }
+        },
+        {
+          "type": "practice",
+          "title": "Practice Exercise",
+          "instructions": "Write a project plan: project name, AI concept used, input, output, ethical consideration",
+          "starterCode": "# Outline your plan here\n",
+          "solution": "# E.g. Name: Chatbot, Concept: NLP",
+          "hint": "Fill in all the required project elements."
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "keyTakeaways": [
+      {
+        "emoji": "",
+        "text": "You have completed 8 weeks of AI concepts — Search, Logic, Probability, Optimization, ML, Neural Networks, NLP, Ethics"
+      },
+      {
+        "emoji": "",
+        "text": "The final project applies your learning to a real AI-powered application"
+      },
+      {
+        "emoji": "",
+        "text": "Every project must show which AI concept it uses"
+      },
+      {
+        "emoji": "",
+        "text": "Define clear input and output for your project"
+      },
+      {
+        "emoji": "",
+        "text": "Every project must include one ethical consideration"
+      },
+      {
+        "emoji": "",
+        "text": "Reflection is as important as the code — think about what surprised you"
+      }
+    ],
+    "whatYouLearned": [
+      "What AI, ML, and Deep Learning are and how they differ",
+      "How AI searches for solutions using BFS, DFS, and A*",
+      "How AI uses logic, probability, and optimization",
+      "How Machine Learning and Neural Networks work",
+      "How NLP and LLMs understand and generate language",
+      "How to identify and address ethical issues in AI"
+    ],
+    "nextUp": null
+  }
+}

@@ -1,0 +1,198 @@
+{
+  "id": "cs50ai-lecture-3",
+  "courseSlug": "cs50ai",
+  "number": 3,
+  "title": "Probability & Uncertainty",
+  "overview": "The real world is rarely certain — AI uses probability to handle situations that are not clearly True or False",
+  "estimatedMinutes": 60,
+  "nextUp": "Optimization",
+  "sections": [
+    {
+      "id": "prob-basics",
+      "label": "Probability Basics",
+      "blocks": [
+        {
+          "type": "explanation",
+          "accentColor": "blue",
+          "title": "Probability Basics",
+          "body": "The real world is rarely certain — AI uses probability to handle situations that are not clearly True or False",
+          "bullets": [
+            "Probability is a number between 0 and 1 showing how likely something is",
+            "0 = impossible, 1 = certain, 0.7 = 70% likely",
+            "Every day examples: 70% chance of rain, 50% chance of heads on a coin flip",
+            "AI uses probability to make decisions even when it is not 100% sure"
+          ]
+        },
+        {
+          "type": "concept_visualization",
+          "title": "Probability Concept",
+          "accentColor": "blue",
+          "leftPanel": {
+            "label": "Real Life Analogy",
+            "emoji": "🌤️",
+            "title": "Weather forecast",
+            "description": "70% chance of rain means likely but not certain"
+          },
+          "centerPanel": {
+            "label": "Programming Concept",
+            "visualType": "text",
+            "flowSteps": null,
+            "textContent": "Probability scale 0 → 1"
+          },
+          "rightPanel": {
+            "label": "Code Example",
+            "code": "import random\nflip = random.random()\nif flip > 0.5:\n    print('Heads')",
+            "language": "python",
+            "output": ""
+          }
+        },
+        {
+          "type": "reflection",
+          "question": "Is a probability of 0.9 more certain than a probability of 0.5?",
+          "answer": "Yes, 0.9 means 90% likely, which is much more certain than 50% (0.5)."
+        }
+      ]
+    },
+    {
+      "id": "bayes-theorem",
+      "label": "Conditional Probability & Bayes Theorem",
+      "blocks": [
+        {
+          "type": "explanation",
+          "accentColor": "blue",
+          "title": "Conditional Probability & Bayes Theorem",
+          "body": "Conditional probability asks — what is the chance of X given that Y already happened? Bayes Theorem lets AI update its belief when new evidence arrives.",
+          "bullets": [
+            "Conditional probability: P(A|B) — probability of A given B is already true",
+            "Example: probability of wet roads given it rained = very high",
+            "Bayes Theorem updates probability when new evidence arrives",
+            "Spam filter example: AI updates its confidence that an email is spam as it reads more words"
+          ]
+        },
+        {
+          "type": "concept_visualization",
+          "title": "Bayes in Action",
+          "accentColor": "purple",
+          "leftPanel": {
+            "label": "Real Life Analogy",
+            "emoji": "🏥",
+            "title": "A doctor updating their diagnosis",
+            "description": "as each new test result comes in"
+          },
+          "centerPanel": {
+            "label": "Programming Concept",
+            "visualType": "text",
+            "flowSteps": null,
+            "textContent": "Prior belief + New evidence → Updated belief"
+          },
+          "rightPanel": {
+            "label": "Code Example",
+            "code": "# If email has 'free money' → increase spam probability",
+            "language": "python",
+            "output": ""
+          }
+        },
+        {
+          "type": "reflection",
+          "question": "Does Bayes Theorem allow AI to change its mind when it gets new information?",
+          "answer": "Yes, it provides a mathematical way to update beliefs based on new evidence."
+        }
+      ]
+    },
+    {
+      "id": "getting-started",
+      "label": "Getting Started",
+      "blocks": [
+        {
+          "type": "explanation",
+          "accentColor": "blue",
+          "title": "Steps for Probability",
+          "body": "Using probability in practice involves these steps.",
+          "bullets": [
+            "Step 1: Assign a starting probability to your belief (prior)",
+            "Step 2: Observe new evidence",
+            "Step 3: Update your probability using Bayes Theorem",
+            "Step 4: Make a decision based on the updated probability"
+          ]
+        },
+        {
+          "type": "concept_visualization",
+          "title": "Probability Flow",
+          "accentColor": "green",
+          "leftPanel": {
+            "label": "Real Life Analogy",
+            "emoji": "🔄",
+            "title": "Updating Belief",
+            "description": "Iteratively refining confidence"
+          },
+          "centerPanel": {
+            "label": "Flow Diagram",
+            "visualType": "flow_diagram",
+            "flowSteps": [
+              "Prior Belief",
+              "↓",
+              "New Evidence",
+              "↓",
+              "Bayes Update",
+              "↓",
+              "Updated Belief",
+              "↓",
+              "Decision"
+            ],
+            "textContent": null
+          },
+          "rightPanel": {
+            "label": "Code Example",
+            "code": "# See example above",
+            "language": "python",
+            "output": ""
+          }
+        },
+        {
+          "type": "practice",
+          "title": "Practice Exercise",
+          "instructions": "Flip a coin 10 times, record results, calculate actual probability of heads",
+          "starterCode": "# Write your coin flip simulation or manually calculate\n",
+          "solution": "# Actual heads / Total flips",
+          "hint": "Count the heads and divide by 10."
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "keyTakeaways": [
+      {
+        "emoji": "",
+        "text": "Probability is a number between 0 (impossible) and 1 (certain)"
+      },
+      {
+        "emoji": "",
+        "text": "Real world decisions are rarely 100% certain — AI uses probability"
+      },
+      {
+        "emoji": "",
+        "text": "Conditional probability: chance of X given Y already happened"
+      },
+      {
+        "emoji": "",
+        "text": "Bayes Theorem updates probability when new evidence arrives"
+      },
+      {
+        "emoji": "",
+        "text": "Spam filters use probability to decide if an email is spam"
+      },
+      {
+        "emoji": "",
+        "text": "Weather forecasts, medical tests, and recommendations all use probability"
+      }
+    ],
+    "whatYouLearned": [
+      "What probability is on a 0 to 1 scale",
+      "How to understand conditional probability",
+      "How Bayes Theorem updates beliefs",
+      "How spam filters use probability",
+      "How to model real-world uncertainty"
+    ],
+    "nextUp": "Optimization"
+  }
+}

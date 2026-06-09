@@ -1,54 +1,57 @@
 [
   {
-    "question": "If a card is drawn from a standard deck, what is the probability that it is a spade or a two?",
+    "question": "What is propositional logic?",
     "options": [
-      "About 0.019",
-      "About 0.077",
-      "About 0.17",
-      "About 0.25",
-      "About 0.308",
-      "About 0.327",
-      "About 0.5",
-      "None of the above"
+      "Statements that are True or False",
+      "Statements that are numbers",
+      "Statements about probability",
+      "Statements about search"
     ],
-    "answer": "About 0.308"
+    "answer": "Statements that are True or False",
+    "explanation": "The correct answer is Statements that are True or False."
   },
   {
-    "question": "What is the probability that two fair coins land one heads and one tails?",
+    "question": "AND returns True when?",
     "options": [
-      "0.25",
-      "0.5 = 1/2",
-      "0.75",
-      "1.0"
+      "Both sides are True",
+      "One side is True",
+      "Neither side is True",
+      "Always"
     ],
-    "answer": "0.5 = 1/2"
+    "answer": "Both sides are True",
+    "explanation": "The correct answer is Both sides are True."
   },
   {
-    "question": "Which Bayesian Network statement is true?",
+    "question": "NOT True equals?",
     "options": [
-      "Assuming we know the train is on time, whether or not there is rain affects the probability that the appointment is attended.",
-      "Assuming we know there is rain, whether or not there is track maintenance does not affect the probability that the train is on time.",
-      "Assuming we know there is track maintenance, whether or not there is rain does not affect the probability that the train is on time.",
-      "Assuming we know the train is on time, whether or not there is track maintenance does not affect the probability that the appointment is attended.",
-      "Assuming we know there is track maintenance, whether or not there is rain does not affect the probability that the appointment is attended."
+      "False",
+      "True",
+      "Maybe",
+      "Zero"
     ],
-    "answer": "Assuming we know the train is on time, whether or not there is track maintenance does not affect the probability that the appointment is attended."
+    "answer": "False",
+    "explanation": "The correct answer is False."
   },
   {
-    "question": "What is the probability that a battery is both made by Factory A and defective?",
+    "question": "What is a Knowledge Base?",
     "options": [
-      "0.008",
-      "0.012",
-      "0.02",
-      "0.024",
-      "0.028",
-      "0.06",
-      "0.12",
-      "0.2",
-      "0.429",
-      "0.6",
-      "None of the above"
+      "A collection of facts and rules",
+      "A database of images",
+      "A list of search results",
+      "A neural network"
     ],
-    "answer": "0.012"
+    "answer": "A collection of facts and rules",
+    "explanation": "The correct answer is A collection of facts and rules."
+  },
+  {
+    "question": "Inference means?",
+    "options": [
+      "Deriving new facts from existing facts",
+      "Searching for a path",
+      "Training on data",
+      "Predicting a number"
+    ],
+    "answer": "Deriving new facts from existing facts",
+    "explanation": "The correct answer is Deriving new facts from existing facts."
   }
 ]

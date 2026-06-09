@@ -1,47 +1,57 @@
 [
   {
-    "question": "Which logical entailment is true?",
+    "question": "What does BFS stand for?",
     "options": [
-      "Sentence 6 entails Sentence 2",
-      "Sentence 1 entails Sentence 4",
-      "Sentence 6 entails Sentence 3",
-      "Sentence 2 entails Sentence 5",
-      "Sentence 1 entails Sentence 2",
-      "Sentence 5 entails Sentence 6"
+      "Breadth-First Search",
+      "Best-First Search",
+      "Bidirectional Search",
+      "Bottom-First Search"
     ],
-    "answer": "Sentence 2 entails Sentence 5"
+    "answer": "Breadth-First Search",
+    "explanation": "BFS stands for Breadth-First Search. It explores all nodes at the present depth level before moving to nodes at the next depth level."
   },
   {
-    "question": "Which expression is logically equivalent to A ⊕ B?",
+    "question": "Which search explores the deepest path first?",
     "options": [
-      "(A ∨ B) ∧ ¬ (A ∧ B)",
-      "(A ∧ B) ∨ ¬ (A ∨ B)",
-      "(A ∨ B) ∧ (A ∧ B)",
-      "(A ∨ B) ∧ ¬ (A ∨ B)"
+      "Breadth-First Search",
+      "Depth-First Search",
+      "A* Search",
+      "Greedy Search"
     ],
-    "answer": "(A ∨ B) ∧ ¬ (A ∧ B)"
+    "answer": "Depth-First Search",
+    "explanation": "Depth-First Search (DFS) goes deep into one path before backtracking and trying other paths."
   },
   {
-    "question": "Which propositional logic statement is correct?",
+    "question": "Which search guarantees finding the shortest path?",
     "options": [
-      "(R → C) ∧ ¬S",
-      "R → C → ¬S",
-      "R ∧ C ∧ ¬S",
-      "R → (C ∧ ¬S)",
-      "(C ∨ ¬S) → R"
+      "DFS",
+      "Greedy Best-First",
+      "BFS",
+      "A*"
     ],
-    "answer": "R → (C ∧ ¬S)"
+    "answer": "BFS",
+    "explanation": "BFS explores level by level, so the first path it finds to the goal is guaranteed to be the shortest path."
   },
   {
-    "question": "Which first-order logic translation is correct?",
+    "question": "What does A* search use that Greedy Best-First does not?",
     "options": [
-      "∃x. Course(x) ∧ Enrolled(Harry, x) ∧ Enrolled(Hermione, x)",
-      "∀x. Course(x) ∧ Enrolled(Harry, x) ∧ Enrolled(Hermione, x)",
-      "∃x. Enrolled(Harry, x) ∧ ∃y. Enrolled(Hermione, y)",
-      "∀x. Enrolled(Harry, x) ∧ ∀y. Enrolled(Hermione, y)",
-      "∃x. Enrolled(Harry, x) ∨ Enrolled(Hermione, x)",
-      "∀x. Enrolled(Harry, x) ∨ Enrolled(Hermione, x)"
+      "Only estimated cost to goal",
+      "Both cost so far AND estimated cost to goal",
+      "Only actual cost from start",
+      "Random exploration"
     ],
-    "answer": "∃x. Course(x) ∧ Enrolled(Harry, x) ∧ Enrolled(Hermione, x)"
+    "answer": "Both cost so far AND estimated cost to goal",
+    "explanation": "A* evaluates f(n) = g(n) + h(n), where g(n) is the cost to reach the current node and h(n) is the estimated cost to the goal."
+  },
+  {
+    "question": "In a search problem, the destination is called?",
+    "options": [
+      "Initial state",
+      "Action",
+      "Goal state",
+      "Path cost"
+    ],
+    "answer": "Goal state",
+    "explanation": "In search terminology, the destination or objective is called the goal state."
   }
 ]

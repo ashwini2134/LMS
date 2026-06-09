@@ -1,9 +1,14 @@
 [
   {
-    "id": "traffic",
-    "title": "Traffic",
-    "description": "Write an AI to identify which traffic sign appears in a photograph, using TensorFlow to build a convolutional neural network trained on the German Traffic Sign Recognition Benchmark (GTSRB) dataset of 43 sign categories.\n\nIn `traffic.py`, complete `load_data` and `get_model`:\n\n- `load_data(data_dir)` reads every image (using OpenCV `cv2`), resizes each to `IMG_WIDTH` x `IMG_HEIGHT`, and returns `(images, labels)` where labels are the integer category numbers. Use `os.path.join` / `os.sep` for platform independence.\n- `get_model()` returns a compiled `tf.keras` model whose input shape is `(IMG_WIDTH, IMG_HEIGHT, 3)` and whose output layer has `NUM_CATEGORIES` units. You choose the convolutional/pooling/hidden/dropout layers.\n\n(Uses cv2, scikit-learn, and tensorflow.)\n\n**Example:**\n```\n$ python traffic.py gtsrb\nEpoch 1/10\n500/500 [===...] - loss: 3.71 - accuracy: 0.15\n...\n333/333 - 5s - loss: 0.16 - accuracy: 0.95\n```",
-    "check50_slug": "ai50/projects/2024/x/traffic",
-    "difficulty": "hard"
+    "id": "ml_flowchart",
+    "title": "ML Workflow Flowchart",
+    "description": "Draw the ML workflow as a flowchart — Collect Data → Clean → Train → Test → Predict. Add a one-line note at each step explaining what happens.",
+    "difficulty": "easy"
+  },
+  {
+    "id": "python_classifier",
+    "title": "Simple Classifier",
+    "description": "Write Python to classify a number entered by the user as Positive / Negative / Zero. This simulates a simple classifier.",
+    "difficulty": "easy"
   }
 ]

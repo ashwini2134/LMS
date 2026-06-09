@@ -1,41 +1,57 @@
 [
   {
-    "question": "What value will the network compute for y?",
+    "question": "ML learns rules from?",
     "options": [
-      "0 for step activation function, 0 for ReLU activation function",
-      "1 for step activation function, 11 for ReLU activation function",
-      "16 for step activation function, 16 for ReLU activation function"
+      "Examples and data",
+      "A programmer writing rules",
+      "Random guessing",
+      "Search algorithms"
     ],
-    "answer": "1 for step activation function, 11 for ReLU activation function"
+    "answer": "Examples and data",
+    "explanation": "The correct answer is Examples and data."
   },
   {
-    "question": "How many total weights (including biases) exist?",
+    "question": "Supervised learning requires?",
     "options": [
-      "32",
-      "36",
-      "40",
-      "44",
-      "48"
+      "Labeled data",
+      "No data",
+      "Unlabeled data",
+      "Rewards"
     ],
-    "answer": "44"
+    "answer": "Labeled data",
+    "explanation": "The correct answer is Labeled data."
   },
   {
-    "question": "Which network architecture best fits voice classification?",
+    "question": "Unsupervised learning finds?",
     "options": [
-      "One-to-one",
-      "Many-to-one",
-      "One-to-many",
-      "Many-to-many"
+      "Patterns without labels",
+      "Labeled patterns",
+      "Rewards",
+      "Shortest paths"
     ],
-    "answer": "Many-to-one"
+    "answer": "Patterns without labels",
+    "explanation": "The correct answer is Patterns without labels."
   },
   {
-    "question": "What is the result of applying a 2x2 max-pool?",
+    "question": "Reinforcement learning uses?",
     "options": [
-      "[[16, 12], [32, 28]]",
-      "[[16, 14], [32, 30]]",
-      "[[22, 24], [32, 30]]"
+      "Rewards and penalties",
+      "Labels",
+      "Rules",
+      "Probability only"
     ],
-    "answer": "[[16, 12], [32, 28]]"
+    "answer": "Rewards and penalties",
+    "explanation": "The correct answer is Rewards and penalties."
+  },
+  {
+    "question": "Overfitting means?",
+    "options": [
+      "Model memorizes training data and fails on new data",
+      "Model learns too slowly",
+      "Model has too little data",
+      "Model is too simple"
+    ],
+    "answer": "Model memorizes training data and fails on new data",
+    "explanation": "The correct answer is Model memorizes training data and fails on new data."
   }
 ]

@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { api, type Course, getCompletedProjects, getStreak, getTotalXp, getSubmissionHistory } from "../api";
+import { api, type Course, getSubmissionHistory } from "../api";
 import { useAuth } from "../auth";
 import { Card, LoadingCard } from "../components";
-import { getCourseStats, subscribeToProgressChanges, getAllProgress } from "../hooks/useProgress";
+import { getCourseStats, subscribeToProgressChanges } from "../hooks/useProgress";
+import { useGamification, ACHIEVEMENTS, updateOverallProgress } from "../progress";
 
 const IconBook = () => (
   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -87,11 +88,10 @@ export default function Dashboard() {
   const { user } = useAuth();
   const [courses, setCourses] = useState<Course[] | null>(null);
   const [err, setErr] = useState<string | null>(null);
-  const [completedProjects, setCompletedProjects] = useState<Record<string, boolean>>({});
-  const [streak, setStreak] = useState({ count: 0, lastDate: null as string | null });
-  const [totalXp, setTotalXp] = useState(0);
   const [submissionHistory, setSubmissionHistory] = useState<Record<string, number>>({});
-  const [refreshKey, setRefreshKey] = useState(0);
+  
+  // Use our centralized Gamification hook
+  const { xp, achievements: unlockedAchievements, streak, stats, overallProgress } = useGamification();
 
   const [activeCourseId, setActiveCourseId] = useState<string | null>(null);
   const [activeStatId, setActiveStatId] = useState<string | null>(null);
@@ -118,81 +118,37 @@ export default function Dashboard() {
     }, 900);
   };
 
-  // Listen for progress changes
   useEffect(() => {
-    const unsub = subscribeToProgressChanges(() => setRefreshKey(k => k + 1));
-    return unsub;
+    setSubmissionHistory(getSubmissionHistory());
   }, []);
 
-  // Refresh data on mount and progress updates
-  useEffect(() => {
-    setCompletedProjects(getCompletedProjects());
-    setStreak(getStreak());
-    setTotalXp(getTotalXp());
-    setSubmissionHistory(getSubmissionHistory());
-  }, [refreshKey]);
-
-  // Fetch all progress data
-  const allProgress = useMemo(() => getAllProgress(), [refreshKey]);
-
-  // Overall stats dynamically computed
-  const overallStats = useMemo(() => {
-    const lecturesCompleted = new Set<string>();
-    const quizzesPassed = new Set<string>();
-    const tasksCompleted = new Set<string>();
-    const coursesStarted = new Set<string>();
-
-    for (const [key, p] of Object.entries(allProgress)) {
-      const [courseSlug] = key.split(':');
-      coursesStarted.add(courseSlug);
-      if (p.lectureCompleted) {
-        lecturesCompleted.add(key);
-      }
-      if (p.quizCompleted) {
-        quizzesPassed.add(key);
-      }
-      if (p.handsOnTaskCompleted) {
-        tasksCompleted.add(key);
-      }
-    }
-
-    return {
-      lecturesCompleted: lecturesCompleted.size,
-      quizzesPassed: quizzesPassed.size,
-      tasksCompleted: tasksCompleted.size,
-      coursesStarted: coursesStarted.size,
-    };
-  }, [allProgress]);
-
-  const [coursesCompletedCount, setCoursesCompletedCount] = useState(0);
   const [courseStatsMap, setCourseStatsMap] = useState<Record<string, { completed: number; total: number; lecturesCompleted: number }>>({});
 
   useEffect(() => {
     if (!courses) return;
 
     const map: Record<string, { completed: number; total: number; lecturesCompleted: number }> = {};
-    let completedCourses = 0;
+    let totalAvail = 0;
 
     Promise.all(courses.map(async (course) => {
       try {
         const lectures = await api.courseLectures(course.slug);
         const lectureCount = lectures.length;
-        const stats = getCourseStats(course.slug, lectureCount);
-        const completed = stats.lecturesCompleted === stats.totalLectures;
-        if (completed) completedCourses++;
+        totalAvail += lectureCount;
+        const cStats = getCourseStats(course.slug, lectureCount);
         map[course.slug] = {
-          completed: stats.lecturesCompleted,
-          total: stats.totalLectures,
-          lecturesCompleted: stats.lecturesCompleted,
+          completed: cStats.lecturesCompleted,
+          total: cStats.totalLectures,
+          lecturesCompleted: cStats.lecturesCompleted,
         };
       } catch {
         map[course.slug] = { completed: 0, total: 0, lecturesCompleted: 0 };
       }
     })).then(() => {
       setCourseStatsMap(map);
-      setCoursesCompletedCount(completedCourses);
+      updateOverallProgress(totalAvail);
     });
-  }, [courses, refreshKey]);
+  }, [courses]);
 
   useEffect(() => {
     api
@@ -201,25 +157,7 @@ export default function Dashboard() {
       .catch((e: Error) => setErr(e.message));
   }, []);
 
-  const totalCompleted = Object.keys(completedProjects).length;
-  const projectsCount = totalCompleted;
-
-  const coursesStarted = overallStats.coursesStarted;
-  const lecturesCompleted = overallStats.lecturesCompleted;
-  const quizzesPassed = overallStats.quizzesPassed;
-  const tasksSubmitted = overallStats.tasksCompleted;
-  const projectsSolved = projectsCount;
-
-  // Overall progress computed dynamically
-  const overallProgress = useMemo(() => {
-    let completed = 0;
-    let total = 0;
-    for (const stats of Object.values(courseStatsMap)) {
-      completed += stats.lecturesCompleted;
-      total += stats.total;
-    }
-    return total > 0 ? Math.round((completed / total) * 100) : 0;
-  }, [courseStatsMap]);
+  const totalCompleted = stats.tasksSubmitted + stats.projectsSolved;
 
   // Get last 7 days for streak heatmap
   const getStreakDays = () => {
@@ -243,50 +181,12 @@ export default function Dashboard() {
 
   const streakDays = getStreakDays();
 
-  const achievements = useMemo(() => [
-    {
-      id: "first_lecture",
-      title: "First Lecture Completed",
-      description: "Complete your first lecture",
-      icon: <IconDevice />,
-      unlocked: overallStats.lecturesCompleted >= 1,
-    },
-    {
-      id: "first_quiz",
-      title: "First Quiz Passed",
-      description: "Pass your first knowledge check",
-      icon: <IconSolved />,
-      unlocked: overallStats.quizzesPassed >= 1,
-    },
-    {
-      id: "five_lectures",
-      title: "5 Lectures Completed",
-      description: "Complete 5 lectures",
-      icon: <IconStreak />,
-      unlocked: overallStats.lecturesCompleted >= 5,
-    },
-    {
-      id: "ten_lectures",
-      title: "10 Lectures Completed",
-      description: "Complete 10 lectures",
-      icon: <IconBrain />,
-      unlocked: overallStats.lecturesCompleted >= 10,
-    },
-    {
-      id: "first_project",
-      title: "First Project Submitted",
-      description: "Submit your first hands-on task",
-      icon: <IconDiamond />,
-      unlocked: overallStats.tasksCompleted >= 1,
-    },
-    {
-      id: "course_completed",
-      title: "Course Completed",
-      description: "Complete an entire course",
-      icon: <IconGraduation />,
-      unlocked: coursesCompletedCount >= 1,
-    },
-  ], [overallStats, coursesCompletedCount]);
+  const displayAchievements = useMemo(() => {
+    return ACHIEVEMENTS.map(a => ({
+      ...a,
+      unlocked: unlockedAchievements.includes(a.id)
+    }));
+  }, [unlockedAchievements]);
 
   return (
     <div className="w-full min-h-screen bg-[#0b0f19] text-slate-100 flex flex-col p-4 md:p-8">
@@ -323,7 +223,7 @@ export default function Dashboard() {
                 )}
               </div>
               <div>
-                <div className="text-2xl font-bold text-white leading-none">{streak.count} Days</div>
+                <div className="text-2xl font-bold text-white leading-none">{streak.currentStreak} Days</div>
                 <div className="text-[11px] text-slate-400 mt-1 font-medium">Current Streak</div>
               </div>
             </button>
@@ -363,7 +263,7 @@ export default function Dashboard() {
                 )}
               </div>
               <div>
-                <div className="text-2xl font-bold text-white leading-none">{totalXp}</div>
+                <div className="text-2xl font-bold text-white leading-none">{xp}</div>
                 <div className="text-[11px] text-slate-400 mt-1 font-medium">Total XP</div>
               </div>
             </button>
@@ -400,7 +300,7 @@ export default function Dashboard() {
                     )}
                   </div>
                   <div>
-                    <div className="text-3xl font-extrabold text-white leading-none mb-1">{coursesStarted}</div>
+                    <div className="text-3xl font-extrabold text-white leading-none mb-1">{stats.coursesStarted}</div>
                     <div className="text-[11px] text-slate-400 font-medium">Courses Started</div>
                   </div>
                 </button>
@@ -420,7 +320,7 @@ export default function Dashboard() {
                     )}
                   </div>
                   <div>
-                    <div className="text-3xl font-extrabold text-white leading-none mb-1">{coursesCompletedCount}</div>
+                    <div className="text-3xl font-extrabold text-white leading-none mb-1">{stats.coursesCompleted}</div>
                     <div className="text-[11px] text-slate-400 font-medium">Courses Completed</div>
                   </div>
                 </button>
@@ -440,7 +340,7 @@ export default function Dashboard() {
                     )}
                   </div>
                   <div>
-                    <div className="text-3xl font-extrabold text-white leading-none mb-1">{lecturesCompleted}</div>
+                    <div className="text-3xl font-extrabold text-white leading-none mb-1">{stats.lecturesCompleted}</div>
                     <div className="text-[11px] text-slate-400 font-medium">Lectures Completed</div>
                   </div>
                 </button>
@@ -460,7 +360,7 @@ export default function Dashboard() {
                     )}
                   </div>
                   <div>
-                    <div className="text-3xl font-extrabold text-white leading-none mb-1">{quizzesPassed}</div>
+                    <div className="text-3xl font-extrabold text-white leading-none mb-1">{stats.quizzesPassed}</div>
                     <div className="text-[11px] text-slate-400 font-medium">Quizzes Passed</div>
                   </div>
                 </button>
@@ -480,7 +380,7 @@ export default function Dashboard() {
                     )}
                   </div>
                   <div>
-                    <div className="text-3xl font-extrabold text-white leading-none mb-1">{tasksSubmitted}</div>
+                    <div className="text-3xl font-extrabold text-white leading-none mb-1">{stats.tasksSubmitted}</div>
                     <div className="text-[11px] text-slate-400 font-medium">Tasks Submitted</div>
                   </div>
                 </button>
@@ -500,7 +400,7 @@ export default function Dashboard() {
                     )}
                   </div>
                   <div>
-                    <div className="text-3xl font-extrabold text-white leading-none mb-1">{projectsSolved}</div>
+                    <div className="text-3xl font-extrabold text-white leading-none mb-1">{stats.projectsSolved}</div>
                     <div className="text-[11px] text-slate-400 font-medium">Projects Solved</div>
                   </div>
                 </button>
@@ -587,13 +487,13 @@ export default function Dashboard() {
                   <h3 className="text-lg font-bold text-white tracking-tight">Achievements</h3>
                 </div>
                 <div className="rounded-full bg-slate-900/60 border border-slate-800/80 px-2.5 py-0.5 text-[10px] font-semibold text-slate-400">
-                  {achievements.filter(a => a.unlocked).length} / {achievements.length} Unlocked
+                  {displayAchievements.filter(a => a.unlocked).length} / {displayAchievements.length} Unlocked
                 </div>
               </div>
 
               <Card className="bg-slate-950/40 border border-slate-800/60 rounded-3xl p-6 flex flex-col gap-5">
                 <div className="flex flex-col gap-4">
-                  {achievements.map((achievement) => {
+                  {displayAchievements.map((achievement) => {
                     const isActive = activeBadgeId === achievement.id;
                     return (
                       <button
@@ -657,7 +557,7 @@ export default function Dashboard() {
               </div>
               <div className="flex flex-wrap gap-3">
                 <div className="rounded-2xl bg-slate-950/70 p-3 text-xs uppercase tracking-[0.24em] text-slate-400">Total Submissions: {totalCompleted}</div>
-                <div className="rounded-2xl bg-slate-950/70 p-3 text-xs uppercase tracking-[0.24em] text-slate-400">Longest Streak: {streak.count} days</div>
+                <div className="rounded-2xl bg-slate-950/70 p-3 text-xs uppercase tracking-[0.24em] text-slate-400">Longest Streak: {streak.longestStreak} days</div>
                 <div className="rounded-2xl bg-slate-950/70 p-3 text-xs uppercase tracking-[0.24em] text-slate-400">Most Active Day: Today</div>
               </div>
             </div>

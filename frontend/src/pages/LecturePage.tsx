@@ -347,7 +347,7 @@ export default function LecturePage() {
                   <QuizEngine
                     questions={quiz}
                     onComplete={(score, total) => {
-                      markQuizCompleted(score);
+                      markQuizCompleted(score, total);
                       if (score / total >= 0.7) {
                         markSectionVisited('quiz');
                         if (slug && lessonData) {

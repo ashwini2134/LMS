@@ -117,7 +117,10 @@ export function useProgress(courseSlug: string | undefined, lectureNumber: numbe
         sections: { ...prev.sections, [sectionId]: { ...existing, visited: true } },
       };
     });
-  }, [updateProgress]);
+    if (sectionId !== 'quiz' && sectionId !== 'problems') {
+      import('../progress').then(m => m.completeAction('section', `${courseSlug}:${lectureNumber}:${sectionId}`));
+    }
+  }, [updateProgress, courseSlug, lectureNumber]);
 
   const markPracticeAttempted = useCallback((sectionId: string) => {
     updateProgress(prev => {
@@ -143,16 +146,24 @@ export function useProgress(courseSlug: string | undefined, lectureNumber: numbe
     });
   }, [updateProgress]);
 
-  const markQuizCompleted = useCallback((score: number) => {
+  const markQuizCompleted = useCallback((score: number, total: number = 5) => {
     updateProgress(prev => ({ ...prev, quizScore: score, quizCompleted: true }));
-  }, [updateProgress]);
+    if (score / total >= 0.6) {
+      import('../progress').then(m => m.completeAction('quiz', `${courseSlug}:${lectureNumber}`));
+    }
+  }, [updateProgress, courseSlug, lectureNumber]);
 
   const markProblemCompleted = useCallback((problemId: string) => {
     updateProgress(prev => {
       if (prev.problemsCompleted.includes(problemId)) return prev;
       return { ...prev, problemsCompleted: [...prev.problemsCompleted, problemId] };
     });
-  }, [updateProgress]);
+    if (lectureNumber === 9) {
+      import('../progress').then(m => m.completeAction('project', problemId));
+    } else {
+      import('../progress').then(m => m.completeAction('problem', problemId));
+    }
+  }, [updateProgress, courseSlug, lectureNumber]);
 
   const markHandsOnTaskCompleted = useCallback(() => {
     updateProgress(prev => ({ ...prev, handsOnTaskCompleted: true }));
@@ -163,7 +174,8 @@ export function useProgress(courseSlug: string | undefined, lectureNumber: numbe
       if (prev.lectureCompleted) return prev;
       return { ...prev, lectureCompleted: true, handsOnTaskCompleted: true };
     });
-  }, [updateProgress]);
+    import('../progress').then(m => m.completeAction('lecture', `${courseSlug}:${lectureNumber}`));
+  }, [updateProgress, courseSlug, lectureNumber]);
 
   // Auto-check lecture completion
   const totalSections = 0; // will be passed externally
