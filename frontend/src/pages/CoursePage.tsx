@@ -1,10 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Star, Crown } from 'lucide-react';
-import { api, type Lecture, getCompletedProjects, saveEarnedCertificate } from "../api";
+import { api, type Lecture, getCompletedProjects } from "../api";
 import { getCourseProgress, isLectureUnlocked, subscribeToProgressChanges } from "../hooks/useProgress";
 import { useAuth } from "../auth";
-import { CertificateModal } from "../components/CertificateModal";
 
 type LectureStatus = "completed" | "in-progress" | "locked";
 
@@ -32,8 +31,6 @@ export default function CoursePage() {
   const [lectures, setLectures] = useState<Lecture[] | null>(null);
   const [err, setErr] = useState<string | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
-  const [isCertModalOpen, setIsCertModalOpen] = useState(false);
-
   const courseTitle = slug === "cs50p" ? "CS50 Python" : slug === "cs50ai" ? "CS50 AI" : slug?.toUpperCase() ?? "";
   const lectureCount = lectures?.length ?? 0;
 
@@ -67,9 +64,8 @@ export default function CoursePage() {
       import("../progress").then((m) => {
         m.completeAction("course_complete", slug);
       });
-      saveEarnedCertificate(slug, courseTitle, user.name);
     }
-  }, [progressPercent, lectureCount, user, slug, courseTitle]);
+  }, [progressPercent, lectureCount, user, slug]);
 
   useEffect(() => {
     if (!slug) return;
@@ -125,27 +121,19 @@ export default function CoursePage() {
         <div className="flex-1 min-w-0 space-y-6">
           {/* ── Congratulations Banner ── */}
           {progressPercent === 100 && (
-            <div className="rounded-2xl border border-emerald-500/30 bg-gradient-to-r from-emerald-950/40 to-slate-900/40 backdrop-blur-sm p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-[0_0_24px_rgba(16,185,129,0.1)] animate-fadeIn">
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 flex-shrink-0 border border-emerald-500/20">
-                  <svg className="w-6 h-6 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 14l9-5-9-5-9 5 9 5z" />
-                  </svg>
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-white">🏆 Course Completed!</h3>
-                  <p className="text-xs text-emerald-400 font-semibold uppercase tracking-wider mt-0.5">Certificate Unlocked • +200 XP Awarded</p>
-                  <p className="text-sm text-slate-400 mt-1">
-                    Congratulations! You have completed all lectures, quizzes, and projects for this course. Your official certificate is ready!
-                  </p>
-                </div>
+            <div className="rounded-2xl border border-emerald-500/30 bg-gradient-to-r from-emerald-950/40 to-slate-900/40 backdrop-blur-sm p-6 flex items-start gap-4 shadow-[0_0_24px_rgba(16,185,129,0.1)] animate-fadeIn">
+              <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 flex-shrink-0 border border-emerald-500/20">
+                <svg className="w-6 h-6 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 14l9-5-9-5-9 5 9 5z" />
+                </svg>
               </div>
-              <button
-                onClick={() => setIsCertModalOpen(true)}
-                className="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm transition-all duration-200 shadow-lg shadow-emerald-500/20 active:scale-[0.98] whitespace-nowrap self-start md:self-auto cursor-pointer"
-              >
-                View Certificate
-              </button>
+              <div>
+                <h3 className="text-lg font-bold text-white">🏆 Course Completed!</h3>
+                <p className="text-xs text-emerald-400 font-semibold uppercase tracking-wider mt-0.5">+200 XP Awarded</p>
+                <p className="text-sm text-slate-400 mt-1">
+                  Congratulations! You have completed all lectures, quizzes, and projects for this course.
+                </p>
+              </div>
             </div>
           )}
 
@@ -325,15 +313,6 @@ export default function CoursePage() {
           </div>
         </aside>
       </div>
-
-      {isCertModalOpen && user && (
-        <CertificateModal
-          courseSlug={slug}
-          courseTitle={courseTitle}
-          studentName={user.name}
-          onClose={() => setIsCertModalOpen(false)}
-        />
-      )}
     </div>
   );
 }

@@ -348,46 +348,7 @@ export function saveCompletedQuiz(courseSlug: string, lectureNum: number, score:
   localStorage.setItem("fa_completed_quizzes", JSON.stringify(current));
 }
 
-// ── Certificate Storage Helpers ──────────────────────────────────────────────
-export interface Certificate {
-  courseSlug: string;
-  courseTitle: string;
-  studentName: string;
-  completedAt: string;
-  certificateId: string;
-  verificationUrl: string;
-}
 
-export function getEarnedCertificates(): Record<string, Certificate> {
-  try {
-    return JSON.parse(localStorage.getItem("fa_earned_certificates") ?? "{}");
-  } catch {
-    return {};
-  }
-}
-
-export function saveEarnedCertificate(courseSlug: string, courseTitle: string, studentName: string): Certificate {
-  const current = getEarnedCertificates();
-  if (current[courseSlug]) return current[courseSlug];
-
-  const completedAt = new Date().toISOString();
-  const hash = Math.random().toString(36).substring(2, 7).toUpperCase() + "-" + Math.random().toString(36).substring(2, 7).toUpperCase();
-  const certificateId = `CERT-${hash}`;
-  const verificationUrl = `fraylon.ai/verify/${certificateId}`;
-
-  const cert: Certificate = {
-    courseSlug,
-    courseTitle,
-    studentName,
-    completedAt,
-    certificateId,
-    verificationUrl
-  };
-
-  current[courseSlug] = cert;
-  localStorage.setItem("fa_earned_certificates", JSON.stringify(current));
-  return cert;
-}
 
 export function getStreak(): { count: number; lastDate: string | null } {
   try {
