@@ -1,16 +1,14 @@
 [
   {
-    "id": "pagerank",
-    "title": "PageRank",
-    "description": "Write an AI to rank web pages by importance, using Google's PageRank algorithm. A page is more important if it is linked to by other important pages.\n\nIn `pagerank.py`, complete `transition_model`, `sample_pagerank`, and `iterate_pagerank`:\n\n- `transition_model(corpus, page, damping_factor)` returns a probability distribution over which page a random surfer visits next (with probability `d`, a link from `page`; with probability `1 - d`, any page). A page with no links is treated as linking to all pages.\n- `sample_pagerank(corpus, damping_factor, n)` estimates PageRank by sampling `n` pages from the Markov chain.\n- `iterate_pagerank(corpus, damping_factor)` computes PageRank by iterating the formula until no value changes by more than 0.001.\n\nAll returned distributions should sum to 1.\n\n**Example:**\n```\n$ python pagerank.py corpus0\nPageRank Results from Sampling (n = 10000)\n  1.html: 0.2223\n  2.html: 0.4303\n  ...\nPageRank Results from Iteration\n  1.html: 0.2202\n  ...\n```",
-    "check50_slug": "ai50/projects/2024/x/pagerank",
-    "difficulty": "hard"
+    "id": "logic_puzzle",
+    "title": "Logic Puzzle",
+    "description": "Given these 3 clues: (1) Alice has a cat or a dog. (2) Alice does not have a cat. (3) If Alice has a dog, she also has a fish. — Figure out what pets Alice has. Solve step by step using AND/OR/NOT.",
+    "difficulty": "easy"
   },
   {
-    "id": "heredity",
-    "title": "Heredity",
-    "description": "Write an AI to assess the likelihood that a person will have a particular genetic trait, modeling the family as a Bayesian Network over each person's `Gene` (0, 1, or 2 copies) and `Trait` variables.\n\nIn `heredity.py`, complete `joint_probability`, `update`, and `normalize`:\n\n- `joint_probability(people, one_gene, two_genes, have_trait)` returns the joint probability that everyone in `one_gene`/`two_genes` has that many copies (others have 0), and everyone in `have_trait` has the trait (others don't). For people with parents, model inheritance using `PROBS[\"mutation\"]`.\n- `update(probabilities, one_gene, two_genes, have_trait, p)` adds `p` to the appropriate gene/trait buckets for each person.\n- `normalize(probabilities)` scales each distribution to sum to 1.\n\n**Example:**\n```\n$ python heredity.py data/family0.csv\nHarry:\n  Gene:\n    2: 0.0092\n    1: 0.4557\n    0: 0.5351\n  Trait:\n    True: 0.2665\n    False: 0.7335\n...\n```",
-    "check50_slug": "ai50/projects/2024/x/heredity",
-    "difficulty": "hard"
+    "id": "daily_rules",
+    "title": "Daily Rules",
+    "description": "Write a Python program with 3 IF-THEN rules about daily life. Example: if alarm_rings and is_monday: print('Go to class'). Create your own 3 rules and test them.",
+    "difficulty": "easy"
   }
 ]

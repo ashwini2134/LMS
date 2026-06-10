@@ -1,0 +1,202 @@
+{
+  "id": "cs50ai-lecture-2",
+  "courseSlug": "cs50ai",
+  "number": 2,
+  "title": "Knowledge & Logic",
+  "overview": "Logic is how AI knows things — through rules and True/False statements, not common sense",
+  "estimatedMinutes": 60,
+  "nextUp": "Probability & Uncertainty",
+  "sections": [
+    {
+      "id": "propositional-logic",
+      "label": "Propositional Logic",
+      "blocks": [
+        {
+          "type": "explanation",
+          "accentColor": "blue",
+          "title": "Propositional Logic",
+          "body": "Logic is how AI knows things — through rules and True/False statements, not common sense",
+          "bullets": [
+            "Propositional logic uses statements that are either True or False",
+            "AND — both sides must be True for result to be True",
+            "OR — at least one side must be True",
+            "NOT — reverses the value (NOT True = False)"
+          ]
+        },
+        {
+          "type": "concept_visualization",
+          "title": "Propositional Logic in Practice",
+          "accentColor": "blue",
+          "leftPanel": {
+            "label": "Real Life Analogy",
+            "emoji": "🚦",
+            "title": "A traffic light",
+            "description": "Red means Stop (True), Green means Go (False for stop)"
+          },
+          "centerPanel": {
+            "label": "Programming Concept",
+            "visualType": "text",
+            "flowSteps": null,
+            "textContent": "AND / OR / NOT operators"
+          },
+          "rightPanel": {
+            "label": "Code Example",
+            "code": "if raining and outside:\n    print('Get wet')",
+            "language": "python",
+            "output": ""
+          }
+        },
+        {
+          "type": "reflection",
+          "question": "Is it true that AND returns True only when both sides are True?",
+          "answer": "Yes, AND requires both conditions to be true."
+        }
+      ]
+    },
+    {
+      "id": "knowledge-base",
+      "label": "Knowledge Base & Inference",
+      "blocks": [
+        {
+          "type": "explanation",
+          "accentColor": "blue",
+          "title": "Knowledge Base & Inference",
+          "body": "AI stores facts and rules in a Knowledge Base and uses Inference to derive new facts",
+          "bullets": [
+            "A Knowledge Base is a collection of facts and rules AI uses to reason",
+            "Inference means deriving new facts from existing ones",
+            "IF-THEN rules: If it is raining AND I am outside, THEN I get wet",
+            "Real-world uses: medical diagnosis systems, FAQ chatbots, Google Knowledge Panel"
+          ]
+        },
+        {
+          "type": "concept_visualization",
+          "title": "Inference Engine",
+          "accentColor": "purple",
+          "leftPanel": {
+            "label": "Real Life Analogy",
+            "emoji": "🩺",
+            "title": "A doctor's rulebook",
+            "description": "if symptom A and symptom B then diagnosis C"
+          },
+          "centerPanel": {
+            "label": "Programming Concept",
+            "visualType": "text",
+            "flowSteps": null,
+            "textContent": "Knowledge Base + IF-THEN rules → Inference engine → Conclusion"
+          },
+          "rightPanel": {
+            "label": "Code Example",
+            "code": "if fever and cough:\n    print('Possible flu')",
+            "language": "python",
+            "output": ""
+          }
+        },
+        {
+          "type": "reflection",
+          "question": "Can AI figure out new facts just from existing rules without being told directly?",
+          "answer": "Yes, that's exactly what inference is—deriving new facts logically."
+        }
+      ]
+    },
+    {
+      "id": "getting-started",
+      "label": "Getting Started",
+      "blocks": [
+        {
+          "type": "explanation",
+          "accentColor": "blue",
+          "title": "How AI Uses Logic",
+          "body": "Follow these steps to build a logical reasoning system.",
+          "bullets": [
+            "Step 1: Define your facts — what is True and what is False in your world",
+            "Step 2: Write IF-THEN rules — connect facts to conclusions",
+            "Step 3: Build a Knowledge Base — store all facts and rules together",
+            "Step 4: Run Inference — AI combines facts and rules to reach new conclusions"
+          ]
+        },
+        {
+          "type": "concept_visualization",
+          "title": "Inference Flow",
+          "accentColor": "green",
+          "leftPanel": {
+            "label": "Real Life Analogy",
+            "emoji": "💡",
+            "title": "Systematic reasoning",
+            "description": "Combining rules and facts logically"
+          },
+          "centerPanel": {
+            "label": "Flow Diagram",
+            "visualType": "flow_diagram",
+            "flowSteps": [
+              "Facts + Rules",
+              "↓",
+              "Knowledge Base",
+              "↓",
+              "Inference Engine",
+              "↓",
+              "New Conclusion"
+            ],
+            "textContent": null
+          },
+          "rightPanel": {
+            "label": "Code Example",
+            "code": "# See example above",
+            "language": "python",
+            "output": ""
+          }
+        },
+        {
+          "type": "reflection",
+          "question": "Do you need to tell AI every possible answer, or can it figure some out from rules?",
+          "answer": "It can figure out new answers using inference."
+        },
+        {
+          "type": "practice",
+          "title": "Practice Exercise",
+          "instructions": "Write 3 IF-THEN rules about your daily life using AND/OR/NOT",
+          "starterCode": "# Write your rules here\n",
+          "solution": "# Example:\n# if alarm_rings and is_monday:\n#     print('Go to class')",
+          "hint": "Use logical operators."
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "keyTakeaways": [
+      {
+        "emoji": "",
+        "text": "Logic uses True/False statements called propositions"
+      },
+      {
+        "emoji": "",
+        "text": "AND needs both sides True; OR needs at least one True; NOT reverses"
+      },
+      {
+        "emoji": "",
+        "text": "IF-THEN rules connect facts to conclusions"
+      },
+      {
+        "emoji": "",
+        "text": "A Knowledge Base stores all facts and rules AI uses"
+      },
+      {
+        "emoji": "",
+        "text": "Inference derives new facts from existing ones — like solving a puzzle"
+      },
+      {
+        "emoji": "",
+        "text": "Real uses: medical diagnosis, chatbots, Google Knowledge Panel"
+      }
+    ],
+    "whatYouLearned": [
+      "What propositional logic is and how it works",
+      "How AND, OR, NOT operators work in logic",
+      "What IF-THEN rules are and how to write them",
+      "What a Knowledge Base is",
+      "What inference means",
+      "How AI uses logic in real-world applications"
+    ],
+    "nextUp": "Probability & Uncertainty"
+  }
+}

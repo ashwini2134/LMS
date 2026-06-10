@@ -1,0 +1,197 @@
+{
+  "id": "cs50ai-lecture-4",
+  "courseSlug": "cs50ai",
+  "number": 4,
+  "title": "Optimization",
+  "overview": "Optimization means finding the best solution among many possible options.",
+  "estimatedMinutes": 60,
+  "nextUp": "Machine Learning",
+  "sections": [
+    {
+      "id": "what-is-optimization",
+      "label": "What is Optimization & Hill Climbing",
+      "blocks": [
+        {
+          "type": "explanation",
+          "accentColor": "blue",
+          "title": "What is Optimization & Hill Climbing",
+          "body": "Optimization means finding the best solution among many possible options. Hill Climbing is the simplest approach — always move toward a better nearby option.",
+          "bullets": [
+            "Optimization = finding the best solution (cheapest, fastest, most accurate)",
+            "Real example: finding the cheapest flight with fewest stops",
+            "Hill Climbing: start somewhere, always step toward a better neighbor",
+            "Problem: Hill Climbing can get stuck at a local best that is not the global best"
+          ]
+        },
+        {
+          "type": "concept_visualization",
+          "title": "Optimization Concept",
+          "accentColor": "blue",
+          "leftPanel": {
+            "label": "Real Life Analogy",
+            "emoji": "⛰️",
+            "title": "Climbing a hill in thick fog",
+            "description": "you can only see one step ahead, always step upward"
+          },
+          "centerPanel": {
+            "label": "Programming Concept",
+            "visualType": "text",
+            "flowSteps": null,
+            "textContent": "Current state → Check neighbors → Move to best neighbor → Repeat"
+          },
+          "rightPanel": {
+            "label": "Code Example",
+            "code": "best = max(neighbors)\ncurrent = best",
+            "language": "python",
+            "output": ""
+          }
+        },
+        {
+          "type": "reflection",
+          "question": "Can Hill Climbing always find the absolute best solution?",
+          "answer": "No, it can get stuck at a local best."
+        }
+      ]
+    },
+    {
+      "id": "simulated-annealing",
+      "label": "Simulated Annealing & Constraint Satisfaction",
+      "blocks": [
+        {
+          "type": "explanation",
+          "accentColor": "blue",
+          "title": "Simulated Annealing & Constraint Satisfaction",
+          "body": "Simulated Annealing fixes Hill Climbing by occasionally accepting a worse option to escape being stuck. Constraint Satisfaction Problems have rules the solution must follow.",
+          "bullets": [
+            "Simulated Annealing: sometimes accept a worse option — like shaking a puzzle to unstick pieces",
+            "As time goes on, accept worse options less often (temperature cools down)",
+            "CSP: a problem where the solution must satisfy a set of constraints (rules)",
+            "CSP example: exam scheduling — no student should have two exams at the same time",
+            "Sudoku is a classic CSP — every row, column, box must have digits 1-9 with no repeats"
+          ]
+        },
+        {
+          "type": "concept_visualization",
+          "title": "CSP Example",
+          "accentColor": "purple",
+          "leftPanel": {
+            "label": "Real Life Analogy",
+            "emoji": "📅",
+            "title": "Exam timetable",
+            "description": "must schedule all exams so no student has a clash"
+          },
+          "centerPanel": {
+            "label": "Programming Concept",
+            "visualType": "text",
+            "flowSteps": null,
+            "textContent": "Variables + Domains + Constraints → Solution"
+          },
+          "rightPanel": {
+            "label": "Code Example",
+            "code": "# Sudoku: each row must contain 1-9 with no repeats",
+            "language": "python",
+            "output": ""
+          }
+        },
+        {
+          "type": "reflection",
+          "question": "Is Sudoku an example of a Constraint Satisfaction Problem?",
+          "answer": "Yes, the digits must satisfy strict row, column, and box constraints."
+        }
+      ]
+    },
+    {
+      "id": "getting-started",
+      "label": "Getting Started",
+      "blocks": [
+        {
+          "type": "explanation",
+          "accentColor": "blue",
+          "title": "Optimization Steps",
+          "body": "How to optimize solutions.",
+          "bullets": [
+            "Step 1: Define your problem — what are you trying to optimize?",
+            "Step 2: Choose a starting solution",
+            "Step 3: Check neighboring solutions — is any better?",
+            "Step 4: Move to the better solution (Hill Climbing) or sometimes move to worse (Simulated Annealing)",
+            "Step 5: Repeat until no improvement found"
+          ]
+        },
+        {
+          "type": "concept_visualization",
+          "title": "Optimization Flow",
+          "accentColor": "green",
+          "leftPanel": {
+            "label": "Real Life Analogy",
+            "emoji": "🔄",
+            "title": "Iterative Improvement",
+            "description": "Checking neighbors"
+          },
+          "centerPanel": {
+            "label": "Flow Diagram",
+            "visualType": "flow_diagram",
+            "flowSteps": [
+              "Start",
+              "↓",
+              "Evaluate",
+              "↓",
+              "Check Neighbors",
+              "↓",
+              "Better? Yes → Move / No → Done"
+            ],
+            "textContent": null
+          },
+          "rightPanel": {
+            "label": "Code Example",
+            "code": "# See example above",
+            "language": "python",
+            "output": ""
+          }
+        },
+        {
+          "type": "practice",
+          "title": "Practice Exercise",
+          "instructions": "Solve a simple Sudoku and write which constraint (rule) you used at each step",
+          "starterCode": "# Write your notes\n",
+          "solution": "# Notes here",
+          "hint": "Follow row, column, and block constraints."
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "keyTakeaways": [
+      {
+        "emoji": "",
+        "text": "Optimization finds the best solution from many possible options"
+      },
+      {
+        "emoji": "",
+        "text": "Hill Climbing always moves toward a better nearby option"
+      },
+      {
+        "emoji": "",
+        "text": "Hill Climbing can get stuck at a local best — not always the global best"
+      },
+      {
+        "emoji": "",
+        "text": "Simulated Annealing escapes by occasionally accepting worse options"
+      },
+      {
+        "emoji": "",
+        "text": "CSP problems have constraints (rules) the solution must satisfy"
+      },
+      {
+        "emoji": "",
+        "text": "Sudoku, exam scheduling, and delivery routing are all optimization problems"
+      }
+    ],
+    "whatYouLearned": [
+      "What Optimization is",
+      "How Hill Climbing and Simulated Annealing work",
+      "What CSP means and how it applies to Sudoku",
+      "How to define states and neighbors"
+    ],
+    "nextUp": "Machine Learning"
+  }
+}
